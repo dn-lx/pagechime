@@ -10,6 +10,7 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowsOut,
+  ArrowsIn,
   BookmarkSimple,
   BookOpen,
   Check,
@@ -36,6 +37,7 @@ import {
   narrationOffset,
   activeWord,
   segmentAt,
+  adjacentListeningChapter,
   type Bookmark,
   type Progress,
   type ReaderNote,
@@ -46,6 +48,7 @@ import {
 import { useAccount } from "../lib/account";
 import type { Playback } from "../lib/playback";
 import { PdfPage } from "./PdfPage";
+import { useReaderFullscreen } from "../lib/reader-fullscreen";
 
 export type AnnotationDraft = {
   quote: string;
@@ -152,8 +155,12 @@ export default function BookReader({
     writeSaved("pdf.edition." + book.id, pdfEdition);
   }, [book.id, pdfEdition]);
   const [size, setSize] = useState({ width: 650, height: 560 });
-  const [focus, setFocus] = useState(false),
-    [selection, setSelection] = useState<AnnotationDraft | null>(null);
+  const {
+    active: focus,
+    toggle: toggleFullscreen,
+    notice: fullscreenNotice,
+  } = useReaderFullscreen();
+  const [selection, setSelection] = useState<AnnotationDraft | null>(null);
   const paper = useRef<HTMLDivElement>(null),
     prose = useRef<HTMLElement>(null),
     touch = useRef<{ x: number; y: number } | null>(null);
@@ -254,10 +261,6 @@ export default function BookReader({
     }));
   }, [theme]);
   useEffect(() => {
-    document.body.classList.toggle("focus-reading", focus);
-    return () => document.body.classList.remove("focus-reading");
-  }, [focus]);
-  useEffect(() => {
     paper.current?.scrollTo({ top: 0 });
     setSelection(null);
   }, [pageIndex, readingChapter]);
@@ -311,12 +314,14 @@ export default function BookReader({
     const next = pageIndex + direction;
     if (next >= 0 && next < pages.length)
       remember(readingAnchorAt(pages, next, readingChapter));
-    else if (
-      readingChapter + direction >= 0 &&
-      readingChapter + direction < book.chapters.length
-    ) {
-      const target = readingChapter + direction,
-        segs = book.chapters[target].segments,
+    else {
+      const target = adjacentListeningChapter(
+        book.chapters,
+        readingChapter,
+        direction < 0 ? -1 : 1,
+      );
+      if (target === null) return;
+      const segs = book.chapters[target].segments,
         last = Math.max(0, segs.length - 1);
       remember({
         chapter: target,
@@ -412,12 +417,15 @@ export default function BookReader({
     });
   }
   const previousDisabled =
-    mode === "pdf" ? p.page <= 1 : pageIndex === 0 && readingChapter === 0;
+    mode === "pdf"
+      ? p.page <= 1
+      : pageIndex === 0 &&
+        adjacentListeningChapter(book.chapters, readingChapter, -1) === null;
   const nextDisabled =
     mode === "pdf"
       ? p.page >= book.pageCount
       : pageIndex >= pages.length - 1 &&
-        readingChapter === book.chapters.length - 1;
+        adjacentListeningChapter(book.chapters, readingChapter, 1) === null;
   return (
     <section
       className="ebook-reader"
@@ -430,7 +438,8 @@ export default function BookReader({
           <p className="eyebrow">YOUR READING ROOM</p>
           <h1>{book.title}</h1>
           <p>
-            {book.title} <span>·</span> Chapter {readingChapter + 1} of{" "}
+            <span className="reader-chapter-title">{chapter.title}</span>
+            <span>·</span> Chapter {readingChapter + 1} of{" "}
             {book.chapters.length}
           </p>
         </div>
@@ -444,15 +453,21 @@ export default function BookReader({
             <BookmarkSimple />
           </button>
           <button
-            className="icon-button"
-            aria-label={focus ? "Leave focused reading" : "Focus on reading"}
+            className="fullscreen-button"
+            aria-label={focus ? "Exit fullscreen" : "Enter fullscreen"}
             aria-pressed={focus}
-            onClick={() => setFocus(!focus)}
+            onClick={() => void toggleFullscreen()}
           >
-            <ArrowsOut />
+            {focus ? <ArrowsIn /> : <ArrowsOut />}
+            <span>{focus ? "Exit" : "Fullscreen"}</span>
           </button>
         </div>
       </div>
+      {focus && fullscreenNotice && (
+        <p className="fullscreen-notice" role="status">
+          {fullscreenNotice}
+        </p>
+      )}
       <div className="ebook-tools">
         <div className="view-switch" aria-label="Reading view">
           <button

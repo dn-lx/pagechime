@@ -4,8 +4,9 @@ import {
   type Book,
   type Progress,
   clamp,
-  globalPosition,
-  locatePosition,
+  adjacentListeningChapter,
+  firstListeningChapter,
+  skipListeningPosition,
   segmentAt,
 } from "@pagechime/core";
 import type { ReaderStorage } from "./storage";
@@ -142,8 +143,9 @@ export function usePlayback(
       ended: () => {
         save();
         const b = current.current;
-        if (b && ci.current < b.chapters.length - 1)
-          loadRef.current(ci.current + 1, 0, true);
+        const next = b && adjacentListeningChapter(b.chapters, ci.current, 1);
+        if (b && next !== null && next !== undefined)
+          loadRef.current(next, 0, true);
         else {
           setPlaying(false);
           notify("You’ve reached the end of the book.");
@@ -196,9 +198,11 @@ export function usePlayback(
       const b = current.current,
         a = audio.current;
       if (!b || !a) return;
-      const p = locatePosition(
+      const p = skipListeningPosition(
         b.chapters,
-        globalPosition(b.chapters, ci.current, a.currentTime) + seconds,
+        ci.current,
+        a.currentTime,
+        seconds,
       );
       if (p.chapter === ci.current) seek(p.time);
       else loadRef.current(p.chapter, p.time, !a.paused);
@@ -209,7 +213,12 @@ export function usePlayback(
     const p = startOver
       ? null
       : readSaved<Progress | null>("progress." + b.id, null);
-    loadRef.current(p?.chapter || 0, p?.time || 0, false, b);
+    loadRef.current(
+      p?.chapter ?? firstListeningChapter(b.chapters),
+      p?.time || 0,
+      false,
+      b,
+    );
     if (p?.page) {
       pageRef.current = clamp(p.page, 1, b.pageCount);
       setPageState(pageRef.current);
@@ -265,18 +274,18 @@ export function usePlayback(
         audio.current?.play().catch(() => {});
       },
       pause: () => audio.current?.pause(),
-      seekbackward: () => skip(-15),
-      seekforward: () => skip(30),
-      previoustrack: () =>
-        loadRef.current(Math.max(0, ci.current - 1), 0, true),
+      seekbackward: () => skip(-10),
+      seekforward: () => skip(10),
+      previoustrack: () => {
+        const b = current.current,
+          previous = b && adjacentListeningChapter(b.chapters, ci.current, -1);
+        if (previous !== null && previous !== undefined)
+          loadRef.current(previous, 0, true);
+      },
       nexttrack: () => {
         const b = current.current;
-        if (b)
-          loadRef.current(
-            Math.min(b.chapters.length - 1, ci.current + 1),
-            0,
-            true,
-          );
+        const next = b && adjacentListeningChapter(b.chapters, ci.current, 1);
+        if (next !== null && next !== undefined) loadRef.current(next, 0, true);
       },
       seekto: (d) => {
         if (d.seekTime !== undefined) seek(d.seekTime);
@@ -308,6 +317,12 @@ export function usePlayback(
     clock,
     book,
     chapter,
+    previousChapter: book
+      ? adjacentListeningChapter(book.chapters, chapter, -1)
+      : null,
+    nextChapter: book
+      ? adjacentListeningChapter(book.chapters, chapter, 1)
+      : null,
     time,
     page,
     setPage: (value: number) => {

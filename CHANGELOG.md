@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add real reader fullscreen with an explicit exit and full-window fallback, legible 10-second rewind/forward controls, and responsive page/player spacing. Ordinary listening starts at the introduction and skips reference sections while Contents retains every chapter and saved positions. Intended impact: patch within ongoing development; develop only.
+
 - Keep a selected audio position when chapter metadata arrives after an early seek, including slow connections. Intended impact: patch.
 
 - Repair the develop deployment’s private-library connection, retain required asset verification, and identify missing build settings by name. Intended impact: patch; no production promotion.

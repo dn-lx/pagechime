@@ -3,16 +3,18 @@
 Updated 2026-10-24.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-012","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"implementing","last_verified_sha":"6e38106e49e7141390d6b1530e8fe25d63c432d9","next_step":"Develop library/deploy and early-seek fix are live. Review member/native runtime acceptance and book timing quality; Google remains paused under owner zero-spend policy. Main promotion requires owner request.","updated_at":"2026-10-24T11:15:53.012035+00:00"}
+{"task_id":"REQ-013","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"implementing","last_verified_sha":"6e38106e49e7141390d6b1530e8fe25d63c432d9","next_step":"Finish REQ-013 UI/theme/PDF checks and develop deployment. Private reference flags are published and upload access expired. Keep missing-sentence audit open; no speculative text/audio edits.","updated_at":"2026-10-24T14:41:28.994488+00:00"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Active work and owner policy
 
-REQ-012, directly on develop with null PR. The owner requires **$0 Google spend** and continued development. This supersedes earlier paid audition/full-book examples. Google --check/--generate, credential acquisition and HTTP calls are now blocked in source; budgets/env/cache cannot enable them. Offline estimates and existing Emma recordings remain available. Independent reviewer /root/guest_security_review found no material issue; synthetic Python 6/6, targeted Node 3/3 and diff whitespace passed. This local guard cannot control other applications or verify the Cloud account’s bill.
+REQ-013, directly on develop with null PR. The owner requires **$0 Google spend** and continued development. This supersedes earlier paid audition/full-book examples. Google --check/--generate, credential acquisition and HTTP calls are now blocked in source; budgets/env/cache cannot enable them. Offline estimates and existing Emma recordings remain available. Independent reviewer /root/guest_security_review found no material issue; synthetic Python 6/6, targeted Node 3/3 and diff whitespace passed. This local guard cannot control other applications or verify the Cloud account’s bill.
 
-Owner supplied Cloud project `project-89a9b506-ff91-4cd1-a2d` and reports completing API setup. No authenticated readback, synthesis or provider billing/API change was performed by the agent. Console and Cloud Shell return Site Unavailable; no Cloud Text-to-Speech management connector was found. Do not assume free quota, alerts or provider spend caps guarantee zero charges. Current spend caps do not cover Cloud Text-to-Speech. See docs/CONTENT-AND-VOICES.md.
+Owner Cloud project:project-89a9b506-ff91-4cd1-a2d; reports API setup. Provider billing/API state is not verified; Console/Cloud Shell were unavailable. The source lock prevents Pagechime Google requests, not unrelated applications’ spending. See docs/CONTENT-AND-VOICES.md.
 
-The reader restores only packaged PDF editions in account-local preferences; guests retain memory-only settings. Word-following and the early-seek metadata fix are live on develop. Current local checks:36 unit/contracts (including6 Python cost/word tests), all types, Next export,8 targeted word browser cases,2 actual-book desktop/mobile cases and563/900KiB shell. Independent source/security review has no material findings. REQ-012 stays open for member/native acceptance and timing-quality review; Google synthesis remains paused.
+REQ-013 reviewed changes implement real fullscreen/fallback/browser exit, measured player height, visible10s web/native transport and optional validated reference skipping. Root fixed the fullscreen main-shell min-height that let navigation fall behind the player. Core/source review passed13 checks; controls browser8/8 passed before the final prose-only fullscreen polish. Private book delta is8 skipByDefault flags only, no chapter reorder/text/audio/cue change; new immutable version0e4a2bc8f8faf3292e231cd8fd2ce50e330cc8f075c021b9ecb755c4350824ae is published. Fresh27-file restore verifies hashes; upload capability expired immediately, subsequent401; active counts1 build/0 upload (one expired audit row). Google lock/main/gate remain unchanged.
+
+Owner confirms missing sentences affect both text and audio and later asks to proceed without another clarification. Album122 photos had two local OCR passes; no confident omitted sentence was isolated. Printed page5/key terms was visually checked against all6 current passages and matches. Eleven long uncued body runs were independently transcribed locally with100% expected-word overlap, so these sampled timing gaps are not missing narration. Do not guess text/audio replacements or claim the omission report resolved. Private audit evidence is under /tmp/pagechime-*; no private text/photos belong in Git.
 
 ## Verified book and source
 
@@ -20,7 +22,7 @@ Historical CI and runtime evidence is in docs/REQ-012-VERIFICATION.md. Native to
 
 Supplied unmodified Manifest All-Editions ZIP contains page-matched/cozy PDFs (237 pages), Kindle/fixed-layout EPUBs and licences. Complete M4B from Drive: Kokoro bf_emma,19 chapters,13,682.328 s. Recovered private book has 1,136 passages, 207,752 characters, 37,139/37,476 acoustic word cues (99.1% overall; chapter 90.91–100%). Untimed words remain visible without guesses. Text follows words; PDFs follow source pages without glyph overlays. Native/web preserve selection offsets; legacy passage-only books work. Source originals and contents stay outside Git.
 
-Previous actual-book schema/lossless four-layout checks, desktop/mobile opening/chapter10/chapter19/word visibility/both PDFs/axe/pageerrors passed 2/2; fixture browser 50 passed/2 private checks skipped separately; 36 Node tests, Next export, Expo Android/iOS Hermes exports and 563/900KiB shell passed. Independent sensitive review completed with 12 targeted checks. Current changes require current final validation. See docs/REQ-012-VERIFICATION.md and docs/plans/REQ-012-manifest-library.md.
+Historical complete-book, web/native and hosting checks: docs/REQ-012-VERIFICATION.md. REQ-013 unit/types38 checks, Next export, actual-book2 browser cases and native exports pass; shell565/900KiB. Final enhanced controls/theme/PDF checks and develop publication remain.
 
 ## Private asset source and external writes
 

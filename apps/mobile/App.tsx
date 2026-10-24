@@ -51,6 +51,9 @@ import {
   listeningLength,
   segmentAt,
   validateTimedBook,
+  adjacentListeningChapter,
+  firstListeningChapter,
+  skipListeningPosition,
 } from "@pagechime/core";
 import { catalog } from "./assets/catalog.generated";
 import NativePdf from "./NativePdf";
@@ -383,8 +386,9 @@ function PagechimeApp() {
       return;
     const e = current.current.entry,
       c = current.current.chapter;
-    if (e && c < e.book.chapters.length - 1)
-      loadRef.current(c + 1, 0, true, undefined, true);
+    const next = e && adjacentListeningChapter(e.book.chapters, c, 1);
+    if (next !== null && next !== undefined)
+      loadRef.current(next, 0, true, undefined, true);
     else if (e) {
       save();
       setToast("The last page. Thank you for making time.");
@@ -401,7 +405,12 @@ function PagechimeApp() {
   }, [index, follow, active, mode, reduce]);
   function open(e: Entry) {
     const p = progress[e.book.id];
-    loadRef.current(p?.chapter || 0, p?.time || 0, false, e);
+    loadRef.current(
+      p?.chapter ?? firstListeningChapter(e.book.chapters),
+      p?.time || 0,
+      false,
+      e,
+    );
     if (
       p?.page &&
       (p.view === "pdf" || !e.book.chapters[p.chapter || 0].segments.length)
@@ -429,6 +438,26 @@ function PagechimeApp() {
     player
       .seekTo(clamp(t, 0, status.duration || ch?.duration || 1e9))
       .catch(() => setLoadError("The audio is still loading."));
+  }
+  function skip(seconds: number) {
+    if (!entry) return;
+    const target = skipListeningPosition(
+      entry.book.chapters,
+      chapter,
+      status.currentTime,
+      seconds,
+    );
+    if (target.chapter === chapter) seek(target.time);
+    else loadRef.current(target.chapter, target.time, status.playing);
+  }
+  function stepChapter(direction: 1 | -1) {
+    if (!entry) return;
+    const next = adjacentListeningChapter(
+      entry.book.chapters,
+      chapter,
+      direction,
+    );
+    if (next !== null) loadRef.current(next, 0, status.playing);
   }
   function bookmark() {
     if (isGuest) {
@@ -1012,16 +1041,20 @@ function PagechimeApp() {
               icon="skip-back"
               label="Previous chapter"
               styles={s}
-              disabled={chapter === 0}
-              onPress={() => load(chapter - 1, 0, status.playing)}
+              disabled={
+                adjacentListeningChapter(entry.book.chapters, chapter, -1) ===
+                null
+              }
+              onPress={() => stepChapter(-1)}
             />
             <Pressable
               style={s.skip}
-              accessibilityLabel="Back 15 seconds"
-              onPress={() => seek(status.currentTime - 15)}
+              accessibilityRole="button"
+              accessibilityLabel="Back 10 seconds"
+              onPress={() => skip(-10)}
             >
               <Feather name="rotate-ccw" size={25} color={colors.muted} />
-              <Text style={s.skipNumber}>15</Text>
+              <Text style={s.skipNumber}>10s</Text>
             </Pressable>
             <Pressable
               accessibilityRole="button"
@@ -1043,18 +1076,22 @@ function PagechimeApp() {
             </Pressable>
             <Pressable
               style={s.skip}
-              accessibilityLabel="Forward 30 seconds"
-              onPress={() => seek(status.currentTime + 30)}
+              accessibilityRole="button"
+              accessibilityLabel="Forward 10 seconds"
+              onPress={() => skip(10)}
             >
               <Feather name="rotate-cw" size={25} color={colors.muted} />
-              <Text style={s.skipNumber}>30</Text>
+              <Text style={s.skipNumber}>10s</Text>
             </Pressable>
             <Button
               icon="skip-forward"
               label="Next chapter"
               styles={s}
-              disabled={chapter === entry.book.chapters.length - 1}
-              onPress={() => load(chapter + 1, 0, status.playing)}
+              disabled={
+                adjacentListeningChapter(entry.book.chapters, chapter, 1) ===
+                null
+              }
+              onPress={() => stepChapter(1)}
             />
           </View>
           <View style={s.seekRow}>
@@ -2019,28 +2056,28 @@ function makeStyles(c: typeof paper) {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        gap: 23,
+        gap: 10,
         marginTop: 4,
       },
       bigPlay: {
-        width: 42,
-        height: 42,
+        width: 52,
+        height: 52,
         backgroundColor: c.accent,
-        borderRadius: 21,
+        borderRadius: 26,
         alignItems: "center",
         justifyContent: "center",
       },
       skip: {
-        width: 29,
-        height: 32,
+        width: 48,
+        height: 48,
+        gap: 2,
         alignItems: "center",
         justifyContent: "center",
       },
       skipNumber: {
-        position: "absolute",
-        fontSize: 8,
+        fontSize: 11,
+        fontWeight: "600",
         color: c.muted,
-        top: 13,
       },
       seekRow: {
         flexDirection: "row",

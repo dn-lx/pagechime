@@ -137,7 +137,7 @@ http
             : "audio.wav";
         // Isolated browser contexts choose a corpus without bypassing the real worker/auth path.
         const corpus =
-          /(?:^|; )reader-test-corpus=(long|mixed|untimed|words|mixedwords|editions)(?:;|$)/.exec(
+          /(?:^|; )reader-test-corpus=(long|mixed|untimed|words|mixedwords|editions|references)(?:;|$)/.exec(
             req.headers.cookie || "",
           )?.[1];
         const wordBook = JSON.parse(
@@ -158,6 +158,14 @@ http
           { label: "Cozy PDF", kind: "pdf", url: "/books/demo/cozy.pdf" },
         ];
         const variants = {
+          references: {
+            ...wordBook,
+            chapters: [0, 1, 0, 1, 0].map((n, i) => ({
+              ...wordBook.chapters[n],
+              title: `Section ${i + 1}`,
+              skipByDefault: [0, 2, 4].includes(i),
+            })),
+          },
           editions: editionBook,
           mixedwords: mixedWords,
           words: wordBook,

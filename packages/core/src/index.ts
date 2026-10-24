@@ -8,6 +8,7 @@ export type Segment = {
 };
 export type Chapter = {
   id?: string;
+  skipByDefault?: boolean;
   title: string;
   audio: string;
   file?: string;
@@ -115,6 +116,45 @@ export function locatePosition(chapters: Chapter[], time: number) {
   }
   return { chapter: 0, time: 0 };
 }
+/** References stay directly accessible while ordinary listening follows the main text. */
+export function adjacentListeningChapter(
+  chapters: Chapter[],
+  from: number,
+  direction: 1 | -1,
+): number | null {
+  for (let i = from + direction; i >= 0 && i < chapters.length; i += direction)
+    if (!chapters[i].skipByDefault) return i;
+  return null;
+}
+export function firstListeningChapter(chapters: Chapter[]) {
+  return adjacentListeningChapter(chapters, -1, 1) ?? 0;
+}
+export function skipListeningPosition(
+  chapters: Chapter[],
+  chapter: number,
+  time: number,
+  seconds: number,
+) {
+  if (!chapters.length) return { chapter: 0, time: 0 };
+  let index = Math.trunc(clamp(chapter, 0, chapters.length - 1)),
+    remaining =
+      clamp(time, 0, chapters[index].duration) +
+      (Number.isFinite(seconds) ? seconds : 0);
+  while (remaining < 0) {
+    const previous = adjacentListeningChapter(chapters, index, -1);
+    if (previous === null) return { chapter: index, time: 0 };
+    index = previous;
+    remaining += chapters[index].duration;
+  }
+  while (remaining >= chapters[index].duration) {
+    const next = adjacentListeningChapter(chapters, index, 1);
+    if (next === null)
+      return { chapter: index, time: chapters[index].duration };
+    remaining -= chapters[index].duration;
+    index = next;
+  }
+  return { chapter: index, time: remaining };
+}
 export function validateTimedBook(
   data: unknown,
   audioNames: string[],
@@ -124,6 +164,11 @@ export function validateTimedBook(
   if (!d || !Array.isArray(d.chapters) || !d.chapters.length)
     throw new Error("The timing file needs a chapters list.");
   return d.chapters.map((chapter, i) => {
+    if (
+      chapter.skipByDefault !== undefined &&
+      typeof chapter.skipByDefault !== "boolean"
+    )
+      throw Error("Chapter skip preference must be true or false.");
     const file = String(chapter.file || chapter.audio || "")
       .split("/")
       .pop()!;
@@ -187,6 +232,9 @@ export function validateTimedBook(
       return { start, end, page, text: s.text, ...(words ? { words } : {}) };
     });
     return {
+      ...(chapter.skipByDefault !== undefined
+        ? { skipByDefault: chapter.skipByDefault as boolean }
+        : {}),
       title: String(chapter.title || `Chapter ${i + 1}`),
       file,
       audio: file,

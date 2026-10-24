@@ -581,7 +581,11 @@ export default function ReaderApp() {
                   </span>
                   <span>
                     {ch.title}
-                    <small>{listeningLength(ch.duration)}</small>
+                    <small>
+                      {ch.skipByDefault
+                        ? "Reference · tap to open"
+                        : listeningLength(ch.duration)}
+                    </small>
                   </span>
                   {i === p.chapter ? (
                     <AudioBars playing={p.playing} />
@@ -1391,11 +1395,33 @@ export default function ReaderApp() {
   );
 }
 function Player({ p, onOpen }: { p: Playback; onOpen: () => void }) {
+  const host = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const element = host.current,
+      shell = element?.closest<HTMLElement>(".app-shell");
+    if (!element || !shell) return;
+    const measure = () =>
+      shell.style.setProperty(
+        "--player",
+        `${Math.ceil(element.getBoundingClientRect().height)}px`,
+      );
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    measure();
+    return () => {
+      observer.disconnect();
+      shell.style.removeProperty("--player");
+    };
+  }, []);
   const b = p.book!,
     ch = b.chapters[p.chapter];
   return (
-    <section className="player" aria-label="Audiobook player">
-      <div className="player-book" onClick={onOpen}>
+    <section ref={host} className="player" aria-label="Audiobook player">
+      <button
+        className="player-book"
+        onClick={onOpen}
+        aria-label="Open current book"
+      >
         <div className="mini-cover">
           <BookOpen size={24} />
         </div>
@@ -1404,23 +1430,26 @@ function Player({ p, onOpen }: { p: Playback; onOpen: () => void }) {
           <span>{ch.title}</span>
         </div>
         <AudioBars playing={p.playing} />
-      </div>
+      </button>
       <div className="player-center">
         <div className="playback-buttons">
           <IconButton
             label="Previous audio chapter"
-            disabled={p.chapter === 0}
-            onClick={() => p.load(p.chapter - 1, 0, p.playing)}
+            disabled={p.previousChapter === null}
+            onClick={() =>
+              p.previousChapter !== null &&
+              p.load(p.previousChapter, 0, p.playing)
+            }
           >
             <SkipBack size={18} weight="fill" />
           </IconButton>
           <button
             className="skip-button"
-            aria-label="Back 15 seconds"
-            onClick={() => p.skip(-15)}
+            aria-label="Back 10 seconds"
+            onClick={() => p.skip(-10)}
           >
             <ArrowCounterClockwise />
-            <span>15</span>
+            <span>10s</span>
           </button>
           <button
             className={`play-button ${p.loading ? "is-loading" : ""}`}
@@ -1435,16 +1464,18 @@ function Player({ p, onOpen }: { p: Playback; onOpen: () => void }) {
           </button>
           <button
             className="skip-button"
-            aria-label="Forward 30 seconds"
-            onClick={() => p.skip(30)}
+            aria-label="Forward 10 seconds"
+            onClick={() => p.skip(10)}
           >
             <ArrowClockwise />
-            <span>30</span>
+            <span>10s</span>
           </button>
           <IconButton
             label="Next audio chapter"
-            disabled={p.chapter === b.chapters.length - 1}
-            onClick={() => p.load(p.chapter + 1, 0, p.playing)}
+            disabled={p.nextChapter === null}
+            onClick={() =>
+              p.nextChapter !== null && p.load(p.nextChapter, 0, p.playing)
+            }
           >
             <SkipForward size={18} weight="fill" />
           </IconButton>

@@ -2,6 +2,14 @@
 
 Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-24.
 
+## [ ] REQ-013 — Fullscreen reader, clear transport and verified text
+- Enter real browser fullscreen from the reader control; provide an obvious exit and a usable full-window fallback when the browser lacks the API. Keep reading/audio controls accessible and synchronize state after browser exit.
+- Rewind/advance by exactly 10 seconds with readable labels, generous mobile touch targets and consistent media-session/native controls.
+- Skip cover/publication/dedication/contents and back reference chapters in normal listening, while retaining every chapter for explicit access and preserving saved positions.
+- Audit the supplied photo album against the private reading text. Restore only photo-verified missing text; preserve existing quote offsets and valid acoustic cues where text is unchanged. Never invent words or timestamps or commit private book text/photos.
+- Polish the existing paper/olive reader and player, verify narrow mobile/desktop, fullscreen/fallback/exit, skip boundaries, themes, accessibility, real book coverage and develop deployment. Google remains paused under the owner's $0 policy; main stays unchanged.
+- Plan: docs/plans/REQ-013-reader-controls-text.md.
+
 ## [ ] REQ-012 — Manifest library and word-following narration
 - Restore Manifest in Action from the supplied 237-page PDF/EPUB editions and complete 19-chapter audiobook, with a reliable private build asset source outside public Git.
 - Provide the Kindle-style reading/PDF experience with real optional word timestamps, active-word audio following and preserved notes/selection/reading anchors across web/native.

@@ -20,6 +20,14 @@ test("restored Manifest guest library, real word following, chapter boundaries a
     fullPage: true,
   });
   await page.getByRole("button", { name: "Open book", exact: true }).click();
+  await expect(page.locator(".ebook-heading")).toContainText("Chapter 5 of 19");
+  const firstMenu = page.getByRole("button", { name: "Open library menu" });
+  if (await firstMenu.isVisible()) await firstMenu.click();
+  await page
+    .getByRole("navigation", { name: "Book chapters" })
+    .getByRole("button")
+    .first()
+    .click();
   await expect(page.locator(".ebook-heading")).toContainText("Chapter 1 of 19");
   await page
     .getByRole("button", { name: "Play narration", exact: true })
