@@ -3642,3 +3642,6 @@ progress::-webkit-progress-value {
   padding-top: 22px;
   padding-bottom: 22px;
 }
+.focus-reading .book-editions {
+  display: none;
+}

@@ -1,9 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { longBook } from "../fixtures/reading-books";
+import { longBook, repairedBook } from "../fixtures/reading-books";
 async function login(
   page: Page,
-  corpus?: "long" | "mixed" | "untimed" | "editions",
+  corpus?: "long" | "mixed" | "untimed" | "editions" | "repaired",
 ) {
   if (corpus)
     await page.context().addCookies([
@@ -49,6 +49,56 @@ async function selectParagraph(page: Page) {
     page.getByRole("region", { name: "Selected quotation" }),
   ).toBeVisible();
 }
+test("repaired reading joins words and saves corrected quotations at original source offsets", async ({
+  page,
+}) => {
+  await login(page, "repaired");
+  await expect(page.locator(".ebook-passage").first()).toContainText(
+    "A meaningful moment. We can walk home safely.",
+  );
+  const passage = page.locator('[data-fragment][data-segment="1"]');
+  await passage.evaluate((el) => {
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let node: Node | null;
+    while ((node = walker.nextNode())) {
+      const start = node.textContent!.indexOf("home safely");
+      if (start < 0) continue;
+      const range = document.createRange();
+      range.setStart(node, start);
+      range.setEnd(node, start + "home safely".length);
+      const selection = getSelection()!;
+      selection.removeAllRanges();
+      selection.addRange(range);
+      break;
+    }
+  });
+  await page.locator(".ebook-paper").dispatchEvent("mouseup");
+  await page.getByRole("button", { name: "Highlight", exact: true }).click();
+  await expect(page.locator(".ebook-prose mark")).toHaveText("home safely");
+  const from = repairedBook.chapters[0].segments[1].text.indexOf("home safely");
+  await expect
+    .poll(async () => {
+      const account = await page.evaluate(
+        () =>
+          JSON.parse(localStorage.getItem("leaf.reader.session")!).account.id,
+      );
+      const state = await (
+        await page.request.get("/api/reader/state", {
+          headers: { "X-Reader-Account": account },
+        })
+      ).json();
+      const note = state.items.find((item: any) =>
+        item.key.startsWith("note."),
+      )?.value;
+      return note && [note.segment, note.offset, note.endOffset];
+    })
+    .toEqual([1, from, from + "home safely".length]);
+  await page.reload();
+  await page
+    .getByRole("button", { name: "Continue reading", exact: true })
+    .click();
+  await expect(page.locator(".ebook-prose mark")).toHaveText("home safely");
+});
 test("reading pages preserve all text and move across chapter boundaries without opening PDF", async ({
   page,
 }) => {
@@ -87,8 +137,16 @@ test("reading pages preserve all text and move across chapter boundaries without
   await page
     .getByRole("button", { name: "Previous reading page", exact: true })
     .click();
-  await expect(page.locator("[data-fragment]").last()).toContainText(
-    "Every word deserves its place",
+  await expect(page.locator(".ebook-heading")).toContainText("Chapter 1 of 2");
+  const last = page.locator("[data-fragment]").last();
+  await expect(last).toHaveAttribute(
+    "data-segment",
+    String(longBook.chapters[0].segments.length - 1),
+  );
+  const suffix = await last.textContent();
+  expect(suffix?.length).toBeGreaterThan(0);
+  expect(longBook.chapters[0].segments.at(-1)!.text.endsWith(suffix!)).toBe(
+    true,
   );
   await expect(page.locator("canvas")).toHaveCount(0);
   await page.getByRole("button", { name: "Follow audio", exact: true }).click();

@@ -95,11 +95,16 @@ export default function AccountGate({ children }: { children: ReactNode }) {
     generation = useRef(0);
   const engine = useRef<ReaderSync | null>(null),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  function clearSyncTimer() {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+  }
   async function enter(s: ReaderSession, offline = false) {
     const attempt = ++generation.current;
     setGuest(false);
     activeId.current = s.account.id;
     engine.current?.close();
+    clearSyncTimer();
     const scopedApi = readerClient("/api/reader", () => null, s.account.id);
     let store: ReaderStorage;
     const sync = new ReaderSync(
@@ -229,6 +234,7 @@ export default function AccountGate({ children }: { children: ReactNode }) {
       if (next !== activeId.current) {
         generation.current++;
         engine.current?.close();
+        clearSyncTimer();
         activeId.current = null;
         setSession(null);
         setGuest(false);
@@ -240,7 +246,7 @@ export default function AccountGate({ children }: { children: ReactNode }) {
     window.addEventListener("storage", changed);
     return () => {
       engine.current?.close();
-      if (timer.current) clearTimeout(timer.current);
+      clearSyncTimer();
       window.removeEventListener("online", online);
       clearInterval(retry);
       window.removeEventListener("storage", changed);
@@ -256,6 +262,7 @@ export default function AccountGate({ children }: { children: ReactNode }) {
         if (attempt !== generation.current) return;
         if (s.account.id !== session.account.id) {
           engine.current?.close();
+          clearSyncTimer();
           activeId.current = null;
           setSession(null);
           setStorage(null);
@@ -303,7 +310,7 @@ export default function AccountGate({ children }: { children: ReactNode }) {
     generation.current++;
     setBusy(true);
     engine.current?.close();
-    if (timer.current) clearTimeout(timer.current);
+    clearSyncTimer();
     // Unmount the reader before clearing the worker so playback and object URLs stop.
     activeId.current = null;
     setSession(null);
@@ -338,7 +345,7 @@ export default function AccountGate({ children }: { children: ReactNode }) {
     const attempt = ++generation.current;
     setBusy(true);
     engine.current?.close();
-    if (timer.current) clearTimeout(timer.current);
+    clearSyncTimer();
     try {
       localStorage.removeItem(remembered);
       localStorage.setItem("leaf.reader.logged-out", "1");

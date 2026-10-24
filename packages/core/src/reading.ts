@@ -1,4 +1,4 @@
-import type { Chapter, Segment } from "./index";
+import type { Chapter, Segment, ReadingEdit } from "./index";
 
 /** Offsets refer to original passage text, independently of layout page numbers. */
 export type ReadingAnchor = {
@@ -12,6 +12,7 @@ export type ReadingFragment = {
   end: number;
   text: string;
   heading: boolean;
+  joinPrevious?: boolean;
 };
 export type ReadingPage = { fragments: ReadingFragment[] };
 export type ReadingAppearance = {
@@ -49,7 +50,7 @@ export function readingWordBudget(
 ) {
   const lines = Math.max(3, (height - 100) / (size * leading));
   const words = Math.max(3, (width - 72) / (size * 0.48 * 6));
-  return Math.max(30, Math.min(360, Math.floor(lines * words * 0.82)));
+  return Math.max(8, Math.min(360, Math.floor(lines * words * 0.82)));
 }
 /** Lossless pagination; unusually tall rendered pages may scroll rather than clip. */
 export function paginateReading(
@@ -74,11 +75,26 @@ export function paginateReading(
     let start = 0,
       word = 0;
     const heading =
-      segment.text.length < 95 && segment.text === segment.text.toUpperCase();
+      !segment.continuesPreviousWord &&
+      segment.text.length < 95 &&
+      segment.text === segment.text.toUpperCase();
     while (word < words.length) {
       if (used >= budget || (heading && budget - used < 15 && fragments.length))
         flush();
-      const count = Math.min(words.length - word, Math.max(1, budget - used));
+      let count = Math.min(words.length - word, Math.max(1, budget - used));
+      // Keep a source-page hyphenation pair on one reading page. Both source
+      // fragments and their offsets remain intact for notes and acoustic cues.
+      if (
+        segments[index + 1]?.continuesPreviousWord &&
+        word + count === words.length &&
+        used + count >= budget
+      ) {
+        if (count > 1) count--;
+        else if (used) {
+          flush();
+          continue;
+        }
+      }
       const last = words[word + count - 1];
       const end =
         word + count === words.length
@@ -90,8 +106,16 @@ export function paginateReading(
         end,
         text: segment.text.slice(start, end),
         heading,
+        ...(start === 0 && segment.continuesPreviousWord
+          ? { joinPrevious: true }
+          : {}),
       });
-      used += count + 5;
+      used +=
+        count +
+        (end === segment.text.length &&
+        segments[index + 1]?.continuesPreviousWord
+          ? 0
+          : 5);
       word += count;
       start = end;
       if (word < words.length) flush();
@@ -99,6 +123,51 @@ export function paginateReading(
   });
   flush();
   return pages;
+}
+/** Group only explicitly verified word continuations, never infer prose joins. */
+export function readingParagraphs(page: ReadingPage | undefined) {
+  const groups: ReadingFragment[][] = [];
+  for (const fragment of page?.fragments || []) {
+    const previous = groups.at(-1);
+    if (
+      fragment.joinPrevious &&
+      previous?.at(-1)?.segment === fragment.segment - 1
+    )
+      previous.push(fragment);
+    else groups.push([fragment]);
+  }
+  return groups;
+}
+
+/** Display text plus a UTF-16 boundary map back to the untouched source text. */
+export function readingDisplay(
+  fragment: Pick<ReadingFragment, "text" | "start" | "end">,
+  edits: readonly ReadingEdit[] = [],
+) {
+  let text = "",
+    cursor = fragment.start;
+  const offsets = [cursor];
+  const boundaries = [0];
+  const raw = (end: number) => {
+    while (cursor < end) {
+      text += fragment.text[cursor - fragment.start];
+      offsets.push(++cursor);
+      boundaries[cursor - fragment.start] = text.length;
+    }
+  };
+  for (const edit of edits) {
+    if (edit.to <= cursor || edit.from >= fragment.end) continue;
+    raw(Math.max(cursor, edit.from));
+    const from = Math.max(cursor, edit.from),
+      to = Math.min(fragment.end, edit.to);
+    if (edit.text !== "") throw Error("Only deletion repairs are supported.");
+    for (let source = from; source <= to; source++)
+      boundaries[source - fragment.start] = text.length;
+    offsets[offsets.length - 1] = to;
+    cursor = to;
+  }
+  raw(fragment.end);
+  return { text, offsets, boundaries };
 }
 export function readingPageAt(
   pages: ReadingPage[],

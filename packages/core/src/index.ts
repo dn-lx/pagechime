@@ -1,10 +1,14 @@
 export type WordCue = { start: number; end: number; from: number; to: number };
+/** Deletion-only reading repairs retain original text, cues and saved offsets. */
+export type ReadingEdit = { from: number; to: number; text: string };
 export type Segment = {
   start: number;
   end: number;
   page: number;
   text: string;
   words?: WordCue[];
+  continuesPreviousWord?: boolean;
+  readingEdits?: ReadingEdit[];
 };
 export type Chapter = {
   id?: string;
@@ -182,7 +186,8 @@ export function validateTimedBook(
     if (chapter.segments !== undefined && !Array.isArray(chapter.segments))
       throw Error("Chapter passages must be a list.");
     let previous = -1;
-    const segments = ((chapter.segments || []) as Segment[]).map((s) => {
+    const source = (chapter.segments || []) as Segment[];
+    const segments = source.map((s, segmentIndex) => {
       const start = Number(s.start),
         end = Number(s.end),
         page = Number(s.page);
@@ -201,6 +206,34 @@ export function validateTimedBook(
       )
         throw new Error("A passage has an invalid time, page number or text.");
       previous = end;
+      if (
+        s.continuesPreviousWord !== undefined &&
+        (typeof s.continuesPreviousWord !== "boolean" ||
+          (s.continuesPreviousWord &&
+            (!segmentIndex ||
+              source[segmentIndex - 1].continuesPreviousWord === true ||
+              !/[\p{L}\p{N}]$/u.test(source[segmentIndex - 1].text) ||
+              !/^[\p{L}\p{N}]/u.test(s.text))))
+      )
+        throw Error("A continued word needs adjacent source fragments.");
+      let repairEnd = 0;
+      if (s.readingEdits !== undefined) {
+        if (!Array.isArray(s.readingEdits) || s.readingEdits.length > 100)
+          throw Error("Reading repairs must be a bounded list.");
+        for (const edit of s.readingEdits) {
+          if (
+            !edit ||
+            !Number.isSafeInteger(edit.from) ||
+            !Number.isSafeInteger(edit.to) ||
+            edit.from < repairEnd ||
+            edit.to <= edit.from ||
+            edit.to > s.text.length ||
+            edit.text !== ""
+          )
+            throw Error("A reading repair has invalid source offsets.");
+          repairEnd = edit.to;
+        }
+      }
       let words: WordCue[] | undefined;
       if (s.words !== undefined) {
         if (!Array.isArray(s.words) || s.words.length > s.text.length)
@@ -229,7 +262,19 @@ export function validateTimedBook(
           return { start: w.start, end: w.end, from: w.from, to: w.to };
         });
       }
-      return { start, end, page, text: s.text, ...(words ? { words } : {}) };
+      return {
+        start,
+        end,
+        page,
+        text: s.text,
+        ...(words ? { words } : {}),
+        ...(s.continuesPreviousWord !== undefined
+          ? { continuesPreviousWord: s.continuesPreviousWord }
+          : {}),
+        ...(s.readingEdits
+          ? { readingEdits: s.readingEdits.map((e) => ({ ...e })) }
+          : {}),
+      };
     });
     return {
       ...(chapter.skipByDefault !== undefined

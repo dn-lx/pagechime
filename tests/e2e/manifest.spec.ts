@@ -21,6 +21,36 @@ test("restored Manifest guest library, real word following, chapter boundaries a
   });
   await page.getByRole("button", { name: "Open book", exact: true }).click();
   await expect(page.locator(".ebook-heading")).toContainText("Chapter 5 of 19");
+  await page
+    .getByRole("button", { name: "Enter fullscreen", exact: true })
+    .click();
+  await expect(page.locator("body")).toHaveClass(/focus-reading/);
+  await expect
+    .poll(() =>
+      page
+        .locator(".ebook-paper")
+        .evaluate((e) => e.scrollHeight <= e.clientHeight + 2),
+    )
+    .toBe(true);
+  await expect
+    .poll(async () => {
+      const first = await page.locator("[data-fragment]").first().boundingBox();
+      const paper = await page.locator(".ebook-paper").boundingBox();
+      return (
+        !!first &&
+        !!paper &&
+        first.y >= paper.y &&
+        first.y + first.height <= paper.y + paper.height
+      );
+    })
+    .toBe(true);
+  await page.screenshot({
+    path: info.outputPath("manifest-introduction-fullscreen.png"),
+    fullPage: true,
+  });
+  await page
+    .getByRole("button", { name: "Exit fullscreen", exact: true })
+    .click();
   const firstMenu = page.getByRole("button", { name: "Open library menu" });
   if (await firstMenu.isVisible()) await firstMenu.click();
   await page
@@ -56,6 +86,36 @@ test("restored Manifest guest library, real word following, chapter boundaries a
     path: info.outputPath("manifest-word-reader.png"),
     fullPage: true,
   });
+  // Verify every private, explicitly marked source-page word join without
+  // embedding book excerpts in the public test source.
+  for (const [chapterIndex, chapter] of actual.chapters.entries()) {
+    const joins = chapter.segments.flatMap((segment: any, i: number) =>
+      segment.continuesPreviousWord ? [i] : [],
+    );
+    if (!joins.length) continue;
+    const menu = page.getByRole("button", { name: "Open library menu" });
+    if (await menu.isVisible()) await menu.click();
+    await page
+      .getByRole("navigation", { name: "Book chapters" })
+      .getByRole("button")
+      .nth(chapterIndex)
+      .click();
+    for (const i of joins) {
+      const segment = chapter.segments[i];
+      const cue = segment.words?.[0];
+      await page
+        .getByLabel("Chapter playback position")
+        .fill(String(cue ? (cue.start + cue.end) / 2 : segment.start + 0.01));
+      const word =
+        chapter.segments[i - 1].text.match(/\S+$/)[0] +
+        segment.text.match(/^\S+/)[0];
+      const continuation = page.locator(
+        `[data-fragment][data-segment="${i}"][data-start="0"]`,
+      );
+      await expect(continuation).toBeVisible();
+      await expect(continuation.locator("..")).toContainText(word);
+    }
+  }
   for (const n of [10, 19]) {
     const menu = page.getByRole("button", { name: "Open library menu" });
     if (await menu.isVisible()) await menu.click();

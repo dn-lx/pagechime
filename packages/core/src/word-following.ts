@@ -1,5 +1,9 @@
-import type { Segment, WordCue } from "./index";
-import { readingHighlights, type ReadingFragment } from "./reading";
+import type { Segment, WordCue, ReadingEdit } from "./index";
+import {
+  readingHighlights,
+  readingDisplay,
+  type ReadingFragment,
+} from "./reading";
 
 /** The most recent cue; gaps are retained rather than filled with guessed speech. */
 export function wordCueIndex(words: readonly WordCue[], time: number) {
@@ -40,7 +44,11 @@ export function narrationParts(
   fragment: ReadingFragment,
   notes: Parameters<typeof readingHighlights>[1],
   words: readonly WordCue[] = [],
+  edits: readonly ReadingEdit[] = [],
 ) {
+  const display = readingDisplay(fragment, edits);
+  const displayBoundary = (source: number) =>
+    display.boundaries[source - fragment.start];
   let offset = 0;
   const highlights = readingHighlights(fragment, notes).map((part) => {
     const range = {
@@ -71,7 +79,10 @@ export function narrationParts(
         (w) => w.from <= fragment.start + start && w.to >= fragment.start + end,
       );
     return {
-      text: fragment.text.slice(start, end),
+      text: display.text.slice(
+        displayBoundary(fragment.start + start),
+        displayBoundary(fragment.start + end),
+      ),
       highlighted: highlights.some(
         (h) => h.highlighted && h.start <= start && h.end >= end,
       ),

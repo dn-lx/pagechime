@@ -577,3 +577,73 @@ test("guest media allowlist is exact and read-only; personal API remains protect
     false,
   );
 });
+
+test("in-flight outbox flush drains later edits with the acknowledged revision", async () => {
+  let release!: () => void, started!: () => void;
+  const gate = new Promise<void>((r) => {
+    release = r;
+  });
+  const entered = new Promise<void>((r) => {
+    started = r;
+  });
+  const writes: any[] = [];
+  let snapshot: SyncSnapshot = { pending: {}, revisions: {} };
+  const api: any = async (_path: string, _method: string, body: any) => {
+    writes.push(structuredClone(body));
+    if (writes.length === 1) {
+      started();
+      await gate;
+    }
+    return { revision: body.revision + 1 };
+  };
+  const sync = new ReaderSync(api, (s) => {
+    snapshot = structuredClone(s);
+  });
+  sync.change("note.a", { body: "First" });
+  const first = sync.flush();
+  await entered;
+  sync.change("note.a", { body: "Edited while sending" });
+  sync.change("note.b", { body: "Added while sending" });
+  const again = sync.flush();
+  release();
+  await Promise.all([first, again]);
+  assert.deepEqual(
+    writes.map((w) => [w.key, w.value.body, w.revision]),
+    [
+      ["note.a", "First", 0],
+      ["note.a", "Edited while sending", 1],
+      ["note.b", "Added while sending", 0],
+    ],
+  );
+  assert.deepEqual(snapshot.pending, {});
+});
+
+test("closing an in-flight outbox retains later edits without sending after account exit", async () => {
+  let release!: () => void, started!: () => void;
+  const gate = new Promise<void>((r) => {
+    release = r;
+  });
+  const entered = new Promise<void>((r) => {
+    started = r;
+  });
+  let calls = 0,
+    snapshot: SyncSnapshot = { pending: {}, revisions: {} };
+  const api: any = async () => {
+    calls++;
+    started();
+    await gate;
+    return { revision: 1 };
+  };
+  const sync = new ReaderSync(api, (s) => {
+    snapshot = structuredClone(s);
+  });
+  sync.change("note.a", { body: "First" });
+  const pending = sync.flush();
+  await entered;
+  sync.change("note.a", { body: "Retained" });
+  sync.close();
+  release();
+  await pending;
+  assert.equal(calls, 1);
+  assert.equal(snapshot.pending["note.a"].value?.body, "Retained");
+});

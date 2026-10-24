@@ -4,8 +4,12 @@ const origin = "http://localhost:4174";
 async function user(page: Page) {
   return (await page.request.post("/__test/account")).json();
 }
-async function signIn(page: Page, u: { username: string; password: string }) {
-  await page.goto("/");
+async function signIn(
+  page: Page,
+  u: { username: string; password: string },
+  navigate = true,
+) {
+  if (navigate) await page.goto("/");
   await page.getByLabel("Username or email", { exact: true }).fill(u.username);
   await page.getByLabel("Password", { exact: true }).fill(u.password);
   await page.getByRole("button", { name: "Enter my library" }).click();
@@ -103,12 +107,12 @@ test("notes and bookmarks stay private across account switches and a fresh brows
     .toBe(1);
   await page.getByRole("button", { name: "Close dialog" }).click();
   await logout(page);
-  await signIn(page, bob);
+  await signIn(page, bob, false);
   await notes(page);
   await expect(page.locator(".note-card")).toHaveCount(0);
   await page.getByRole("button", { name: "Close dialog" }).click();
   await logout(page);
-  await signIn(page, alice);
+  await signIn(page, alice, false);
   await notes(page);
   await expect(page.locator(".note-card")).toContainText(
     "A thought only Alice",

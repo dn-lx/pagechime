@@ -1,4 +1,15 @@
 import fixture from "./book.json";
+import type { Book } from "../../packages/core/src/index";
+
+export const repairedBook: Book = structuredClone(fixture);
+repairedBook.chapters[0].segments[0].text = "A mean";
+repairedBook.chapters[0].segments[1].text =
+  "ingful moment. We can walked home safely.";
+repairedBook.chapters[0].segments[1].continuesPreviousWord = true;
+const typo = repairedBook.chapters[0].segments[1].text.indexOf("walked") + 4;
+repairedBook.chapters[0].segments[1].readingEdits = [
+  { from: typo, to: typo + 2, text: "" },
+];
 
 export const longBook = structuredClone(fixture);
 longBook.chapters[0].segments[0].text = Array.from(

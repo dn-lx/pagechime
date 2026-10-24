@@ -1,0 +1,34 @@
+{
+  "id": "manifest",
+  "sourceTextSha256": "6f1d5daec00629976e23985392f8b95dedc8a7ab88a56e2bfb4386d26eb6a310",
+  "joins": [
+    {
+      "chapter": 7,
+      "segment": 20
+    },
+    {
+      "chapter": 7,
+      "segment": 56
+    },
+    {
+      "chapter": 8,
+      "segment": 74
+    },
+    {
+      "chapter": 11,
+      "segment": 16
+    },
+    {
+      "chapter": 13,
+      "segment": 31
+    }
+  ],
+  "deletions": [
+    {
+      "chapter": 7,
+      "segment": 21,
+      "from": 46,
+      "to": 47
+    }
+  ]
+}

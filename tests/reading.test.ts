@@ -6,6 +6,11 @@ import {
   readingAnchorAt,
   readingAppearance,
   readingProgress,
+  readingWordBudget,
+  readingParagraphs,
+  readingDisplay,
+  narrationParts,
+  validateTimedBook,
   type Segment,
 } from "../packages/core/src/index";
 const segment = (text: string, page = 1): Segment => ({
@@ -13,6 +18,153 @@ const segment = (text: string, page = 1): Segment => ({
   page,
   start: 0,
   end: 10,
+});
+test("verified page-end word joins stay on one page without moving source text or anchors", () => {
+  const segments = [
+    segment("A small beginning makes room for a mean"),
+    {
+      ...segment("ingful moment. Another complete sentence follows.", 2),
+      continuesPreviousWord: true,
+    },
+  ];
+  for (const budget of [8, 9, 10, 15, 40]) {
+    const pages = paginateReading(segments, budget);
+    const joined = pages.find((p) =>
+      p.fragments.some((f) => f.segment === 1 && f.start === 0),
+    )!;
+    assert.ok(
+      joined.fragments.some(
+        (f) => f.segment === 0 && f.end === segments[0].text.length,
+      ),
+    );
+    assert.ok(
+      readingParagraphs(joined).some((group) =>
+        group
+          .map((f) => f.text)
+          .join("")
+          .includes("meaningful"),
+      ),
+    );
+    for (const [i, s] of segments.entries())
+      assert.equal(
+        pages
+          .flatMap((p) => p.fragments)
+          .filter((f) => f.segment === i)
+          .map((f) => f.text)
+          .join(""),
+        s.text,
+      );
+  }
+});
+test("minimal display repairs preserve source selection offsets, notes and acoustic cue identities", () => {
+  const text = "We can walked home safely.";
+  const edits = [{ from: 11, to: 13, text: "" }];
+  const f = { segment: 0, start: 0, end: text.length, text, heading: false };
+  const display = readingDisplay(f, edits);
+  assert.equal(display.text, "We can walk home safely.");
+  assert.equal(
+    display.offsets[display.text.indexOf("home")],
+    text.indexOf("home"),
+  );
+  assert.equal(display.offsets["We can walk".length], 13);
+  const from = text.indexOf("safely"),
+    to = from + 6;
+  const parts = narrationParts(
+    f,
+    [{ segment: 0, offset: from, endOffset: to, quote: "safely" }],
+    [{ start: 1, end: 2, from, to }],
+    edits,
+  );
+  assert.equal(parts.map((p) => p.text).join(""), display.text);
+  assert.equal(
+    parts
+      .filter((p) => p.highlighted)
+      .map((p) => p.text)
+      .join(""),
+    "safely",
+  );
+  assert.equal(parts.find((p) => p.wordFrom === from)?.text, "safely");
+  assert.throws(() => readingDisplay(f, [{ from: 3, to: 6, text: "could" }]));
+});
+test("reading repair metadata is validated and cannot join the first passage", () => {
+  const input = (segments: Segment[]) => ({
+    chapters: [{ audio: "one.wav", duration: 30, segments }],
+  });
+  const a = segment("A mean"),
+    b = {
+      ...segment("ingful moment."),
+      start: 10,
+      end: 20,
+      continuesPreviousWord: true,
+    };
+  assert.equal(
+    validateTimedBook(input([a, b]), ["one.wav"], 1)[0].segments[1]
+      .continuesPreviousWord,
+    true,
+  );
+  for (const edit of [
+    { from: -1, to: 1, text: "" },
+    { from: 1, to: 999, text: "" },
+    { from: 1, to: 1, text: "" },
+  ])
+    assert.throws(() =>
+      validateTimedBook(
+        input([{ ...a, readingEdits: [edit] }]),
+        ["one.wav"],
+        1,
+      ),
+    );
+  assert.throws(() =>
+    validateTimedBook(
+      input([{ ...a, readingEdits: [{ from: 0, to: 1, text: "expanded" }] }]),
+      ["one.wav"],
+      1,
+    ),
+  );
+  assert.throws(() =>
+    validateTimedBook(
+      input([a, b, { ...b, start: 20, end: 30 }]),
+      ["one.wav"],
+      1,
+    ),
+  );
+  assert.throws(() =>
+    validateTimedBook(
+      input([{ ...a, continuesPreviousWord: true }]),
+      ["one.wav"],
+      1,
+    ),
+  );
+  assert.throws(() =>
+    validateTimedBook(
+      input([
+        {
+          ...a,
+          readingEdits: [
+            { from: 0, to: 3, text: "" },
+            { from: 2, to: 4, text: "" },
+          ],
+        },
+      ]),
+      ["one.wav"],
+      1,
+    ),
+  );
+});
+test("short reader viewports paginate below thirty words instead of forcing hidden lines", () => {
+  const budget = readingWordBudget(300, 180, 22, 1.75);
+  assert.ok(budget >= 8 && budget < 30);
+  assert.ok(readingWordBudget(650, 600, 22, 1.75) > budget);
+  const original = "A complete sentence belongs on the page. ".repeat(5);
+  const pages = paginateReading([segment(original)], budget);
+  assert.equal(
+    pages
+      .flatMap((p) => p.fragments)
+      .map((f) => f.text)
+      .join(""),
+    original,
+  );
+  assert.ok(pages.length > 1);
 });
 test("reading pagination preserves every character and passage identity through long Unicode paragraphs", () => {
   const segments = [

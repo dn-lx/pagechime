@@ -5,6 +5,7 @@ import { createReaderApi } from "../server/reader-api.ts";
 import { proxyReader, authorizeMedia } from "../server/web-boundary.ts";
 import {
   longBook,
+  repairedBook,
   mixedBook,
   untimedBook,
 } from "../tests/fixtures/reading-books.ts";
@@ -29,7 +30,10 @@ const send: typeof fetch = async (input, init) => {
       status: 503,
       headers: { "Content-Type": "application/json" },
     });
-  return handler(request, "fixture-ip");
+  return handler(
+    request,
+    request.headers.get("x-forwarded-for") || "fixture-ip",
+  );
 };
 const fixtureHash = db.table("book_reader_accounts")[0].password_hash;
 const root = resolve("apps/web/out");
@@ -59,6 +63,20 @@ http
         new URL(req.url, "http://localhost").pathname,
       );
       const origin = "http://localhost:4174";
+      // Model independent browser contexts as independent clients. Keep each
+      // context's real rate limits active instead of sharing one suite-wide IP.
+      const existingClient =
+        /(?:^|; )reader-test-client=([a-f0-9-]{36})(?:;|$)/.exec(
+          req.headers.cookie || "",
+        )?.[1];
+      let client = existingClient || "fixture-ip";
+      if (!existingClient && (path === "/" || path === "/__test/account")) {
+        client = crypto.randomUUID();
+        res.setHeader(
+          "Set-Cookie",
+          `reader-test-client=${client}; Path=/; HttpOnly; SameSite=Lax`,
+        );
+      }
       const chunks: Buffer[] = [];
       for await (const chunk of req) chunks.push(Buffer.from(chunk));
       const raw = Buffer.concat(chunks);
@@ -94,7 +112,7 @@ http
         return;
       }
       if (path.startsWith("/api/reader/")) {
-        const response = await proxyReader(request, "fixture-ip", send);
+        const response = await proxyReader(request, client, send);
         res.writeHead(response.status, Object.fromEntries(response.headers));
         res.end(Buffer.from(await response.arrayBuffer()));
         return;
@@ -137,7 +155,7 @@ http
             : "audio.wav";
         // Isolated browser contexts choose a corpus without bypassing the real worker/auth path.
         const corpus =
-          /(?:^|; )reader-test-corpus=(long|mixed|untimed|words|mixedwords|editions|references)(?:;|$)/.exec(
+          /(?:^|; )reader-test-corpus=(long|mixed|untimed|words|mixedwords|editions|references|repaired)(?:;|$)/.exec(
             req.headers.cookie || "",
           )?.[1];
         const wordBook = JSON.parse(
@@ -170,6 +188,7 @@ http
           mixedwords: mixedWords,
           words: wordBook,
           long: longBook,
+          repaired: repairedBook,
           mixed: mixedBook,
           untimed: untimedBook,
         };

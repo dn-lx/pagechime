@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+- Rejoin verified page-end word fragments and support minimal reading-only text repairs with source-offset maps, keeping existing quotes, highlights and acoustic cues stable. Original editions and recordings remain intact.
+
+- Drain account changes made during an in-flight save and clear stale sync timers when switching accounts, so edits sync promptly without a reload.
+
+- Let short reading pages use smaller word counts and hide edition-download chrome during fullscreen, preventing mobile Manifest lines from falling below the visible page while preserving text and reading anchors.
+
 - Add real reader fullscreen with an explicit exit and full-window fallback, legible 10-second rewind/forward controls, and responsive page/player spacing. Ordinary listening starts at the introduction and skips reference sections while Contents retains every chapter and saved positions. Intended impact: patch within ongoing development; develop only.
 
 - Keep a selected audio position when chapter metadata arrives after an early seek, including slow connections. Intended impact: patch.

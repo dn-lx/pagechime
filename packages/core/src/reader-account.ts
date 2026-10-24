@@ -93,6 +93,7 @@ export class ReaderSync {
   private snapshot: SyncSnapshot;
   private closed = false;
   private running: Promise<void> | null = null;
+  private queued = false;
   public error = "";
   public conflicts = false;
   constructor(
@@ -115,6 +116,7 @@ export class ReaderSync {
   }
   change(key: string, value: Record<string, unknown> | null) {
     if (this.closed) return;
+    if (this.running) this.queued = true;
     this.snapshot.pending[key] = {
       value,
       revision:
@@ -137,7 +139,10 @@ export class ReaderSync {
   }
   flush(): Promise<void> {
     if (this.closed) return Promise.resolve();
-    if (this.running) return this.running;
+    if (this.running) {
+      this.queued = true;
+      return this.running;
+    }
     this.running = (async () => {
       this.error = "";
       this.conflicts = false;
@@ -171,6 +176,9 @@ export class ReaderSync {
       }
     })().finally(() => {
       this.running = null;
+      const again = this.queued;
+      this.queued = false;
+      if (again && !this.closed && !this.error) return this.flush();
     });
     return this.running;
   }

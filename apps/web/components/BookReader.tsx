@@ -33,6 +33,8 @@ import {
   readingPageAt,
   readingWordBudget,
   readingProgress,
+  readingParagraphs,
+  readingDisplay,
   narrationParts,
   narrationOffset,
   activeWord,
@@ -77,7 +79,12 @@ function markedText(
   segment: import("@pagechime/core").Segment,
   current: number | undefined,
 ) {
-  return narrationParts(fragment, notes, segment.words).map((part, i) => {
+  return narrationParts(
+    fragment,
+    notes,
+    segment.words,
+    segment.readingEdits,
+  ).map((part, i) => {
     const text =
       part.wordFrom === undefined ? (
         part.text
@@ -393,7 +400,9 @@ export default function BookReader({
       r.setEnd(node, offset);
       return {
         segment: Number(el.dataset.segment),
-        offset: Number(el.dataset.start) + r.toString().length,
+        offset: el.dataset.offsets
+          ? JSON.parse(el.dataset.offsets)[r.toString().length]
+          : Number(el.dataset.start) + r.toString().length,
       };
     };
     const start = part(range.startContainer, range.startOffset),
@@ -675,41 +684,60 @@ export default function BookReader({
                 <div />
               </div>
             )}
-            {visible?.fragments.map((f) => (
-              <p
-                key={`${f.segment}-${f.start}`}
-                className={`passage ebook-passage ${f.heading ? "passage-heading" : ""} ${f.segment === activeIndex ? "spoken" : ""}`}
-                aria-current={f.segment === activeIndex ? "true" : undefined}
-              >
-                <button
-                  className="passage-listen"
-                  aria-label={`Listen from: ${f.text.slice(0, 95)}`}
-                  title="Listen from here"
-                  onClick={() => {
-                    p.load(
-                      readingChapter,
-                      chapter.segments[f.segment].start,
-                      true,
-                    );
-                    setFollow(true);
-                  }}
+            {readingParagraphs(visible).map((group) => {
+              const f = group[0];
+              const spoken = group.some((part) => part.segment === activeIndex);
+              return (
+                <p
+                  key={`${f.segment}-${f.start}`}
+                  className={`passage ebook-passage ${f.heading ? "passage-heading" : ""} ${spoken ? "spoken" : ""}`}
+                  aria-current={spoken ? "true" : undefined}
                 >
-                  <Play size={13} weight="fill" />
-                </button>
-                <span
-                  data-fragment="true"
-                  data-segment={f.segment}
-                  data-start={f.start}
-                >
-                  {markedText(
-                    f,
-                    chapterNotes,
-                    chapter.segments[f.segment],
-                    f.segment === trackingIndex ? currentWord?.from : undefined,
-                  )}
-                </span>
-              </p>
-            ))}
+                  <button
+                    className="passage-listen"
+                    aria-label={`Listen from: ${f.text.slice(0, 95)}`}
+                    title="Listen from here"
+                    onClick={() => {
+                      p.load(
+                        readingChapter,
+                        chapter.segments[f.segment].start,
+                        true,
+                      );
+                      setFollow(true);
+                    }}
+                  >
+                    <Play size={13} weight="fill" />
+                  </button>
+                  {group.map((f) => (
+                    <span
+                      key={`${f.segment}-${f.start}`}
+                      data-fragment="true"
+                      data-segment={f.segment}
+                      data-start={f.start}
+                      data-offsets={
+                        chapter.segments[f.segment].readingEdits?.length
+                          ? JSON.stringify(
+                              readingDisplay(
+                                f,
+                                chapter.segments[f.segment].readingEdits,
+                              ).offsets,
+                            )
+                          : undefined
+                      }
+                    >
+                      {markedText(
+                        f,
+                        chapterNotes,
+                        chapter.segments[f.segment],
+                        f.segment === trackingIndex
+                          ? currentWord?.from
+                          : undefined,
+                      )}
+                    </span>
+                  ))}
+                </p>
+              );
+            })}
             {pageIndex === pages.length - 1 && (
               <div
                 className="ebook-chapter-ending"

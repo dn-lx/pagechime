@@ -9,6 +9,8 @@ mkdirSync(pub, { recursive: true });
 const { fetchPrivateLibrary } = await import("./fetch-private-library.mjs");
 const restored = await fetchPrivateLibrary(pub);
 if (restored) console.log("Private library verified:", restored.count, "files; version", restored.version.slice(0,12));
+const { applyReadingRepairs } = await import("./apply-reading-repairs.mjs");
+await applyReadingRepairs(pub);
 if (!existsSync(join(pub, "library.json")))
   writeFileSync(join(pub, "library.json"), '{"books":[]}');
 try {
