@@ -1230,7 +1230,11 @@ export default function ReaderApp() {
                       <span>Just you and the next page.</span>
                     </p>
                   </div>
-                  <span>Your place, saved just for you.</span>
+                  <span>
+                    {isGuest
+                      ? "Sign in to save your reading place."
+                      : "Your place, saved just for you."}
+                  </span>
                 </div>
               </motion.main>
             )}
@@ -1336,7 +1340,14 @@ export default function ReaderApp() {
               <p>
                 Read the clean text or switch to the original PDF. With Follow
                 audio on, Pagechime keeps your passage and page with the
-                narrator.
+                narrator. Books with word timings also highlight the spoken
+                word.
+              </p>
+              <p>
+                Tap Fullscreen for more reading space, then Exit to return. The
+                player’s 10s buttons move back or forward ten seconds. Normal
+                listening skips sections marked Reference; you can open them
+                from Contents at any time.
               </p>
               <p>
                 Use a passage’s play button to listen from there. Select text to
@@ -1358,9 +1369,9 @@ export default function ReaderApp() {
                 </span>
               </div>
               <p className="muted">
-                Your bookmarks, notes and reading place are private to your
-                account. Imported book files stay on this device. Audio and page
-                cues follow passages, rather than individual words.
+                {isGuest
+                  ? "You’re reading as a guest. Sign in or create an account to save bookmarks, notes, your reading place and offline books."
+                  : "Your bookmarks, notes and reading place are private to your account. Imported book files stay on this device."}
               </p>
             </div>
           </Modal>
@@ -1384,8 +1395,8 @@ export default function ReaderApp() {
                 to Home Screen from the browser menu.
               </p>
               <p className="muted">
-                The Expo iOS and Android projects are also included in the
-                GitHub repository.
+                Once installed, open Pagechime from your home screen. Sign in to
+                save books for offline reading.
               </p>
             </div>
           </Modal>

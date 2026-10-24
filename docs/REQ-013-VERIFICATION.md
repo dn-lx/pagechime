@@ -32,3 +32,11 @@ No definite missing clause was identified, so no new sentence was generated. Ele
 Published library version remains0e4a2bc8f8faf3292e231cd8fd2ce50e330cc8f075c021b9ecb755c4350824ae,27 verified files. Automatic approval review rejected re-uploading the private book to Supabase because that disclosure destination lacked explicit authorization. The action was not retried: current pointer unchanged,0 recent objects. Temporary upload capability was expired immediately; subsequent401 and active uploads0.
 
 The safer completed path uses scripts/book-reading-repairs.json, containing only identifiers, indices, a source-text hash and deletion offsets. prepare-assets applies this reviewed metadata to the local build copy after hash-verified restoration; changed source text is left unchanged. The plan is idempotent and retains every original source/cue field. No private book text/photos, tokens or signed URLs enter Git. Existing read-only build configuration, team-login gate and production branch policy are unchanged.
+
+## Resume check — 2026-10-25 (Europe/Madrid)
+
+Current source `fd0de363` already includes the completed reader repair. Fresh verification passes all 45 unit/contracts/types and 26 desktop/mobile account/control cases. The ready hosted develop reader starts at Introduction; ±10-second seeking, Emma playback/pause, fallback/Exit and no horizontal overflow were checked again. The cloud browser lacks actual fullscreen permission; local desktop/mobile browser API tests pass.
+
+A final copy pass corrects the guest saved-place claim and the obsolete passage-only help, documents fullscreen and reference skipping, and removes implementation details from installation help. Next export passes; changed guest footer/help were rendered at 1440x1000 and 390x844 with inspected screenshots, no page errors and no horizontal overflow. Fixture-only shell: 566/900 KiB. No new book-text or narration changes.
+
+Positive hosted account acceptance remains unverified: automatic approval review blocked creating persistent temporary accounts/state on the shared live backend. The action was not retried, and a bounded database read confirms zero proposed test accounts. Existing isolated account tests pass; this does not close native-device or hosted account acceptance.

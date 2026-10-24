@@ -1,10 +1,16 @@
 # Current Handoff
 
-Updated 2026-10-24.
+Updated 2026-10-25 (Europe/Madrid).
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":null,"repository":null,"base":"develop","branch":null,"pr":null,"status":"idle","last_verified_sha":null,"next_step":null,"updated_at":"2026-10-24T21:45:47.737565+00:00"}
+{"task_id":null,"repository":null,"base":"develop","branch":null,"pr":null,"status":"idle","last_verified_sha":null,"next_step":null,"updated_at":"2026-10-24T22:49:25.963416+00:00"}
 <!-- AGENT_TASK_STATE_END -->
+
+## Resume — 2026-10-25
+
+Recovered develop `fd0de363`; no active PR/task. Fresh 45 contracts/types and 26 desktop/mobile account/control checks pass. Hosted guest start, 10s seeks, Emma playback/pause and fallback/Exit pass. Correct guest saved-place copy and reading/install help; Next export and inspected desktop/mobile help pass, no overflow/errors; fixture shell 566/900 KiB. See docs/REQ-013-VERIFICATION.md.
+
+Automatic approval review blocked persistent live test accounts/state; no retry, readback confirms zero test accounts. Positive hosted-account and native-device acceptance remain open. RLS/client grants unchanged; unauthenticated live `/me` is 401. Copy deployment is being verified. Main and Google $0 policy unchanged.
 
 ## Policy and current work
 
