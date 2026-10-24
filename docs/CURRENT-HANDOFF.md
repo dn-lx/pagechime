@@ -8,9 +8,9 @@ Updated 2026-10-25 (Europe/Madrid).
 
 ## Resume — 2026-10-25
 
-Recovered develop `fd0de363`; no active PR/task. Fresh 45 contracts/types and 26 desktop/mobile account/control checks pass. Hosted guest start, 10s seeks, Emma playback/pause and fallback/Exit pass. Correct guest saved-place copy and reading/install help; Next export and inspected desktop/mobile help pass, no overflow/errors; fixture shell 566/900 KiB. See docs/REQ-013-VERIFICATION.md.
+Recovered develop `fd0de363`; no active PR/task. Fresh 45 contracts/types and 26 targeted browser checks pass; runtime CI passes all 64 fixture browser cases (2 private skips) and both native exports. Hosted guest start, 10s seeks, Emma playback/pause and fallback/Exit pass. Correct guest saved-place copy and reading/install help; Next export and inspected desktop/mobile help pass, no overflow/errors; fixture shell 566/900 KiB. See docs/REQ-013-VERIFICATION.md.
 
-Automatic approval review blocked persistent live test accounts/state; no retry, readback confirms zero test accounts. Positive hosted-account and native-device acceptance remain open. RLS/client grants unchanged; unauthenticated live `/me` is 401. Copy deployment is being verified. Main and Google $0 policy unchanged.
+Automatic approval review blocked persistent live test accounts/state; no retry, readback confirms zero test accounts. Positive hosted-account and native-device acceptance remain open. RLS/client grants unchanged; unauthenticated live `/me` is 401. Copy source `13488eed` is ready in Netlify `6add361c782eba47291d2f53`; hosted footer/help and Manifest reader verified. Main and Google $0 policy unchanged.
 
 ## Policy and current work
 
