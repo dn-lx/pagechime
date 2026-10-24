@@ -3,7 +3,7 @@
 Updated 2026-10-24.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-013","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"implementing","last_verified_sha":"898c1517ec394ea09376923a539d66e385be81c8","next_step":"Verify and publish mobile pagination, account sync and source-preserving editorial overlays. Check exact-head CI and develop hosting; no main promotion or Google requests.","updated_at":"2026-10-24T23:30:00Z"}
+{"task_id":null,"repository":null,"base":"develop","branch":null,"pr":null,"status":"idle","last_verified_sha":null,"next_step":null,"updated_at":"2026-10-24T21:45:47.737565+00:00"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Policy and current work
@@ -12,7 +12,9 @@ Work directly on develop with null PR, GitHub MCP writes. Main stays2396458e4660
 
 Owner approved Google spend is $0. scripts/google-narration.py blocks provider requests before credentials or network, including --check/--generate. No budget/env/cache bypass. Existing Kokoro bf_emma remains available. This lock does not verify Cloud billing or control unrelated apps. Cloud project project-89a9b506-ff91-4cd1-a2d reports setup; account billing/API state unverified. See docs/CONTENT-AND-VOICES.md.
 
-REQ-013 source898c151 implements real fullscreen/exit/fallback/browser cleanup, explicit10s transport web/native, measured player height with independent112px minimum, reference skipping and compact reading chrome. Ready Netlify deploy6add1bc8be2cd6add2b29163. Current follow-up lowers the page-word floor30→8 for actual mobile Introduction visibility and hides editions during fullscreen. Account fixes clear timer refs on every engine-close lifecycle and drain edits queued during an in-flight save, respecting close/error. Independent accounts/security17/17; targeted account-switch/lossless browser4/4. Full post-overlay verification pending. Source898 CI Application failed8 mobile tests because all fixture contexts exhausted one shared rate-limit IP; test-only per-context IP isolation retains enforcement. Other4 suites passed. Do not claim all898 CI green.
+REQ-013 is verified on develop runtime68c7d2539800d76e75c7a47e80a64af70d536591, ready Netlify6add25a2e13c9e100daf0beb. All5 exact-source CI suites pass;45 contracts/types,64 fixture browser passes/2 private skips, both native exports. Actual private book desktop/mobile2/2 separately pass, including all5 joins and both PDFs. Shell653/900KiB. Hosted guest library loads; fallback/Exit/player bounds/no overflow verified, Emma advances to14s with active words and pauses. Real fullscreen API, rejection fallback, resize, PDF geometry,10s seeking, reference skip/direct access and light/night axe pass in browser tests. Screenshots inspected. Source-only acceptance checkpoint changes a private-test slider value to its0.1s step and records evidence; no runtime change. See docs/REQ-013-VERIFICATION.md.
+
+Source898 earlier failed fixture auth because one suite-wide IP exhausted rate limits; source68 fixes test-only context isolation while retaining actual limits. Account timer/outbox regressions are fixed and independently reviewed. Mobile word budget floor8 prevents actual Introduction clipping; fullscreen editions chrome is hidden, measured player minimum stays independent of its height.
 
 ## Editorial work and private assets
 

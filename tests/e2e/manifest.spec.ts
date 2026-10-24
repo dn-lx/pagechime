@@ -103,9 +103,10 @@ test("restored Manifest guest library, real word following, chapter boundaries a
     for (const i of joins) {
       const segment = chapter.segments[i];
       const cue = segment.words?.[0];
+      const time = cue ? (cue.start + cue.end) / 2 : segment.start + 0.1;
       await page
         .getByLabel("Chapter playback position")
-        .fill(String(cue ? (cue.start + cue.end) / 2 : segment.start + 0.01));
+        .fill(String(Math.round(time * 10) / 10));
       const word =
         chapter.segments[i - 1].text.match(/\S+$/)[0] +
         segment.text.match(/^\S+/)[0];

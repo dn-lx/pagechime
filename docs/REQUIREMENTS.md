@@ -2,13 +2,13 @@
 
 Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-24.
 
-## [ ] REQ-013 — Fullscreen reader, clear transport and verified text
+## [x] REQ-013 — Fullscreen reader, clear transport and verified text
 - Enter real browser fullscreen from the reader control; provide an obvious exit and a usable full-window fallback when the browser lacks the API. Keep reading/audio controls accessible and synchronize state after browser exit.
 - Rewind/advance by exactly 10 seconds with readable labels, generous mobile touch targets and consistent media-session/native controls.
 - Skip cover/publication/dedication/contents and back reference chapters in normal listening, while retaining every chapter for explicit access and preserving saved positions.
 - Audit the supplied photo album against the private reading text. Restore photo-verified gaps and, under the owner’s latest instruction, use only the few words needed to complete an obviously broken sentence. Preserve source quote offsets and acoustic cues; never invent timestamps or commit private book text/photos. Record source restorations separately from editorial repairs.
 - Polish the existing paper/olive reader and player, verify narrow mobile/desktop, fullscreen/fallback/exit, skip boundaries, themes, accessibility, real book coverage and develop deployment. Google remains paused under the owner's $0 policy; main stays unchanged.
-- Plan: docs/plans/REQ-013-reader-controls-text.md.
+- Plan: docs/plans/REQ-013-reader-controls-text.md. Verified develop source68c7d253, ready deploy6add25a2;45 contracts/types,64 fixture browser checks,2 actual-book cases, web/native exports and5 CI suites pass. Five verified word joins and one minimal reading-only grammar repair preserve original text/cues; no definite omitted clause was identified. Evidence: docs/REQ-013-VERIFICATION.md.
 
 ## [ ] REQ-012 — Manifest library and word-following narration
 - Restore Manifest in Action from the supplied 237-page PDF/EPUB editions and complete 19-chapter audiobook, with a reliable private build asset source outside public Git.
