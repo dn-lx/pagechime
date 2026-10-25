@@ -3,14 +3,14 @@
 Updated 2026-10-25 (Europe/Madrid).
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-014","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"2a6771305b5d249cace0704476f73bdc085ad526","next_step":"Confirm the new develop Netlify deploy/source and hosted overlay behavior in an authenticated browser; source and CI are verified. Keep the outer gate unchanged.","updated_at":"2026-10-25T04:43:39.442843+00:00"}
+{"task_id":"REQ-014","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"bdb61533b2294aa2cde4ed01c24f7f8f705f8e88","next_step":"REQ-015 samples are delivered only to the owner; no sample UI/assets may be published. Await voice choice before full narration. REQ-014 hosted deploy/source checks still need authenticated Netlify access.","updated_at":"2026-10-25T05:15:20.050888+00:00"}
 <!-- AGENT_TASK_STATE_END -->
 
-## Current overlay repair — REQ-014
+## Voice auditions completed — REQ-015
 
-Appearance uses the shared native dialog with Close/Done, outside tap, Escape, focus containment/return and a scrollable body with fixed close controls. Padding/inside-to-outside drags do not dismiss. The library drawer uses the same behavior; chapter/bookmark controls remain reachable. Escape closes cards before fallback fullscreen; night primary-button contrast uses the current theme token. Fresh clean export/budget566/900KiB and74 browser passes/2 private skips;45 unit/contracts and types pass. Screenshots inspected. See docs/REQ-014-VERIFICATION.md. Published source2a677130 on develop; application CI40162568905 passes, including74 browser checks/2 private skips and iOS/Android exports. Policy, security and cross-platform quality checks pass except the existing non-blocking native tooling advisory (REQ-005). Hosted deploy/source and interactions remain unverified: this browser is signed out of Netlify. No auth/database/voice changes.
+Qwen3-TTS, Chatterbox Nano and Piper Cori original auditions generated locally and saved as three owner-downloadable MP3s. Kokoro unchanged. Latest owner instruction: samples only here, never on the website; upload after full recording is ready. Unpublished preview UI/assets/tests were removed before any source publication. Only offline preparation script/provenance/docs remain. No private book text, human voice recording or paid API. Models/environments/raw WAVs remain under /tmp/pagechime-voice-lab. See docs/plans/REQ-015-free-voice-auditions.md. Full-book voice choice/generation has not started.
 
-Prior REQ-013 copy runtime13488eed was ready in deploy6add361c782eba47291d2f53. Earlier evidence is in docs/REQ-013-VERIFICATION.md. Positive hosted-account/native-device acceptance remains open; no live test-account writes were retried.
+REQ-014 overlay repair source2a677130 has45 unit/74 browser passes,2 private skips, mobile exports and successful application CI40162568905. Hosted deploy/source and interactions remain unverified because the browser is signed out of Netlify. See docs/REQ-014-VERIFICATION.md. Later audition QA found low contrast in the existing tiny selected-voice status label; no repair was included in this audio-only delivery. Prior copy runtime13488eed was ready in deploy6add361c782eba47291d2f53.
 
 ## Policy and current work
 

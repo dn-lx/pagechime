@@ -92,3 +92,5 @@ Run `node scripts/validate-docs.mjs` to check documentation structure/references
 - `docs/REQ-013-VERIFICATION.md` — fullscreen, 10-second controls, source-preserving repairs and develop acceptance.
 - `docs/REQ-014-VERIFICATION.md` — dismissible settings, shared dialog and mobile drawer regression evidence.
 - `docs/READER-ACCOUNTS.md` — standalone Me+ accounts, first admin, Netlify setup and verification.
+
+- `docs/plans/REQ-015-free-voice-auditions.md` — Owner-only local voice audition preparation and verification evidence.

@@ -2,6 +2,12 @@
 
 Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-24.
 
+## [x] REQ-015 — Free voice auditions delivered only to the owner
+- Generate the same original short English passage locally with Qwen3-TTS, Chatterbox and Piper; keep the existing Kokoro recording unchanged. No paid service, Google requests, private book text or human voice cloning.
+- Deliver the three short audio files directly to the owner. Latest instruction: do not add sample clips to the website; upload only after a full recording is created.
+- Retain model/revision/licence/generation provenance and durable downloadable samples. A sample does not constitute full-book narration or word timings.
+- Completed2026-10-25: three MP3s saved and delivered, all decode and have no clipped raw samples. Qwen/Chatterbox automated transcripts match; Piper has one article-word ambiguity. Reproduction and exact provenance: docs/plans/REQ-015-free-voice-auditions.md. No app/runtime change or sample publication.
+
 ## [ ] REQ-014 — Dismissible settings and reliable overlays
 - Appearance settings have a visible Close and Done action, outside-tap/Escape dismissal, contained keyboard focus and focus return; changes remain applied and narration/reading place are preserved.
 - Keep close controls reachable on short/narrow screens and in fullscreen. A gesture that begins inside a dialog, or a tap on its padding, must not dismiss it accidentally. Escape dismisses the current dialog without also leaving fallback fullscreen.

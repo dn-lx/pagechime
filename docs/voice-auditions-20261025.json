@@ -1,0 +1,75 @@
+{
+  "samples": [
+    {
+      "engine": "qwen",
+      "text": "Make yourself comfortable. A good book gives us room to pause, notice, and begin again. Take a steady breath, turn the page, and let the next idea arrive in its own time.",
+      "duration": 13.36,
+      "sampleRate": 24000,
+      "cpuSeconds": 84.06,
+      "wavSha256": "67c54cb1e5293b74e8798955c36a164c8b87955217c428fd441b2929eb7fe1b4",
+      "referenceSha256": null,
+      "network": "denied by seccomp during inference",
+      "file": "qwen3-tts.mp3",
+      "mp3Sha256": "0d9c685ff2e7cdc22071aa014b887563fd25868233a9495cc4375688056f8859",
+      "bytes": 107565,
+      "model": "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+      "revision": "5ecdb67327fd37bb2e042aab12ff7391903235d3",
+      "modelLicense": "apache-2.0"
+    },
+    {
+      "engine": "chatterbox",
+      "text": "Make yourself comfortable. A good book gives us room to pause, notice, and begin again. Take a steady breath, turn the page, and let the next idea arrive in its own time.",
+      "duration": 12.08,
+      "sampleRate": 24000,
+      "cpuSeconds": 51.5,
+      "wavSha256": "eadc1cbff7a8e9b63187d43a3f22cb6e665fc1f237cf7df7e03b7ea1dad73b24",
+      "referenceSha256": "67c54cb1e5293b74e8798955c36a164c8b87955217c428fd441b2929eb7fe1b4",
+      "network": "denied by seccomp during inference",
+      "file": "chatterbox.mp3",
+      "mp3Sha256": "3bddd0fda525f5abd71851d2652a7143ab79a484ac853ec20fbfea7cc60ab76c",
+      "bytes": 97389,
+      "model": "ResembleAI/chatterbox-nano",
+      "revision": "71ccd1d0081b430592cea481f4307e764e07bc64",
+      "modelLicense": "mit"
+    },
+    {
+      "engine": "piper",
+      "text": "Make yourself comfortable. A good book gives us room to pause, notice, and begin again. Take a steady breath, turn the page, and let the next idea arrive in its own time.",
+      "duration": 11.586757369614512,
+      "sampleRate": 22050,
+      "cpuSeconds": 5.5,
+      "wavSha256": "1c26ac04ac96262c611413642de9b4f10ee1e637f21f1f82a9a0decd5fcc3b0c",
+      "referenceSha256": null,
+      "network": "denied by seccomp during inference",
+      "file": "piper.mp3",
+      "mp3Sha256": "a097257298d13b09236066d3cbc241b52b7ba59ff502ec8201507abf6a42331e",
+      "bytes": 93357,
+      "model": "rhasspy/piper-voices",
+      "revision": "5041a7a49ae5b3a0f30e6837769eb03fdbb231bd",
+      "modelLicense": "mit"
+    }
+  ],
+  "automatedAudioQA": [
+    {
+      "engine": "qwen",
+      "transcript": "Make yourself comfortable. A good book gives us room to pause, notice, and begin again. Take a steady breath, turn the page, and let the next idea arrive in its own time.",
+      "peak": 0.75390625,
+      "rms": 0.11685456773538948,
+      "clippedSamples": 0
+    },
+    {
+      "engine": "chatterbox",
+      "transcript": "Make yourself comfortable. A good book gives us room to pause, notice and begin again. Take a steady breath. Turn the page and let the next idea arrive in its own time.",
+      "peak": 0.215728759765625,
+      "rms": 0.036903344500430826,
+      "clippedSamples": 0
+    },
+    {
+      "engine": "piper",
+      "transcript": "Make yourself comfortable, and good book gives us room to pause, notice and begin again. Take a steady breath, turn the page, and let the next idea arrive in its own time.",
+      "peak": 0.89996337890625,
+      "rms": 0.15459652678308458,
+      "clippedSamples": 0
+    }
+  ]
+}
