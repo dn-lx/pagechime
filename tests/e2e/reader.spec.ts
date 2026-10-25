@@ -238,14 +238,14 @@ test("Piper can play, switch chapter layouts and return to Kokoro", async ({ pag
   expect(voiceA11y.violations).toEqual([]);
   await page.screenshot({ path: info.outputPath("piper-voice-choice.png"), fullPage: true });
   await page.getByRole("button", { name: /Piper · Cori/ }).click();
-  await expect(page.getByRole("heading", { name: "Piper reading", exact: true })).toBeVisible();
+  await expect(page.locator(".ebook-heading")).toContainText("Piper reading");
   await expect(page.getByLabel("Chapter playback position")).toHaveValue("4");
   await page.getByRole("button", { name: "Play narration", exact: true }).click();
   await expect(page.getByRole("button", { name: "Pause narration", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Choose narration voice" }).click();
   await expect(page.getByRole("button", { name: /Piper · Cori/ })).toContainText("Selected");
   await page.getByRole("button", { name: /Kokoro · Emma/ }).click();
-  await expect(page.getByRole("heading", { name: "The next page", exact: true })).toBeVisible();
+  await expect(page.locator(".ebook-heading")).toContainText("The next page");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(errors).toEqual([]);
 });

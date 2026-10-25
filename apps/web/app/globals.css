@@ -2414,7 +2414,7 @@ progress::-webkit-progress-value {
 }
 .voice-choice p {
   font-size: 12px;
-  color: var(--muted);
+  color: var(--ink);
   margin: 5px 0;
 }
 .voice-choice span {

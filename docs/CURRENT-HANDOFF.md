@@ -8,7 +8,7 @@ Updated 2026-10-25 (Europe/Madrid).
 
 ## Piper website and unfinished recordings — REQ-016
 
-Owner explicitly requests full Piper added to develop; no short samples. Complete private MP3:12,397.920s,715 chunks,36,025 narrative words. Filename Manifest-in-Action-Piper.mp3, Library libfile_32ae1fd154488191b47d9a92fdcd2003. Site packages17 chapters with exact passage boundaries, no inherited word cues. Separate manifest-piper identity isolates progress/notes/bookmarks. Nearest-passage voice switching and declared-path guest traversal are implemented; source CI/deploy pending.
+Owner explicitly requests full Piper added to develop; no short samples. Complete private MP3:12,397.920s,715 chunks,36,025 narrative words. Filename Manifest-in-Action-Piper.mp3, Library libfile_32ae1fd154488191b47d9a92fdcd2003. Site packages17 chapters with exact passage boundaries, no inherited word cues. Separate manifest-piper identity isolates progress/notes/bookmarks. Nearest-passage voice switching and declared-path guest traversal are implemented; source CI/deploy pending. First remote run found voice-description contrast and a mobile test incorrectly assuming the resumed reading page contains its chapter heading; both corrected before acceptance.
 
 Private current version94da1b70b50c4009a99e2bb11dc94c3d2a02e4b2a4c4a815fad56cfa7bf2334f:45 files/187,054,263bytes. Fresh complete hash restore verified; both temporary capabilities expired (1 existing build/0 upload active). Encoding intermediates excluded before deployment. No private book/media or keys in Git.
 
