@@ -3,14 +3,14 @@
 Updated 2026-10-25 (Europe/Madrid).
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":null,"repository":null,"base":"develop","branch":null,"pr":null,"status":"idle","last_verified_sha":null,"next_step":null,"updated_at":"2026-10-24T22:49:25.963416+00:00"}
+{"task_id":"REQ-014","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"reviewing","last_verified_sha":"e7a750c423aaa79dea2b7cf2b539e15d337c3fb1","next_step":"Publish verified overlay fixes through GitHub MCP and check develop CI/deployment; outer Netlify gate remains unchanged.","updated_at":"2026-10-25T04:36:10.733176+00:00"}
 <!-- AGENT_TASK_STATE_END -->
 
-## Resume — 2026-10-25
+## Current overlay repair — REQ-014
 
-Recovered develop `fd0de363`; no active PR/task. Fresh 45 contracts/types and 26 targeted browser checks pass; runtime CI passes all 64 fixture browser cases (2 private skips) and both native exports. Hosted guest start, 10s seeks, Emma playback/pause and fallback/Exit pass. Correct guest saved-place copy and reading/install help; Next export and inspected desktop/mobile help pass, no overflow/errors; fixture shell 566/900 KiB. See docs/REQ-013-VERIFICATION.md.
+Appearance uses the shared native dialog with Close/Done, outside tap, Escape, focus containment/return and a scrollable body with fixed close controls. Padding/inside-to-outside drags do not dismiss. The library drawer uses the same behavior; chapter/bookmark controls remain reachable. Escape closes cards before fallback fullscreen; night primary-button contrast uses the current theme token. Fresh clean export/budget566/900KiB and74 browser passes/2 private skips;45 unit/contracts and types pass. Screenshots inspected. See docs/REQ-014-VERIFICATION.md. Develop publication/remote checks are next; this cloud browser is signed out of Netlify. No auth/database/voice changes.
 
-Automatic approval review blocked persistent live test accounts/state; no retry, readback confirms zero test accounts. Positive hosted-account and native-device acceptance remain open. RLS/client grants unchanged; unauthenticated live `/me` is 401. Copy source `13488eed` is ready in Netlify `6add361c782eba47291d2f53`; hosted footer/help and Manifest reader verified. Main and Google $0 policy unchanged.
+Prior REQ-013 copy runtime13488eed was ready in deploy6add361c782eba47291d2f53. Earlier evidence is in docs/REQ-013-VERIFICATION.md. Positive hosted-account/native-device acceptance remains open; no live test-account writes were retried.
 
 ## Policy and current work
 
@@ -18,9 +18,7 @@ Work directly on develop with null PR, GitHub MCP writes. Main stays2396458e4660
 
 Owner approved Google spend is $0. scripts/google-narration.py blocks provider requests before credentials or network, including --check/--generate. No budget/env/cache bypass. Existing Kokoro bf_emma remains available. This lock does not verify Cloud billing or control unrelated apps. Cloud project project-89a9b506-ff91-4cd1-a2d reports setup; account billing/API state unverified. See docs/CONTENT-AND-VOICES.md.
 
-REQ-013 is verified on develop runtime68c7d2539800d76e75c7a47e80a64af70d536591, ready Netlify6add25a2e13c9e100daf0beb. All5 exact-source CI suites pass;45 contracts/types,64 fixture browser passes/2 private skips, both native exports. Actual private book desktop/mobile2/2 separately pass, including all5 joins and both PDFs. Shell653/900KiB. Hosted guest library loads; fallback/Exit/player bounds/no overflow verified, Emma advances to14s with active words and pauses. Real fullscreen API, rejection fallback, resize, PDF geometry,10s seeking, reference skip/direct access and light/night axe pass in browser tests. Screenshots inspected. Source-only acceptance checkpoint changes a private-test slider value to its0.1s step and records evidence; no runtime change. See docs/REQ-013-VERIFICATION.md.
-
-Source898 earlier failed fixture auth because one suite-wide IP exhausted rate limits; source68 fixes test-only context isolation while retaining actual limits. Account timer/outbox regressions are fixed and independently reviewed. Mobile word budget floor8 prevents actual Introduction clipping; fullscreen editions chrome is hidden, measured player minimum stays independent of its height.
+REQ-013 remains accepted at runtime68c7d253 / ready deploy6add25a2, with actual-book desktop/mobile coverage, both PDFs, native exports and word-join/anchor verification. Earlier account outbox/timer, player sizing and reference-skip fixes remain covered by the new regression run. Historical evidence: docs/REQ-013-VERIFICATION.md.
 
 ## Editorial work and private assets
 

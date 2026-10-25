@@ -1369,7 +1369,7 @@ progress::-webkit-progress-value {
   width: min(530px, calc(100vw - 32px));
   max-height: calc(100dvh - 50px);
   box-shadow: 0 35px 100px #1f281f26;
-  overflow-y: auto;
+  overflow: hidden;
 }
 .modal.wide {
   width: min(700px, calc(100vw - 32px));
@@ -1379,6 +1379,8 @@ progress::-webkit-progress-value {
   backdrop-filter: blur(5px);
 }
 .modal[open] {
+  display: flex;
+  flex-direction: column;
   animation: dialog-in 0.22s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 .modal-head {
@@ -1387,6 +1389,7 @@ progress::-webkit-progress-value {
   justify-content: space-between;
   gap: 15px;
   margin-bottom: 16px;
+  flex-shrink: 0;
 }
 .modal-head h2 {
   font-size: 29px;
@@ -1394,8 +1397,46 @@ progress::-webkit-progress-value {
   letter-spacing: -0.5px;
 }
 .modal-head .icon-button {
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+.modal-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 6px 6px;
+}
+.modal-footer {
+  flex-shrink: 0;
+  margin-top: 18px;
+}
+.modal-footer > .primary-button {
+  width: 100%;
+}
+.library-drawer {
+  width: min(320px, calc(100vw - 24px));
+  height: calc(100dvh - 24px);
+  max-height: calc(100dvh - 24px);
+  margin: 12px auto 12px 12px;
+  padding: 20px;
+}
+.library-drawer .modal-head h2 {
+  font: 20px/1.2 var(--serif);
+}
+.library-drawer .modal-body {
+  display: flex;
+  flex-direction: column;
+}
+.library-drawer .modal-body > * {
+  flex-shrink: 0;
+}
+.library-drawer .book-navigation {
+  flex: 1 0 260px;
+  min-height: 260px;
+}
+.library-drawer .brand {
+  margin-bottom: 25px;
 }
 .help-copy p {
   font-size: 13px;
@@ -1596,9 +1637,6 @@ progress::-webkit-progress-value {
 }
 .focus-reading .reader-main {
   max-width: 1050px;
-}
-.drawer-scrim {
-  display: none;
 }
 [data-theme="night"] .cover-stage {
   background: #363b2e;
@@ -1915,16 +1953,6 @@ progress::-webkit-progress-value {
     bottom: 0 !important;
     padding: 28px 22px;
     z-index: 70;
-  }
-  .sidebar.drawer-open {
-    transform: translateX(0);
-  }
-  .drawer-scrim {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: #161c1666;
-    z-index: 65;
   }
   .main-shell {
     margin-left: 0;
@@ -2322,9 +2350,6 @@ progress::-webkit-progress-value {
   .sidebar-foot > span {
     font-size: 10px;
   }
-  .focus-reading .sidebar.drawer-open {
-    transform: translateX(0);
-  }
   .book-navigation {
     margin-bottom: 10px;
   }
@@ -2450,16 +2475,7 @@ progress::-webkit-progress-value {
 [data-theme="night"] {
   --subtle: #bbc3b1;
 }
-.drawer-close {
-  display: none;
-}
 @media (max-width: 767px) {
-  .drawer-close {
-    display: flex;
-    position: absolute;
-    right: 15px;
-    top: 35px;
-  }
   .reading-toolbar {
     flex-wrap: wrap;
     row-gap: 6px;
@@ -2611,7 +2627,7 @@ progress::-webkit-progress-value {
   justify-content: center;
   align-items: center;
   gap: 20px;
-  background: #65704f;
+  background: var(--olive);
   color: white;
   border: 0;
   border-radius: 9px;
@@ -2801,7 +2817,7 @@ progress::-webkit-progress-value {
   margin-bottom: 22px;
 }
 .ebook-tools button,
-.appearance-menu summary {
+.appearance-trigger {
   min-height: 44px;
 }
 .ebook-follow {
@@ -2815,10 +2831,7 @@ progress::-webkit-progress-value {
 .ebook-follow.is-following {
   color: var(--olive-deep);
 }
-.appearance-menu {
-  position: relative;
-}
-.appearance-menu summary {
+.appearance-trigger {
   display: flex;
   align-items: center;
   gap: 7px;
@@ -2827,33 +2840,20 @@ progress::-webkit-progress-value {
   font-size: 11px;
   padding: 0 8px;
 }
-.appearance-menu summary::-webkit-details-marker {
-  display: none;
-}
-.appearance-menu[open] summary {
+.appearance-trigger[aria-expanded="true"] {
   color: var(--olive-deep);
   background: var(--soft);
   border-radius: 6px;
 }
-.appearance-panel {
-  position: absolute;
-  right: 0;
-  top: 54px;
-  width: 320px;
-  max-width: calc(100vw - 32px);
-  background: var(--paper);
-  color: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  box-shadow: 0 16px 50px #171e1733;
+.modal.appearance-panel {
+  width: min(420px, calc(100vw - 32px));
   padding: 24px;
-  z-index: 35;
 }
 .appearance-panel h2 {
   font: 25px/1.2 var(--serif);
   letter-spacing: -0.4px;
 }
-.appearance-panel > p {
+.appearance-panel .modal-body > p {
   font-size: 11px;
   color: var(--muted);
   margin: 6px 0 20px;
@@ -3157,7 +3157,7 @@ progress::-webkit-progress-value {
   .ebook-tool-actions {
     gap: 4px;
   }
-  .appearance-menu summary > span {
+  .appearance-trigger > span {
     display: none;
   }
   .ebook-follow > span {
@@ -3222,9 +3222,6 @@ progress::-webkit-progress-value {
   .passage-listen {
     left: -22px;
     width: 22px;
-  }
-  .appearance-panel {
-    right: -8px;
   }
   .ebook-page-status {
     font-size: 11px;

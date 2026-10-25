@@ -16,7 +16,12 @@ export function useReaderFullscreen() {
       }
     };
     const key = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !document.fullscreenElement)
+      if (
+        event.key === "Escape" &&
+        !event.defaultPrevented &&
+        !document.fullscreenElement &&
+        !document.querySelector("dialog[open]")
+      )
         setActive(false);
     };
     document.addEventListener("fullscreenchange", changed);

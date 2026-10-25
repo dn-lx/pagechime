@@ -51,6 +51,7 @@ import { useAccount } from "../lib/account";
 import type { Playback } from "../lib/playback";
 import { PdfPage } from "./PdfPage";
 import { useReaderFullscreen } from "../lib/reader-fullscreen";
+import Modal from "./Modal";
 
 export type AnnotationDraft = {
   quote: string;
@@ -167,6 +168,7 @@ export default function BookReader({
     toggle: toggleFullscreen,
     notice: fullscreenNotice,
   } = useReaderFullscreen();
+  const [appearanceOpen, setAppearanceOpen] = useState(false);
   const [selection, setSelection] = useState<AnnotationDraft | null>(null);
   const paper = useRef<HTMLDivElement>(null),
     prose = useRef<HTMLElement>(null),
@@ -359,7 +361,7 @@ export default function BookReader({
       if (
         document.querySelector("dialog[open]") ||
         (e.target as HTMLElement).closest(
-          "input,textarea,select,[contenteditable=true],.appearance-menu",
+          "input,textarea,select,[contenteditable=true]",
         )
       )
         return;
@@ -527,13 +529,31 @@ export default function BookReader({
             <Headphones size={16} />
             <span>{follow ? "Following audio" : "Follow audio"}</span>
           </button>
-          <details className="appearance-menu">
-            <summary aria-label="Reading appearance">
-              <TextAa size={23} />
-              <span>Appearance</span>
-            </summary>
-            <div className="appearance-panel">
-              <h2>Make yourself comfortable.</h2>
+          <button
+            className="appearance-trigger"
+            aria-label="Reading appearance"
+            aria-haspopup="dialog"
+            aria-expanded={appearanceOpen}
+            onClick={() => setAppearanceOpen(true)}
+          >
+            <TextAa size={23} />
+            <span>Appearance</span>
+          </button>
+          {appearanceOpen && (
+            <Modal
+              title="Make yourself comfortable."
+              className="appearance-panel"
+              closeLabel="Close reading appearance"
+              onClose={() => setAppearanceOpen(false)}
+              footer={
+                <button
+                  className="primary-button"
+                  onClick={() => setAppearanceOpen(false)}
+                >
+                  Done
+                </button>
+              }
+            >
               <p>Set the page to your pace.</p>
               <div className="appearance-size">
                 <span>Text size</span>
@@ -616,8 +636,8 @@ export default function BookReader({
                   ))}
                 </div>
               </fieldset>
-            </div>
-          </details>
+            </Modal>
+          )}
           <button
             className="icon-button ebook-download"
             aria-label={offlineLabel}

@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Make appearance settings explicitly dismissible with Close/Done, outside tap and Escape; keep close controls visible on short screens. Prevent accidental dialog dismissal from padding or drag gestures, preserve fallback fullscreen while dismissing cards, give the mobile library a focus-contained, dismissible drawer, and correct primary-button contrast in night mode. Intended impact: patch; develop only.
+
 - Clarify guest reading-place limits and update reading help for word highlighting, fullscreen, 10-second controls and reference skipping. Keep installation guidance focused on home-screen and offline reading. Intended impact: patch; develop only.
 
 - Rejoin verified page-end word fragments and support minimal reading-only text repairs with source-offset maps, keeping existing quotes, highlights and acoustic cues stable. Original editions and recordings remain intact.

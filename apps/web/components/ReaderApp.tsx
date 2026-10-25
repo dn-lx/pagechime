@@ -65,6 +65,7 @@ import { materialize, type StoredBook } from "../lib/storage";
 import { useAccount } from "../lib/account";
 import { type ReaderNote } from "@pagechime/core";
 import AccountPanel from "./AccountPanel";
+import Modal from "./Modal";
 import { usePlayback, type Playback } from "../lib/playback";
 import { pdfLibrary } from "../lib/pdf";
 import Reader, { type AnnotationDraft } from "./BookReader";
@@ -94,43 +95,6 @@ function IconButton({
     >
       {children}
     </button>
-  );
-}
-function Modal({
-  title,
-  onClose,
-  children,
-  wide = false,
-}: {
-  title: string;
-  onClose: () => void;
-  children: ReactNode;
-  wide?: boolean;
-}) {
-  const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const d = ref.current;
-    d?.showModal();
-    return () => d?.close();
-  }, []);
-  return (
-    <dialog
-      ref={ref}
-      className={`modal ${wide ? "wide" : ""}`}
-      onCancel={onClose}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      aria-labelledby="modal-title"
-    >
-      <div className="modal-head">
-        <h2 id="modal-title">{title}</h2>
-        <IconButton label="Close dialog" onClick={onClose}>
-          <X />
-        </IconButton>
-      </div>
-      {children}
-    </dialog>
   );
 }
 function Cover({ book, small = false }: { book: Book; small?: boolean }) {
@@ -196,6 +160,7 @@ export default function ReaderApp() {
     [reading, setReading] = useState(false),
     [readerKey, setReaderKey] = useState(0),
     [drawer, setDrawer] = useState(false),
+    [narrow, setNarrow] = useState(false),
     [modal, setModal] = useState(""),
     [theme, setTheme] = useState("paper"),
     [bookmarks, setBookmarks] = useState<Bookmark[]>([]),
@@ -213,6 +178,20 @@ export default function ReaderApp() {
     timeout.current = setTimeout(() => setNotice(""), 4500);
   }, []);
   const p = usePlayback(notify, storage);
+  useEffect(() => {
+    const query = matchMedia("(max-width: 767px)");
+    const changed = () => {
+      setNarrow(query.matches);
+      if (!query.matches) setDrawer(false);
+    };
+    changed();
+    query.addEventListener("change", changed);
+    return () => query.removeEventListener("change", changed);
+  }, []);
+  function openModal(name: string) {
+    setDrawer(false);
+    setModal(name);
+  }
   const loadBooks = useCallback(async () => {
     setBoot(true);
     setError("");
@@ -334,7 +313,7 @@ export default function ReaderApp() {
   const addMark = useCallback(
     (location?: Partial<Bookmark>) => {
       if (isGuest) {
-        setModal("join");
+        openModal("join");
         return;
       }
       if (!p.book) return;
@@ -371,7 +350,7 @@ export default function ReaderApp() {
         return;
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
-        setModal("search");
+        openModal("search");
         return;
       }
       if (!reading || !p.book) return;
@@ -420,7 +399,7 @@ export default function ReaderApp() {
   }
   async function offline(b: Book) {
     if (isGuest) {
-      setModal("join");
+      openModal("join");
       return;
     }
     if (b.local) {
@@ -519,13 +498,6 @@ export default function ReaderApp() {
           Pagechime<span className="brand-dot">.</span>
         </span>
       </button>
-      <IconButton
-        label="Close library menu"
-        className="drawer-close"
-        onClick={() => setDrawer(false)}
-      >
-        <X />
-      </IconButton>
       <p className="nav-label">YOUR LITTLE CORNER</p>
       <button
         className={`nav-item ${!reading ? "active" : ""}`}
@@ -537,7 +509,7 @@ export default function ReaderApp() {
         <BookOpen />
         My library<span className="count">{books.length}</span>
       </button>
-      <button className="nav-item" onClick={() => setModal("search")}>
+      <button className="nav-item" onClick={() => openModal("search")}>
         <MagnifyingGlass />
         Find a passage<kbd>⌘ K</kbd>
       </button>
@@ -659,7 +631,7 @@ export default function ReaderApp() {
           className="nav-item"
           onClick={() => {
             setDrawer(false);
-            setModal(isGuest ? "join" : "notes");
+            openModal(isGuest ? "join" : "notes");
           }}
         >
           <TextAa />
@@ -670,7 +642,7 @@ export default function ReaderApp() {
           onClick={() => {
             setDrawer(false);
             if (isGuest) requestAccount();
-            else setModal("account");
+            else openModal("account");
           }}
         >
           <Leaf />
@@ -692,7 +664,7 @@ export default function ReaderApp() {
         </button>
         <button
           className="nav-item add-book"
-          onClick={() => setModal(isGuest ? "join" : "import")}
+          onClick={() => openModal(isGuest ? "join" : "import")}
         >
           <Plus />
           Add a book
@@ -710,7 +682,7 @@ export default function ReaderApp() {
           className="install-link"
           onClick={() => {
             if (prompt.current) prompt.current.prompt();
-            else setModal("install");
+            else openModal("install");
           }}
         >
           <DeviceMobile size={16} />
@@ -901,26 +873,30 @@ export default function ReaderApp() {
       <div
         className={`app-shell ${p.book ? "has-player" : ""} ${reading ? "is-reading" : ""}`}
       >
-        <aside className={`sidebar ${drawer ? "drawer-open" : ""}`}>
-          {sidebar}
-        </aside>
-        {drawer && (
-          <button
-            className="drawer-scrim"
-            aria-label="Close menu"
-            onClick={() => setDrawer(false)}
-          />
+        {!narrow && <aside className="sidebar">{sidebar}</aside>}
+        {narrow && drawer && (
+          <Modal
+            title="Your library"
+            className="library-drawer"
+            closeLabel="Close library menu"
+            onClose={() => setDrawer(false)}
+          >
+            {sidebar}
+          </Modal>
         )}
         <div className="main-shell">
           <header className="topbar">
             <div className="topbar-left">
-              <IconButton
-                label="Open library menu"
-                className="mobile-menu"
+              <button
+                type="button"
+                aria-label="Open library menu"
+                aria-haspopup="dialog"
+                aria-expanded={drawer}
+                className="icon-button mobile-menu"
                 onClick={() => setDrawer(true)}
               >
                 <List />
-              </IconButton>
+              </button>
               <span className="breadcrumb">
                 MY LIBRARY
                 {reading && (
@@ -934,7 +910,7 @@ export default function ReaderApp() {
             <div className="topbar-right">
               <button
                 className="voice-menu-button"
-                onClick={() => setModal("voices")}
+                onClick={() => openModal("voices")}
                 aria-label="Choose narration voice"
               >
                 <Headphones size={16} />
@@ -943,7 +919,10 @@ export default function ReaderApp() {
               <span className="topbar-note">
                 <span className="status-dot" />A place to slow down
               </span>
-              <IconButton label="Reading help" onClick={() => setModal("help")}>
+              <IconButton
+                label="Reading help"
+                onClick={() => openModal("help")}
+              >
                 <Headphones />
               </IconButton>
             </div>
@@ -967,14 +946,14 @@ export default function ReaderApp() {
                   onTheme={setTheme}
                   onAnnotate={(draft, kind) => {
                     if (isGuest) {
-                      setModal("join");
+                      openModal("join");
                       return;
                     }
                     if (kind === "note") {
                       setNoteDraft(draft);
                       setEditingNote(null);
                       setNoteText("");
-                      setModal("notes");
+                      openModal("notes");
                       return;
                     }
                     const highlight: ReaderNote = {
@@ -1059,7 +1038,7 @@ export default function ReaderApp() {
                   </div>
                   <button
                     className="text-button"
-                    onClick={() => setModal(isGuest ? "join" : "import")}
+                    onClick={() => openModal(isGuest ? "join" : "import")}
                   >
                     <Plus size={17} />
                     Add a book
@@ -1214,7 +1193,7 @@ export default function ReaderApp() {
                     </p>
                     <button
                       className="primary-button"
-                      onClick={() => setModal(isGuest ? "join" : "import")}
+                      onClick={() => openModal(isGuest ? "join" : "import")}
                     >
                       <Plus />
                       Add your first book

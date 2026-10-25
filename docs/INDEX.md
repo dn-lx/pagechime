@@ -90,4 +90,5 @@ Run `node scripts/validate-docs.mjs` to check documentation structure/references
 - `docs/REQ-011-VERIFICATION.md` — guest/member, email signup, password reveal and security evidence.
 - `docs/REQ-012-VERIFICATION.md` — restored private library, word cues, asset capability and Neural2 verification.
 - `docs/REQ-013-VERIFICATION.md` — fullscreen, 10-second controls, source-preserving repairs and develop acceptance.
+- `docs/REQ-014-VERIFICATION.md` — dismissible settings, shared dialog and mobile drawer regression evidence.
 - `docs/READER-ACCOUNTS.md` — standalone Me+ accounts, first admin, Netlify setup and verification.

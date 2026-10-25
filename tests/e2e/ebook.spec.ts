@@ -182,7 +182,9 @@ test("reading place survives reflow, audio saves and reload; appearance is acces
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
   expect(a.violations).toEqual([]);
-  await page.getByLabel("Reading appearance", { exact: true }).click();
+  await page
+    .getByRole("button", { name: "Close reading appearance", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Play narration", exact: true })
     .click();
