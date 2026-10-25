@@ -34,7 +34,9 @@ export type Book = {
   duration: number;
   timing?: string;
   local?: boolean;
-  narration?: "kokoro" | "google";
+  narration?: "kokoro" | "google" | "piper";
+  preparedNarrations?: { piper?: string };
+  sourceBookId?: string;
   alternateNarration?: string;
   editions?: { label: string; kind: "pdf" | "epub"; url: string }[];
   timingProvenance?: string;
@@ -315,6 +317,17 @@ export function validateBook(value: unknown): Book {
     )
   )
     throw new Error("This book file is incomplete.");
+  if (b.sourceBookId !== undefined &&
+      (typeof b.sourceBookId !== "string" || !/^[A-Za-z0-9_-]+$/.test(b.sourceBookId)))
+    throw Error("A narration has an invalid source book.");
+  if (b.preparedNarrations !== undefined &&
+      (!b.preparedNarrations || typeof b.preparedNarrations !== "object" ||
+       Array.isArray(b.preparedNarrations) ||
+       Object.entries(b.preparedNarrations).some(([kind, url]) =>
+         kind !== "piper" || typeof url !== "string" ||
+         !url.startsWith(`/books/${b.id}/`) ||
+         !/^\/books\/[A-Za-z0-9_-]+\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\.json$/.test(url))))
+    throw Error("A prepared narration has an invalid address.");
   if (
     b.editions !== undefined &&
     (!Array.isArray(b.editions) ||
@@ -362,6 +375,7 @@ export function validateBook(value: unknown): Book {
 }
 
 export * from "./reader-account";
+export * from "./narration-position";
 
 export * from "./reading";
 export * from "./word-following";

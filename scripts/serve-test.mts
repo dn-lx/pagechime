@@ -123,6 +123,7 @@ http
           ...manifestGuestPaths,
           "/library.json",
           "/books/demo/book.json",
+          "/books/demo/piper.json",
           "/books/demo/book.pdf",
           "/books/demo/1.wav",
           "/books/demo/2.wav",
@@ -134,7 +135,7 @@ http
       }
       let body: Buffer, type: string;
       if (path === "/library.json") {
-        body = Buffer.from(
+        body = process.env.READER_TEST_MANIFEST === "1" ? await readFile(resolve(root, "library.json")) : Buffer.from(
           JSON.stringify({
             books: [
               {
@@ -148,14 +149,14 @@ http
         );
         type = "application/json";
       } else if (path.startsWith("/books/demo/")) {
-        const name = path.endsWith("book.json")
+        const name = (path.endsWith("book.json") || path.endsWith("piper.json"))
           ? "book.json"
           : path.endsWith(".pdf")
             ? "book.pdf"
             : "audio.wav";
         // Isolated browser contexts choose a corpus without bypassing the real worker/auth path.
         const corpus =
-          /(?:^|; )reader-test-corpus=(long|mixed|untimed|words|mixedwords|editions|references|repaired)(?:;|$)/.exec(
+          /(?:^|; )reader-test-corpus=(long|mixed|untimed|words|mixedwords|editions|references|repaired|voices)(?:;|$)/.exec(
             req.headers.cookie || "",
           )?.[1];
         const wordBook = JSON.parse(
@@ -175,7 +176,13 @@ http
         editionBook.editions = [
           { label: "Cozy PDF", kind: "pdf", url: "/books/demo/cozy.pdf" },
         ];
+        const voiceBase = JSON.parse(await readFile("tests/fixtures/book.json", "utf8"));
+        const piperBook = { ...voiceBase, id: "demo-piper", sourceBookId: "demo", narration: "piper",
+          chapters: [{ ...voiceBase.chapters[0], title: "Piper reading", duration: 8,
+            segments: voiceBase.chapters.flatMap((c: any) => c.segments)
+              .map((s: any, i: number) => ({ ...s, start: i * 2, end: i * 2 + 2 })) }] };
         const variants = {
+          voices: { ...voiceBase, preparedNarrations: { piper: "/books/demo/piper.json" } },
           references: {
             ...wordBook,
             chapters: [0, 1, 0, 1, 0].map((n, i) => ({
@@ -195,7 +202,7 @@ http
         body =
           name === "book.json" && corpus
             ? Buffer.from(
-                JSON.stringify(variants[corpus as keyof typeof variants]),
+                JSON.stringify(path.endsWith("/piper.json") && corpus === "voices" ? piperBook : variants[corpus as keyof typeof variants]),
               )
             : await readFile(resolve("tests/fixtures", name));
         type = types[extname(name)];

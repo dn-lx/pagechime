@@ -57,7 +57,7 @@ import {
   globalPosition,
   listeningLength,
   segmentAt,
-  narrationOffset,
+  narrationPosition,
   validateBook,
   validateTimedBook,
 } from "@pagechime/core";
@@ -362,34 +362,28 @@ export default function ReaderApp() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [reading, p.book, p.toggle, p.skip, addMark]);
-  async function chooseNarration(kind: "kokoro" | "google") {
+  async function chooseNarration(kind: "kokoro" | "google" | "piper") {
     if (!p.book) {
       notify("Open a book to choose its narration.");
       return;
     }
-    const base = books.find((b) => b.id === p.book!.id) || p.book;
+    const base = books.find((b) => b.id === (p.book!.sourceBookId || p.book!.id)) || p.book;
     try {
       let next = base;
-      if (kind === "google") {
-        if (!base.alternateNarration) return;
-        const url = new URL(base.alternateNarration, location.href);
-        if (
-          url.origin !== location.origin ||
-          !url.pathname.startsWith("/books/")
-        )
-          throw Error();
+      if (kind !== "kokoro") {
+        const address = kind === "google" ? base.alternateNarration : base.preparedNarrations?.piper;
+        if (!address) return;
+        const url = new URL(address, location.href);
+        if (url.origin !== location.origin || !url.pathname.startsWith("/books/")) throw Error();
         const response = await fetch(url, { cache: "no-store" });
         if (!response.ok) throw Error();
         next = validateBook(await response.json());
-        if (next.id !== base.id || next.narration !== "google") throw Error();
+        if (next.narration !== kind || (kind === "piper"
+          ? next.id !== `${base.id}-piper` || next.sourceBookId !== base.id
+          : next.id !== base.id)) throw Error();
       }
-      const index = segmentAt(p.book.chapters[p.chapter].segments, p.time);
-      const current = p.book.chapters[p.chapter].segments[index],
-        offset = narrationOffset(current, p.time);
-      const target = next.chapters[p.chapter]?.segments[index];
-      if (!target || target.text !== current?.text) throw Error();
-      const cue = target.words?.find((w) => w.from <= offset && w.to > offset);
-      p.load(p.chapter, cue?.start ?? target.start, p.playing, next);
+      const position = narrationPosition(p.book, p.chapter, p.time, next);
+      p.load(position.chapter, position.time, p.playing, next);
       setReaderKey((k) => k + 1);
       setReading(true);
       setModal("");
@@ -1278,12 +1272,26 @@ export default function ReaderApp() {
                   <strong>Kokoro · Emma</strong>
                   <p>Warm, gently paced narration</p>
                   <span>
-                    {p.book?.narration === "google"
-                      ? "Available"
-                      : "Selected · ready to listen"}
+                    {!p.book?.narration || p.book.narration === "kokoro"
+                      ? "Selected · ready to listen" : "Choose this narration"}
                   </span>
                 </div>
-                {p.book && p.book.narration !== "google" && <Check size={20} />}
+                {p.book && (!p.book.narration || p.book.narration === "kokoro") && <Check size={20} />}
+              </button>
+              <button
+                className="voice-choice"
+                disabled={!books.find((b) => b.id === (p.book?.sourceBookId || p.book?.id))?.preparedNarrations?.piper}
+                onClick={() => void chooseNarration("piper")}
+              >
+                <Headphones size={23} />
+                <div>
+                  <strong>Piper · Cori</strong>
+                  <p>British English · female</p>
+                  <span>{p.book?.narration === "piper" ? "Selected · ready to listen"
+                    : books.find((b) => b.id === (p.book?.sourceBookId || p.book?.id))?.preparedNarrations?.piper
+                      ? "Choose this narration" : "Not enabled"}</span>
+                </div>
+                {p.book?.narration === "piper" && <Check size={20} />}
               </button>
               <button
                 className="voice-choice"
@@ -1308,8 +1316,7 @@ export default function ReaderApp() {
               </button>
             </div>
             <p className="muted voice-intro">
-              Emma’s narration is ready to play. Google narration can be added
-              as a prepared recording.
+              Switching voices resumes at the nearest matching passage.
             </p>
           </Modal>
         )}

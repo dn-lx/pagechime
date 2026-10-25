@@ -2419,7 +2419,7 @@ progress::-webkit-progress-value {
 }
 .voice-choice span {
   font-size: 10px;
-  color: var(--olive);
+  color: var(--olive-deep);
 }
 .voice-choice:disabled {
   background: transparent;

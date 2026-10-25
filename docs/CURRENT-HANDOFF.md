@@ -3,16 +3,16 @@
 Updated 2026-10-25 (Europe/Madrid).
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-016","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"implementing","last_verified_sha":"b8adcd44b3fe50bef16c11e948dc27ee4294d5cf","next_step":"Continue private three-engine full narration generation from verified chunks; save durable checkpoints and full recordings. No sample UI/assets on website; Google stays blocked.","updated_at":"2026-10-25T05:42:07.690790+00:00"}
+{"task_id":"REQ-016","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"implementing","last_verified_sha":"b9acd082a4e891db6eca860419d42567584a0c50","next_step":"Verify Piper develop deploy and remote CI; resume Qwen/Chatterbox checkpoints when compute is available. Google stays blocked.","updated_at":"2026-10-25T07:53:01.430Z"}
 <!-- AGENT_TASK_STATE_END -->
 
-## Full narrations in progress — REQ-016
+## Piper website and unfinished recordings — REQ-016
 
-Owner requests all three full recordings, British female preferred; any available voice permitted as fallback. Source recovered from supplied edition ZIP. Private plan under /workspace/scratch/452ae38be48c/full-recordings/plan.json:36,025 narrative words,715 loss-checked chunks,9 logical spine chapters introduction→epilogue. Previous request skips cover/contents/references. No source text/audio in Git. Models/envs under /tmp/pagechime-voice-lab: Qwen0.6B Base reuses the Qwen-designed synthetic British-female reference for consistency; Chatterbox Nano uses that reference; Piper uses Cori British female. No real-person cloning or paid API.
+Owner explicitly requests full Piper added to develop; no short samples. Complete private MP3:12,397.920s,715 chunks,36,025 narrative words. Filename Manifest-in-Action-Piper.mp3, Library libfile_32ae1fd154488191b47d9a92fdcd2003. Site packages17 chapters with exact passage boundaries, no inherited word cues. Separate manifest-piper identity isolates progress/notes/bookmarks. Nearest-passage voice switching and declared-path guest traversal are implemented; source CI/deploy pending.
 
-Scripts prepare-voice-book.py/record-voice-book.py/finalize-voice-book.py implement offline inference, cache fingerprints/hashes, exclusive workers, cooperative pause controls and full output decoding. First two chunks/engine transcribed with offline tiny.en: similarity0.922–1.000; this is sampled acoustic evidence, not a full audiobook proofread. Memory paging requires adjusted scheduling using preserved chunks. Private artifacts/checkpoints must be saved durably as work proceeds. No full recording delivered yet.
+Private current version94da1b70b50c4009a99e2bb11dc94c3d2a02e4b2a4c4a815fad56cfa7bf2334f:45 files/187,054,263bytes. Fresh complete hash restore verified; both temporary capabilities expired (1 existing build/0 upload active). Encoding intermediates excluded before deployment. No private book/media or keys in Git.
 
-REQ-015's short samples remain owner-only. No sample UI/assets on website; unpublished preview removed. REQ-014 source2a677130 has45 unit/74 browser passes,2 private skips and CI40162568905 success; hosted verification still needs authenticated Netlify access. See docs/REQ-014-VERIFICATION.md. Low contrast in existing tiny selected-voice status label remains a noted follow-up, without a repair in this audio-only work.
+Compute became unavailable before source synchronization; website changes were recovered through GitHub MCP. Earlier local48 Node/4 targeted fixture/4 real-book browser checks passed; reconstructed exact revision needs remote CI. Local workers cannot be claimed active. Latest observed Qwen39/Chatterbox>=70. Durable checkpoint ZIPs version1 contain38/43 chunks: libfile_6c7f4ad27d2081918be19f3472d74398 / libfile_91cc8030ae308191b8ddb710c0019fad. Resume sequentially when compute returns. Full details/model provenance/private plan paths in docs/plans/REQ-016-full-local-narrations.md. Qwen/Chatterbox are not website recordings.
 
 ## Policy and current work
 
@@ -32,7 +32,7 @@ Book: Manifest in Action,237 pages,19 chapters,1,136 passages; full Kokoro Emma 
 
 Me+ wbqnctrvxohxwiaignhg, isolated bucket pagechime-library-develop,24MiB file cap, no anon/authenticated storage policies. pagechime-library v1 verifies capability auth despite verify_jwt=false. book_reader_library_keys has RLS/revoked public grants. Existing read-only build capability cannot modify assets or accounts.
 
-Current published immutable version0e4a2bc8f8faf3292e231cd8fd2ce50e330cc8f075c021b9ecb755c4350824ae:27 files/87,290,086bytes, exactly8 reference flags versus original7e6afd6087edca77f985476fab4019017651843388c6f4d23cc2e24e29d0bdca. Fresh restore verifies27 hashes. Temporary upload capability expired, subsequent401; active1 build/0 upload, expired audit row retained. A new editorial upload was blocked by automatic approval review because private-book disclosure to Supabase was not explicitly authorized. No upload/publish retry: current pointer unchanged,0 recent objects. The new temporary upload key was expired; subsequent401 and active uploads0. A safer source-only hash-bound plan in scripts/book-reading-repairs.json applies metadata during prepare-assets after verified restore, with no book text in Git or new Supabase payload. Never print tokens or signed URLs.
+Earlier immutable library0e4a2bc8f8faf3292e231cd8fd2ce50e330cc8f075c021b9ecb755c4350824ae had27 files; the current Piper version above preserves those originals. Earlier editorial upload was denied without disclosure authorization; current owner instruction explicitly authorizes full Piper website upload. Hash-bound reading overlays and all original Kokoro cues remain. Never print capabilities or signed URLs.
 
 ## Hosting and remaining acceptance
 

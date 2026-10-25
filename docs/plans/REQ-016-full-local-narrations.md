@@ -25,3 +25,13 @@ Current partial private chunks are under /workspace/scratch/452ae38be48c/full-re
 ## Remaining acceptance
 
 Full generation, complete output decoding, final private saves and delivery are pending. Later app integration is separate and must retain exact new voice timings and existing reader security boundaries. REQ-014 hosted verification remains separately blocked by Netlify sign-in.
+
+## Piper publication follow-up
+
+Owner explicitly authorizes completed Piper on the existing develop website. All715 chunks were generated;17 unclear takes were repaired and checked by independent offline recognition. Final MP3 fully decoded:12,397.920s,99,183,679bytes,SHA2560143e1a3c84fcc63e7c77fd8a125db8cc40459a88cf01a235756e550e865611b. This is automated acoustic screening, not a human proofread.
+
+Package seventeen <=18min MP3 chapters under existing private limits; exact chunk passage times, no inherited word cues. PDF offset7 matches narrative headings. Distinct manifest-piper identity preserves separate saved positions/bookmarks/notes, with nearest-passage switching. Traverse declared voice manifests through the existing exact-path guest allowlist. New immutable private version94da1b70b50c4009a99e2bb11dc94c3d2a02e4b2a4c4a815fad56cfa7bf2334f has45 files/187,054,263bytes; fresh complete hash restore verified. Both temporary capabilities expired; existing read-only Netlify build capability retained. Private media never belongs in Git.
+
+Before the compute outage,48 Node checks, web build,4 targeted fixture browser checks and4 real-book browser checks passed across desktop/mobile. All17 encoded files fully decoded. Voice-menu contrast and mobile copy were corrected. The environment became unavailable before source synchronization; equivalent website changes and regression tests were recovered through GitHub MCP and require current remote CI. Develop only; preserve main, hosting gate, Google $0 block and original Kokoro.
+
+Qwen39 chunks and Chatterbox at least70 were last observed locally. Saved checkpoint ZIPs contain38 and43 respectively, version1 each. Compute is currently unavailable, so no running-worker claim. Resume verified caches when a workspace returns, keeping generation sequential to avoid7.7GiB resident Torch memory/paging. Remaining renderer improvements (lexical duration bounds for slash lists, seeded retakes, short-clause Piper repairs) were local-only when the outage occurred; recover from saved preparation scripts/checkpoints and inspect before resuming. Full generation and two private final deliverables remain open.

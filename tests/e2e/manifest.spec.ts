@@ -12,14 +12,14 @@ test("restored Manifest guest library, real word following, chapter boundaries a
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
   await page.getByRole("button", { name: "Continue as guest" }).click();
-  await expect(page.locator(".featured-book")).toContainText(
+  await expect(page.locator(".featured-book").first()).toContainText(
     "Manifest in Action",
   );
   await page.screenshot({
     path: info.outputPath("manifest-library.png"),
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Open book", exact: true }).click();
+  await page.getByRole("button", { name: "Open book", exact: true }).first().click();
   await expect(page.locator(".ebook-heading")).toContainText("Chapter 5 of 19");
   await page
     .getByRole("button", { name: "Enter fullscreen", exact: true })
@@ -189,5 +189,35 @@ test("restored Manifest guest library, real word following, chapter boundaries a
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
   expect(axe.violations).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test("complete Piper edition plays for guests and preserves Kokoro", async ({ page }, info) => {
+  const errors: string[] = [];
+  page.on("pageerror", e => errors.push(e.message));
+  await page.goto("/");
+  await page.getByRole("button", { name: "Continue as guest" }).click();
+  await expect(page.locator(".featured-book")).toHaveCount(2);
+  await expect(page.locator(".secondary-book")).toContainText("Piper");
+  await page.getByRole("button", { name: "Open book", exact: true }).first().click();
+  await page.getByRole("button", { name: "Choose narration voice" }).click();
+  await page.getByRole("button", { name: /Piper · Cori/ }).click();
+  await expect(page.locator(".ebook-heading")).toContainText("Chapter 1 of 17");
+  const book = await (await page.request.get("/books/manifest/piper/book.json")).json();
+  expect(book.id).toBe("manifest-piper");
+  expect(book.chapters.flatMap((c: any) => c.segments)).toHaveLength(715);
+  expect(book.chapters.flatMap((c: any) => c.segments).some((s: any) => s.words)).toBe(false);
+  expect(book.duration).toBeGreaterThan(12390);
+  const range = await page.request.get(book.chapters[0].audio, { headers: { Range: "bytes=0-1023" } });
+  expect(range.status()).toBe(206);
+  expect((await range.body()).length).toBe(1024);
+  await page.getByRole("button", { name: "Play narration", exact: true }).click();
+  await expect.poll(async () => Number(await page.getByLabel("Chapter playback position").inputValue())).toBeGreaterThan(0);
+  await page.getByRole("button", { name: "Pause narration", exact: true }).click();
+  await page.screenshot({ path: info.outputPath("piper-real-reading.png"), fullPage: true });
+  await page.getByRole("button", { name: "Choose narration voice" }).click();
+  await expect(page.getByRole("button", { name: /Piper · Cori/ })).toContainText("Selected");
+  await page.getByRole("button", { name: /Kokoro · Emma/ }).click();
+  await expect(page.locator(".ebook-heading")).toContainText("Chapter 5 of 19");
   expect(errors).toEqual([]);
 });

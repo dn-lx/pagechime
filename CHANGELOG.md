@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add the complete British female Piper Cori recording to the develop library, with its own saved positions, passage timing and voice switching across chapter layouts. Preserve Kokoro and the Google $0 block. Intended impact: patch.
+
 - Add private, resumable full-book voice preparation with source-word fidelity, chunk integrity checks, exclusive workers and complete audio decoding. No app/runtime change.
 
 - Add an offline CPU voice-audition preparation script and model provenance for owner-only Qwen, Chatterbox and Piper samples. No website clips or runtime changes.

@@ -225,3 +225,27 @@ test("chapter end advances narration", async ({ page }) => {
     .getByRole("button", { name: "Pause narration", exact: true })
     .click();
 });
+
+test("Piper can play, switch chapter layouts and return to Kokoro", async ({ page }, info) => {
+  const errors: string[] = [];
+  page.on("pageerror", e => errors.push(e.message));
+  await page.context().addCookies([{ name: "reader-test-corpus", value: "voices", url: "http://localhost:4174" }]);
+  await open(page);
+  await page.getByRole("button", { name: "Next audio chapter" }).click();
+  await page.getByRole("button", { name: "Choose narration voice" }).click();
+  await expect(page.getByRole("button", { name: /Piper · Cori/ })).toBeEnabled();
+  const voiceA11y = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
+  expect(voiceA11y.violations).toEqual([]);
+  await page.screenshot({ path: info.outputPath("piper-voice-choice.png"), fullPage: true });
+  await page.getByRole("button", { name: /Piper · Cori/ }).click();
+  await expect(page.getByRole("heading", { name: "Piper reading", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Chapter playback position")).toHaveValue("4");
+  await page.getByRole("button", { name: "Play narration", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Pause narration", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Choose narration voice" }).click();
+  await expect(page.getByRole("button", { name: /Piper · Cori/ })).toContainText("Selected");
+  await page.getByRole("button", { name: /Kokoro · Emma/ }).click();
+  await expect(page.getByRole("heading", { name: "The next page", exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(errors).toEqual([]);
+});

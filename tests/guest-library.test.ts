@@ -42,6 +42,16 @@ test("guest build exposes catalog references only and fails closed for missing o
       "/books/demo/book.pdf",
       "/library.json",
     ]);
+    await writeFile(join(root, "books/demo/piper.json"), JSON.stringify({ ...book,
+      chapters: [{ audio: "/books/demo/piper.mp3" }] }));
+    await writeFile(join(root, "books/demo/piper.mp3"), "private voice fixture");
+    await save({ ...book, preparedNarrations: { piper: "/books/demo/piper.json" } });
+    const prepared = await guestLibraryPaths(root);
+    assert.ok(prepared.includes("/books/demo/piper.json"));
+    assert.ok(prepared.includes("/books/demo/piper.mp3"));
+    assert.ok(!prepared.includes("/books/demo/unlisted.pdf"));
+    await save({ ...book, preparedNarrations: { piper: "https://outside.test/piper.json" } });
+    await assert.rejects(guestLibraryPaths(root));
     for (const pdf of [
       "/books/demo/missing.pdf",
       "https://outside.test/private.pdf",
