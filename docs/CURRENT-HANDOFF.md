@@ -3,7 +3,7 @@
 Updated 2026-10-25 (Europe/Madrid).
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-016","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"implementing","last_verified_sha":"ef3878f6109ff37caae0d2dc4762d3d8600f4ba4","next_step":"Monitor restored model downloads/supervisor, verify accepted audio progress and checkpoint saves. No running-render claim until actual status advances.","updated_at":"2026-10-25T10:17:09.765590+00:00"}
+{"task_id":"REQ-016","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"implementing","last_verified_sha":"ef3878f6109ff37caae0d2dc4762d3d8600f4ba4","next_step":"Monitor alternating offline narration batches and guarded checkpoint saves; finish715 sections per engine, fully decode MP3s and save private deliverables.","updated_at":"2026-10-25T10:35:04.923Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
@@ -16,7 +16,7 @@ Local checks:51 Node tests/types/docs,80 browser passes/4 private skips, web exp
 
 Piper is complete and published privately as45 declared files/187,054,263bytes, immutable version94da1b70b50c4009a99e2bb11dc94c3d2a02e4b2a4c4a815fad56cfa7bf2334f. Temporary capabilities expired;1 existing build/0 upload active. Original Kokoro/editions retained. Piper website source fc6fe2c passes CI40174845078 (48 Node/76 browser), with its own manifest-piper identity and real passage boundaries.
 
-New workspace lacks prior models/caches. Recovered and hash-verified Library version1 checkpoints:38/715 Qwen sections (695.2s),43/715 Chatterbox (825.92s). Local ZIPs/extracted copies: /workspace/scratch/452ae38be48c/recovered-recordings/{qwen,chatterbox}. Library IDs libfile_6c7f4ad27d2081918be19f3472d74398 / libfile_91cc8030ae308191b8ddb710c0019fad. Pinned environments restored; model files downloading. Supervisor session62422 waits for all pinned file sizes/hashes, then runs Chatterbox followed by Qwen in10-section batches with guarded Library checkpoints. Status: recovered-recordings/execution-status.json. No accepted progress beyond38/43 yet. If a save is uncertain, stop and reconcile before retrying. Do not report old39/>=70 unsaved host counts as recovered progress. Sequential CPU scheduling avoids7.7GiB paging. Model provenance and full Piper download: docs/plans/REQ-016-full-local-narrations.md.
+Both pinned models/reference restored and hash-verified. New accepted audio saved to Library version2: Qwen42/715 (765.12s), Chatterbox46/715 (878.00s); restored base38/43, older unsaved host counts unavailable. Library IDs libfile_6c7f4ad27d2081918be19f3472d74398 / libfile_91cc8030ae308191b8ddb710c0019fad. Active session57469: /workspace/scratch/452ae38be48c/recovered-recordings/continue-restored.py. Status: recovered-recordings/execution-status.json; checkpoint-state/save-receipt JSONs beside engine directories. One offline6-thread worker alternates10-section batches; Qwen rendering next. Initial short verification batches saved and complete ZIP audio hashes checked. ZIPs include scripts/pinned-file manifests, with spoken-word duration bounds for slash lists and3 bounded seeded Chatterbox retries. Each checkpoint replacement uses the expected saved version; uncertain saves stop for reconciliation. Re-check processes/status after host loss before restarting. Finalize only after715 sections, decode full MP3s and save privately. Model provenance/full Piper download: docs/plans/REQ-016-full-local-narrations.md.
 
 ## Policy and current work
 
