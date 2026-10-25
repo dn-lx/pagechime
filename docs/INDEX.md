@@ -96,3 +96,5 @@ Run `node scripts/validate-docs.mjs` to check documentation structure/references
 - `docs/plans/REQ-015-free-voice-auditions.md` — Owner-only local voice audition preparation and verification evidence.
 
 - `docs/plans/REQ-016-full-local-narrations.md` — Private resumable full-book generation for three local engines.
+
+- Reader/narration position synchronization: [REQ-017](plans/REQ-017-reader-narration-position.md).

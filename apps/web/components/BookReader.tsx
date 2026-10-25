@@ -63,7 +63,14 @@ export type AnnotationDraft = {
   endSegment: number;
   endOffset: number;
 };
+export type ReadingLocation = {
+  bookId: string;
+  anchor: ReadingAnchor;
+  follow: boolean;
+  mode: "text" | "pdf";
+};
 type Props = {
+  onReadingPosition: (location: ReadingLocation) => void;
   p: Playback;
   addMark: (location?: Partial<Bookmark>) => void;
   notes: ReaderNote[];
@@ -107,6 +114,7 @@ function markedText(
 
 export default function BookReader({
   p,
+  onReadingPosition,
   addMark,
   notes,
   onAnnotate,
@@ -122,12 +130,15 @@ export default function BookReader({
   const book = p.book!,
     audioChapter = book.chapters[p.chapter];
   const audioIndex = segmentAt(audioChapter.segments, p.time);
-  const initialPlace = readSaved<Progress | null>(
+  const request =
+    p.readingRequest?.bookId === book.id ? p.readingRequest : null;
+  const savedPlace = readSaved<Progress | null>(
     "progress." + book.id,
     null,
   )?.reading;
+  const initialPlace = request?.anchor ?? savedPlace;
   const [follow, setFollow] = useState(
-    readSaved("follow." + book.id, !initialPlace),
+    request?.follow ?? readSaved("follow." + book.id, !initialPlace),
   );
   const [appearance, setAppearance] = useState(() =>
     readingAppearance(readSaved("reading.appearance", null)),
@@ -198,7 +209,7 @@ export default function BookReader({
     resize();
     return () => observer.disconnect();
   }, [mode, appearance.width]);
-  const [wordClock, setWordClock] = useState(p.time);
+  const [, setWordClock] = useState(p.time);
   useEffect(() => {
     let frame = 0,
       previous = "";
@@ -216,12 +227,15 @@ export default function BookReader({
     if (p.playing) sample();
     else setWordClock(p.time);
     return () => cancelAnimationFrame(frame);
-  }, [p.playing, p.chapter, p.clock, p.playing ? null : p.time, audioChapter]);
-  const trackingTime = audioChapter.segments[
-    segmentAt(audioChapter.segments, p.time)
-  ]?.words?.length
-    ? wordClock
-    : p.time;
+  }, [
+    p.playing,
+    p.chapter,
+    p.clock,
+    p.playing ? null : p.time,
+    audioChapter,
+    request?.id,
+  ]);
+  const trackingTime = p.loading || !p.playing ? p.time : p.clock();
   const trackingIndex = segmentAt(audioChapter.segments, trackingTime);
   const activeIndex = readingChapter === p.chapter ? trackingIndex : -1;
   const spoken = audioChapter.segments[trackingIndex];
@@ -233,16 +247,67 @@ export default function BookReader({
     Math.max(0, trackingIndex),
     spokenOffset,
   );
+  const pendingFollow = useRef<ReadingAnchor | null>(
+    request?.preserve ? request.anchor : null,
+  );
   useEffect(() => {
-    if (follow) {
+    if (!request) return;
+    pendingFollow.current = request.preserve ? request.anchor : null;
+    setAnchor(request.anchor);
+    setFollow(request.follow);
+  }, [request?.id, book.id]);
+  useEffect(() => {
+    onReadingPosition({
+      bookId: book.id,
+      anchor:
+        follow && !pendingFollow.current
+          ? {
+              chapter: p.chapter,
+              segment: Math.max(0, trackingIndex),
+              offset: spokenOffset,
+            }
+          : anchor,
+      follow,
+      mode,
+    });
+  }, [
+    book.id,
+    anchor,
+    follow,
+    mode,
+    p.chapter,
+    trackingIndex,
+    spokenOffset,
+    onReadingPosition,
+  ]);
+  useEffect(() => {
+    if (follow && !p.loading) {
+      const pending = pendingFollow.current;
+      if (
+        pending &&
+        pending.chapter === p.chapter &&
+        pending.segment === trackingIndex &&
+        spokenOffset < pending.offset
+      )
+        return;
+      pendingFollow.current = null;
       setAnchor({
         chapter: p.chapter,
         segment: Math.max(0, trackingIndex),
         offset: spokenOffset,
       });
-      p.setPage(spoken?.page || audioChapter.firstPage || 1);
+      const page = spoken?.page || audioChapter.firstPage || 1;
+      if (p.page !== page) p.setPage(page);
     }
-  }, [p.chapter, trackingIndex, narratorPage, follow]);
+  }, [
+    p.chapter,
+    trackingIndex,
+    narratorPage,
+    follow,
+    request?.id,
+    p.loading,
+    pendingFollow.current ? spokenOffset : undefined,
+  ]);
   useEffect(() => {
     if (!chapter.segments.length) {
       setMode("pdf");
@@ -524,7 +589,10 @@ export default function BookReader({
             aria-label={follow ? "Following audio" : "Follow audio"}
             aria-pressed={follow}
             disabled={!chapter.segments.length}
-            onClick={() => setFollow(!follow)}
+            onClick={() => {
+              pendingFollow.current = null;
+              setFollow(!follow);
+            }}
           >
             <Headphones size={16} />
             <span>{follow ? "Following audio" : "Follow audio"}</span>

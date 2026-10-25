@@ -68,7 +68,10 @@ import AccountPanel from "./AccountPanel";
 import Modal from "./Modal";
 import { usePlayback, type Playback } from "../lib/playback";
 import { pdfLibrary } from "../lib/pdf";
-import Reader, { type AnnotationDraft } from "./BookReader";
+import Reader, {
+  type AnnotationDraft,
+  type ReadingLocation,
+} from "./BookReader";
 const spring = { type: "spring" as const, stiffness: 280, damping: 30 };
 function IconButton({
   label,
@@ -178,6 +181,10 @@ export default function ReaderApp() {
     timeout.current = setTimeout(() => setNotice(""), 4500);
   }, []);
   const p = usePlayback(notify, storage);
+  const readingLocation = useRef<ReadingLocation | null>(null);
+  const reportReadingPosition = useCallback((location: ReadingLocation) => {
+    readingLocation.current = location;
+  }, []);
   useEffect(() => {
     const query = matchMedia("(max-width: 767px)");
     const changed = () => {
@@ -367,23 +374,61 @@ export default function ReaderApp() {
       notify("Open a book to choose its narration.");
       return;
     }
-    const base = books.find((b) => b.id === (p.book!.sourceBookId || p.book!.id)) || p.book;
+    const base =
+      books.find((b) => b.id === (p.book!.sourceBookId || p.book!.id)) ||
+      p.book;
     try {
       let next = base;
       if (kind !== "kokoro") {
-        const address = kind === "google" ? base.alternateNarration : base.preparedNarrations?.piper;
+        const address =
+          kind === "google"
+            ? base.alternateNarration
+            : base.preparedNarrations?.piper;
         if (!address) return;
         const url = new URL(address, location.href);
-        if (url.origin !== location.origin || !url.pathname.startsWith("/books/")) throw Error();
+        if (
+          url.origin !== location.origin ||
+          !url.pathname.startsWith("/books/")
+        )
+          throw Error();
         const response = await fetch(url, { cache: "no-store" });
         if (!response.ok) throw Error();
         next = validateBook(await response.json());
-        if (next.narration !== kind || (kind === "piper"
-          ? next.id !== `${base.id}-piper` || next.sourceBookId !== base.id
-          : next.id !== base.id)) throw Error();
+        if (
+          next.narration !== kind ||
+          (kind === "piper"
+            ? next.id !== `${base.id}-piper` || next.sourceBookId !== base.id
+            : next.id !== base.id)
+        )
+          throw Error();
       }
-      const position = narrationPosition(p.book, p.chapter, p.time, next);
-      p.load(position.chapter, position.time, p.playing, next);
+      if (next.id === p.book.id) {
+        setModal("");
+        return;
+      }
+      const visible =
+        readingLocation.current?.bookId === p.book.id
+          ? readingLocation.current
+          : null;
+      const position = narrationPosition(
+        p.book,
+        p.chapter,
+        p.time,
+        next,
+        visible?.anchor,
+      );
+      if (!position.matched) {
+        notify(
+          "This passage is not available in that narration. Your reading place was kept.",
+        );
+        return;
+      }
+      if (visible) writeSaved("view." + next.id, visible.mode);
+      p.load(position.chapter, position.time, p.playing, next, {
+        anchor: position.reading,
+        follow: visible?.follow ?? true,
+        preserve: true,
+      });
       setReaderKey((k) => k + 1);
       setReading(true);
       setModal("");
@@ -934,6 +979,7 @@ export default function ReaderApp() {
                 <Reader
                   key={p.book.id + readerKey}
                   p={p}
+                  onReadingPosition={reportReadingPosition}
                   addMark={addMark}
                   notes={notes}
                   theme={theme}
@@ -1273,23 +1319,38 @@ export default function ReaderApp() {
                   <p>Warm, gently paced narration</p>
                   <span>
                     {!p.book?.narration || p.book.narration === "kokoro"
-                      ? "Selected · ready to listen" : "Choose this narration"}
+                      ? "Selected · ready to listen"
+                      : "Choose this narration"}
                   </span>
                 </div>
-                {p.book && (!p.book.narration || p.book.narration === "kokoro") && <Check size={20} />}
+                {p.book &&
+                  (!p.book.narration || p.book.narration === "kokoro") && (
+                    <Check size={20} />
+                  )}
               </button>
               <button
                 className="voice-choice"
-                disabled={!books.find((b) => b.id === (p.book?.sourceBookId || p.book?.id))?.preparedNarrations?.piper}
+                disabled={
+                  !books.find(
+                    (b) => b.id === (p.book?.sourceBookId || p.book?.id),
+                  )?.preparedNarrations?.piper
+                }
                 onClick={() => void chooseNarration("piper")}
               >
                 <Headphones size={23} />
                 <div>
                   <strong>Piper · Cori</strong>
                   <p>British English · female</p>
-                  <span>{p.book?.narration === "piper" ? "Selected · ready to listen"
-                    : books.find((b) => b.id === (p.book?.sourceBookId || p.book?.id))?.preparedNarrations?.piper
-                      ? "Choose this narration" : "Not enabled"}</span>
+                  <span>
+                    {p.book?.narration === "piper"
+                      ? "Selected · ready to listen"
+                      : books.find(
+                            (b) =>
+                              b.id === (p.book?.sourceBookId || p.book?.id),
+                          )?.preparedNarrations?.piper
+                        ? "Choose this narration"
+                        : "Not enabled"}
+                  </span>
                 </div>
                 {p.book?.narration === "piper" && <Check size={20} />}
               </button>

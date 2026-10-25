@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Synchronize ebook position with playback chapter navigation and preserve the visible source-text anchor when switching voices across different chapter layouts. Ignore stale target-voice reading history without borrowing another voice’s timings. Intended impact: patch; develop only.
+
 - Add the complete British female Piper Cori recording to the develop library, with its own saved positions, passage timing and voice switching across chapter layouts. Preserve Kokoro and the Google $0 block. Intended impact: patch.
 
 - Add private, resumable full-book voice preparation with source-word fidelity, chunk integrity checks, exclusive workers and complete audio decoding. No app/runtime change.

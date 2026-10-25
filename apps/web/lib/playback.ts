@@ -8,8 +8,15 @@ import {
   firstListeningChapter,
   skipListeningPosition,
   segmentAt,
+  narrationOffset,
+  type ReadingAnchor,
 } from "@pagechime/core";
 import type { ReaderStorage } from "./storage";
+export type ReadingNavigation = {
+  anchor: ReadingAnchor;
+  follow: boolean;
+  preserve?: boolean;
+};
 export function usePlayback(
   notify: (s: string) => void,
   storage: ReaderStorage,
@@ -23,7 +30,43 @@ export function usePlayback(
     [loading, setLoading] = useState(false),
     [failed, setFailed] = useState(false),
     [rate, setRateState] = useState(1),
-    [sleep, setSleep] = useState(0);
+    [sleep, setSleep] = useState(0),
+    [readingRequest, setReadingRequest] = useState<
+      (ReadingNavigation & { id: number; bookId: string }) | null
+    >(null);
+  const readingRequestId = useRef(0);
+  const requestReading = (
+    b: Book,
+    chapter: number,
+    time: number,
+    navigation?: ReadingNavigation,
+  ) => {
+    const segment = Math.max(0, segmentAt(b.chapters[chapter].segments, time));
+    const next = navigation ?? {
+      anchor: {
+        chapter,
+        segment,
+        offset: narrationOffset(b.chapters[chapter].segments[segment], time),
+      },
+      follow: true,
+    };
+    writeSaved("progress." + b.id, {
+      ...readSaved<Progress | null>("progress." + b.id, null),
+      chapter,
+      time,
+      page:
+        b.chapters[chapter].segments[segment]?.page ||
+        b.chapters[chapter].firstPage ||
+        1,
+      reading: next.anchor,
+      updated: Date.now(),
+    });
+    setReadingRequest({
+      ...next,
+      id: ++readingRequestId.current,
+      bookId: b.id,
+    });
+  };
   const audio = useRef<HTMLAudioElement | null>(null),
     current = useRef<Book | null>(null),
     ci = useRef(0),
@@ -32,9 +75,15 @@ export function usePlayback(
     generation = useRef(0),
     deadline = useRef(0),
     saveAt = useRef(0),
-    loadRef = useRef<(i: number, t?: number, play?: boolean, b?: Book) => void>(
-      () => {},
-    );
+    loadRef = useRef<
+      (
+        i: number,
+        t?: number,
+        play?: boolean,
+        b?: Book,
+        reading?: ReadingNavigation,
+      ) => void
+    >(() => {});
   const save = useCallback(() => {
     const b = current.current,
       a = audio.current;
@@ -49,7 +98,13 @@ export function usePlayback(
     writeSaved("progress." + b.id, p);
   }, []);
   const load = useCallback(
-    (index: number, position = 0, autoplay = false, newBook?: Book) => {
+    (
+      index: number,
+      position = 0,
+      autoplay = false,
+      newBook?: Book,
+      reading?: ReadingNavigation,
+    ) => {
       const b = newBook || current.current,
         a = audio.current;
       if (!b || !a) return;
@@ -69,6 +124,7 @@ export function usePlayback(
       setChapter(i);
       setTime(t);
       requestedTime.current = t;
+      requestReading(b, i, t, reading);
       setFailed(false);
       const token = ++generation.current;
       setLoading(true);
@@ -186,6 +242,7 @@ export function usePlayback(
       try {
         a.currentTime = v;
         setTime(v);
+        requestReading(b, ci.current, v);
         save();
       } catch {
         notify("Audio is still loading. Try again in a moment.");
@@ -218,6 +275,13 @@ export function usePlayback(
       p?.time || 0,
       false,
       b,
+      p?.reading
+        ? {
+            anchor: p.reading,
+            follow: readSaved("follow." + b.id, false),
+            preserve: true,
+          }
+        : undefined,
     );
     if (p?.page) {
       pageRef.current = clamp(p.page, 1, b.pageCount);
@@ -315,6 +379,7 @@ export function usePlayback(
   const clock = useCallback(() => audio.current?.currentTime ?? 0, []);
   return {
     clock,
+    readingRequest,
     book,
     chapter,
     previousChapter: book

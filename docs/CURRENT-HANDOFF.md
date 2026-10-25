@@ -3,16 +3,20 @@
 Updated 2026-10-25 (Europe/Madrid).
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-016","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"fc6fe2c6a1edf9cb32a8c61ebe3ddbc203394ac2","next_step":"Confirm live Netlify develop deployment. Resume saved Qwen/Chatterbox checkpoints when compute becomes available; do not claim active workers.","updated_at":"2026-10-25T08:04:35.071Z"}
+{"task_id":"REQ-017","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"implementing","last_verified_sha":"fc6fe2c6a1edf9cb32a8c61ebe3ddbc203394ac2","next_step":"Verify and deliver reader alignment on transport/voice changes. Narrators remain paused at durable38/43 sections.","updated_at":"2026-10-25T09:57:31.786379+00:00"}
 <!-- AGENT_TASK_STATE_END -->
 
-## Piper website and unfinished recordings — REQ-016
+## Reader synchronization — REQ-017
 
-Owner explicitly requests full Piper added to develop; no short samples. Complete private MP3:12,397.920s,715 chunks,36,025 narrative words. Filename Manifest-in-Action-Piper.mp3, Library libfile_32ae1fd154488191b47d9a92fdcd2003. Site packages17 chapters with exact passage boundaries, no inherited word cues. Separate manifest-piper identity isolates progress/notes/bookmarks. Nearest-passage voice switching and declared-path guest traversal are implemented; source fc6fe2c6a1edf9cb32a8c61ebe3ddbc203394ac2 passes Application CI40174845078:48 Node tests,76 browser passes/4 private skips, web/mobile exports and567KiB/900KiB budget. Security/policy/reliability pass except known non-blocking REQ-005 advisory. First-run contrast and mobile chapter-header assertion were repaired. Live develop deployment is unverified; the available Netlify connector exposes an older published production deploy, not the current branch build.
+Playback load/seek now carries an explicit reading request, so previous/next, Contents, cross-chapter seeks and automatic advancement align a detached ebook. Opening a saved book still restores its manual place; same-chapter play/pause remains independent. Voice selection maps the visible UTF-16 source anchor through ordered normalized text across different chapter/chunk layouts, preserving view/follow state and overriding stale target history. Real cue/passage timestamps only; unmatched sections keep the original voice/place. Main and Google remain unchanged.
 
-Private current version94da1b70b50c4009a99e2bb11dc94c3d2a02e4b2a4c4a815fad56cfa7bf2334f:45 files/187,054,263bytes. Fresh complete hash restore verified; both temporary capabilities expired (1 existing build/0 upload active). Encoding intermediates excluded before deployment. No private book/media or keys in Git.
+Local checks:51 Node tests/types/docs,80 browser passes/4 private skips, web export and568/900KiB budget. Ten focused desktop/mobile cases and inspected screenshots verify round trips and retained layout. Direct live check reaches Netlify team-protection sign-in; hosted verification is blocked without weakening the gate. Remote source CI/deploy pending. See docs/plans/REQ-017-reader-narration-position.md.
 
-Compute became unavailable before source synchronization; website changes were recovered through GitHub MCP. Earlier local48 Node/4 targeted fixture/4 real-book browser checks passed; reconstructed application revision is now verified by the remote CI above. Local workers cannot be claimed active. Latest observed Qwen39/Chatterbox>=70. Durable checkpoint ZIPs version1 contain38/43 chunks: libfile_6c7f4ad27d2081918be19f3472d74398 / libfile_91cc8030ae308191b8ddb710c0019fad. Resume sequentially when compute returns. Full details/model provenance/private plan paths in docs/plans/REQ-016-full-local-narrations.md. Qwen/Chatterbox are not website recordings.
+## Recordings — REQ-016
+
+Piper is complete and published privately as45 declared files/187,054,263bytes, immutable version94da1b70b50c4009a99e2bb11dc94c3d2a02e4b2a4c4a815fad56cfa7bf2334f. Temporary capabilities expired;1 existing build/0 upload active. Original Kokoro/editions retained. Piper website source fc6fe2c passes CI40174845078 (48 Node/76 browser), with its own manifest-piper identity and real passage boundaries.
+
+New workspace lacks prior models/caches. Recovered and hash-verified Library version1 checkpoints:38/715 Qwen sections (695.2s),43/715 Chatterbox (825.92s). Local ZIPs/extracted copies: /workspace/scratch/452ae38be48c/recovered-recordings/{qwen,chatterbox}. Library IDs libfile_6c7f4ad27d2081918be19f3472d74398 / libfile_91cc8030ae308191b8ddb710c0019fad. No render worker running; model environments need restoration before resuming. Do not report old39/>=70 unsaved host counts as recovered progress. Sequential CPU scheduling avoids7.7GiB paging. Model provenance and full Piper download: docs/plans/REQ-016-full-local-narrations.md.
 
 ## Policy and current work
 
