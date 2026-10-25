@@ -7,7 +7,7 @@ Accepted scope: Next.js website and Expo React Native app, based on Agent Projec
 - Keep close controls reachable on short/narrow screens and in fullscreen. A gesture that begins inside a dialog, or a tap on its padding, must not dismiss it accidentally. Escape dismisses the current dialog without also leaving fallback fullscreen.
 - Audit reading help, voice, import, notes/account/join dialogs and the mobile library drawer for the same close/focus/overflow problems; fix confirmed defects without changing account/security boundaries.
 - Verify narrow mobile/desktop, themes, keyboard and rendered screenshots, relevant regressions, web build/budget and develop-only deployment. Existing Google $0 policy remains in force.
-- Source implementation and local acceptance: docs/REQ-014-VERIFICATION.md; publication/hosted verification pending.
+- Source implementation2a677130 and local/CI acceptance pass: docs/REQ-014-VERIFICATION.md. Hosted deploy/source and interaction verification remain pending Netlify browser authentication.
 
 ## [x] REQ-013 — Fullscreen reader, clear transport and verified text
 - Enter real browser fullscreen from the reader control; provide an obvious exit and a usable full-window fallback when the browser lacks the API. Keep reading/audio controls accessible and synchronize state after browser exit.

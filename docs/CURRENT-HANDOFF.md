@@ -3,12 +3,12 @@
 Updated 2026-10-25 (Europe/Madrid).
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-014","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"reviewing","last_verified_sha":"e7a750c423aaa79dea2b7cf2b539e15d337c3fb1","next_step":"Publish verified overlay fixes through GitHub MCP and check develop CI/deployment; outer Netlify gate remains unchanged.","updated_at":"2026-10-25T04:36:10.733176+00:00"}
+{"task_id":"REQ-014","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"2a6771305b5d249cace0704476f73bdc085ad526","next_step":"Confirm the new develop Netlify deploy/source and hosted overlay behavior in an authenticated browser; source and CI are verified. Keep the outer gate unchanged.","updated_at":"2026-10-25T04:43:39.442843+00:00"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Current overlay repair — REQ-014
 
-Appearance uses the shared native dialog with Close/Done, outside tap, Escape, focus containment/return and a scrollable body with fixed close controls. Padding/inside-to-outside drags do not dismiss. The library drawer uses the same behavior; chapter/bookmark controls remain reachable. Escape closes cards before fallback fullscreen; night primary-button contrast uses the current theme token. Fresh clean export/budget566/900KiB and74 browser passes/2 private skips;45 unit/contracts and types pass. Screenshots inspected. See docs/REQ-014-VERIFICATION.md. Develop publication/remote checks are next; this cloud browser is signed out of Netlify. No auth/database/voice changes.
+Appearance uses the shared native dialog with Close/Done, outside tap, Escape, focus containment/return and a scrollable body with fixed close controls. Padding/inside-to-outside drags do not dismiss. The library drawer uses the same behavior; chapter/bookmark controls remain reachable. Escape closes cards before fallback fullscreen; night primary-button contrast uses the current theme token. Fresh clean export/budget566/900KiB and74 browser passes/2 private skips;45 unit/contracts and types pass. Screenshots inspected. See docs/REQ-014-VERIFICATION.md. Published source2a677130 on develop; application CI40162568905 passes, including74 browser checks/2 private skips and iOS/Android exports. Policy, security and cross-platform quality checks pass except the existing non-blocking native tooling advisory (REQ-005). Hosted deploy/source and interactions remain unverified: this browser is signed out of Netlify. No auth/database/voice changes.
 
 Prior REQ-013 copy runtime13488eed was ready in deploy6add361c782eba47291d2f53. Earlier evidence is in docs/REQ-013-VERIFICATION.md. Positive hosted-account/native-device acceptance remains open; no live test-account writes were retried.
 

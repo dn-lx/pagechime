@@ -1,6 +1,6 @@
 # REQ-014 — Dismissible reader settings and overlay audit
 
-Verified locally 2026-10-25. Development only; main promotion remains owner-controlled.
+Verified locally and in GitHub CI 2026-10-25. Development only; main promotion remains owner-controlled.
 
 ## Findings and changes
 
@@ -23,4 +23,6 @@ The shared behavior covers appearance, reading help, voices, search, join/import
 
 ## Delivery and limits
 
-GitHub MCP publication and exact-source CI/deployment are recorded below when confirmed. The cloud browser currently reaches the existing Netlify team sign-in gate, so hosted interaction checks require an authenticated browser; local browser evidence exercises the production export. Do not remove or weaken the gate for testing. This change does not claim native-device or positive live-account acceptance. Google requests remain blocked under the owner's $0 policy. No new voice model or paid service was configured.
+Published through GitHub MCP to `develop` at [2a6771305b5d249cace0704476f73bdc085ad526](https://github.com/dn-lx/pagechime/commit/2a6771305b5d249cace0704476f73bdc085ad526). [Application CI 40162568905](https://github.com/dn-lx/pagechime/actions/runs/40162568905) passes on that source: 45 unit/contracts, types, build/budget 566/900 KiB, 74 browser passes/2 private-input skips and both iOS/Android exports. Agent/version policy, Linux/Windows quality evidence, dependency audit, gitleaks and semgrep checks pass. The pre-existing non-blocking native-tooling advisory remains tracked in REQ-005. Main remains `2396458e46609beb8c448221a647491fb90363c9`.
+
+A final source/diff review found no further blocker within this overlay repair. The hosted deploy/source revision and hosted interactions remain unverified; the available Netlify metadata identifies only earlier deploys. The cloud browser currently reaches the existing Netlify team sign-in gate, so hosted interaction checks require an authenticated browser; local browser evidence exercises the production export. Do not remove or weaken the gate for testing. This change does not claim native-device or positive live-account acceptance. Google requests remain blocked under the owner's $0 policy. No new voice model or paid service was configured.
