@@ -2,11 +2,11 @@
 
 Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-24.
 
-## [ ] REQ-017 — Preserve ebook location through playback and voice navigation
+## [x] REQ-017 — Preserve ebook location through playback and voice navigation
 - Playback chapter navigation, cross-chapter seeks and automatic advancement bring the ebook to the corresponding narration location, including after manual browsing. Ordinary same-chapter play/pause leaves detached reading intact.
 - Switching narration preserves the currently visible source-text position across different passage/chapter layouts and ignores stale target-voice reading history; use real timestamps only.
 - Preserve saved reading places, view/follow preferences, independent voice annotations and account/guest boundaries. Verify desktop/mobile regressions and develop-only delivery.
-- Plan: docs/plans/REQ-017-reader-narration-position.md. Implementation and verification in progress.
+- Plan: docs/plans/REQ-017-reader-narration-position.md. Completed on develop source ef3878f6:51 tests,80 browser passes/4 private skips, web/mobile exports and CI40183409963. Live-browser verification remains behind Netlify team sign-in.
 
 ## [ ] REQ-016 — Three complete local narrations
 - Create full Qwen3-TTS, Chatterbox and Piper recordings of the supplied book. Prefer British female narration; use an available voice if necessary. Preserve the existing Kokoro recording and Google zero-spend block.
