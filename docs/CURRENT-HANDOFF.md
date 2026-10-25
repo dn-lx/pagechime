@@ -3,14 +3,16 @@
 Updated 2026-10-25 (Europe/Madrid).
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-014","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"bdb61533b2294aa2cde4ed01c24f7f8f705f8e88","next_step":"REQ-015 samples are delivered only to the owner; no sample UI/assets may be published. Await voice choice before full narration. REQ-014 hosted deploy/source checks still need authenticated Netlify access.","updated_at":"2026-10-25T05:15:20.050888+00:00"}
+{"task_id":"REQ-016","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"implementing","last_verified_sha":"b8adcd44b3fe50bef16c11e948dc27ee4294d5cf","next_step":"Continue private three-engine full narration generation from verified chunks; save durable checkpoints and full recordings. No sample UI/assets on website; Google stays blocked.","updated_at":"2026-10-25T05:42:07.690790+00:00"}
 <!-- AGENT_TASK_STATE_END -->
 
-## Voice auditions completed — REQ-015
+## Full narrations in progress — REQ-016
 
-Qwen3-TTS, Chatterbox Nano and Piper Cori original auditions generated locally and saved as three owner-downloadable MP3s. Kokoro unchanged. Latest owner instruction: samples only here, never on the website; upload after full recording is ready. Unpublished preview UI/assets/tests were removed before any source publication. Only offline preparation script/provenance/docs remain. No private book text, human voice recording or paid API. Models/environments/raw WAVs remain under /tmp/pagechime-voice-lab. See docs/plans/REQ-015-free-voice-auditions.md. Full-book voice choice/generation has not started.
+Owner requests all three full recordings, British female preferred; any available voice permitted as fallback. Source recovered from supplied edition ZIP. Private plan under /workspace/scratch/452ae38be48c/full-recordings/plan.json:36,025 narrative words,715 loss-checked chunks,9 logical spine chapters introduction→epilogue. Previous request skips cover/contents/references. No source text/audio in Git. Models/envs under /tmp/pagechime-voice-lab: Qwen0.6B Base reuses the Qwen-designed synthetic British-female reference for consistency; Chatterbox Nano uses that reference; Piper uses Cori British female. No real-person cloning or paid API.
 
-REQ-014 overlay repair source2a677130 has45 unit/74 browser passes,2 private skips, mobile exports and successful application CI40162568905. Hosted deploy/source and interactions remain unverified because the browser is signed out of Netlify. See docs/REQ-014-VERIFICATION.md. Later audition QA found low contrast in the existing tiny selected-voice status label; no repair was included in this audio-only delivery. Prior copy runtime13488eed was ready in deploy6add361c782eba47291d2f53.
+Scripts prepare-voice-book.py/record-voice-book.py/finalize-voice-book.py implement offline inference, cache fingerprints/hashes, exclusive workers, cooperative pause controls and full output decoding. First two chunks/engine transcribed with offline tiny.en: similarity0.922–1.000; this is sampled acoustic evidence, not a full audiobook proofread. Memory paging requires adjusted scheduling using preserved chunks. Private artifacts/checkpoints must be saved durably as work proceeds. No full recording delivered yet.
+
+REQ-015's short samples remain owner-only. No sample UI/assets on website; unpublished preview removed. REQ-014 source2a677130 has45 unit/74 browser passes,2 private skips and CI40162568905 success; hosted verification still needs authenticated Netlify access. See docs/REQ-014-VERIFICATION.md. Low contrast in existing tiny selected-voice status label remains a noted follow-up, without a repair in this audio-only work.
 
 ## Policy and current work
 

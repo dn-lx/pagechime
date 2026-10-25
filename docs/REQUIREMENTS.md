@@ -2,6 +2,13 @@
 
 Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-24.
 
+## [ ] REQ-016 — Three complete local narrations
+- Create full Qwen3-TTS, Chatterbox and Piper recordings of the supplied book. Prefer British female narration; use an available voice if necessary. Preserve the existing Kokoro recording and Google zero-spend block.
+- Follow the book's narrative spine from introduction through epilogue, retaining all narrative words and excluding cover/contents/reference material from normal listening as previously requested.
+- Use resumable, integrity-checked sections with stable synthetic narrator references, conservative CPU/memory scheduling and durable private checkpoints. No private book text/audio in Git or small sample clips on the website.
+- Verify source coverage, initial acoustic transcription, all chunk hashes and complete output decoding; deliver three full audio files privately. Record timing/quality limits and do not represent old Kokoro word cues as timings for new narration.
+- Plan: docs/plans/REQ-016-full-local-narrations.md. Generation in progress; no full recording is ready yet.
+
 ## [x] REQ-015 — Free voice auditions delivered only to the owner
 - Generate the same original short English passage locally with Qwen3-TTS, Chatterbox and Piper; keep the existing Kokoro recording unchanged. No paid service, Google requests, private book text or human voice cloning.
 - Deliver the three short audio files directly to the owner. Latest instruction: do not add sample clips to the website; upload only after a full recording is created.

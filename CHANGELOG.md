@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add private, resumable full-book voice preparation with source-word fidelity, chunk integrity checks, exclusive workers and complete audio decoding. No app/runtime change.
+
 - Add an offline CPU voice-audition preparation script and model provenance for owner-only Qwen, Chatterbox and Piper samples. No website clips or runtime changes.
 
 - Make appearance settings explicitly dismissible with Close/Done, outside tap and Escape; keep close controls visible on short screens. Prevent accidental dialog dismissal from padding or drag gestures, preserve fallback fullscreen while dismissing cards, give the mobile library a focus-contained, dismissible drawer, and correct primary-button contrast in night mode. Intended impact: patch; develop only.
