@@ -215,16 +215,13 @@ test("audio-only parts retain manual PDF pages across navigation, automatic adva
 }, info) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.route("**/books/demo/book.json", async (route) => {
-    const response = await route.fetch();
-    const book = await response.json();
-    book.timing = "audio-only";
-    book.chapters = book.chapters.map((chapter: Record<string, unknown>) => ({
-      ...chapter,
-      segments: [],
-    }));
-    await route.fulfill({ response, json: book });
-  });
+  await page.context().addCookies([
+    {
+      name: "reader-test-corpus",
+      value: "audioonly",
+      url: "http://localhost:4174",
+    },
+  ]);
   await enter(page);
   const pdfPage = page.getByLabel("PDF page number");
   await expect(page.getByRole("button", { name: "Reading", exact: true })).toBeDisabled();

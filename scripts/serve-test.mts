@@ -160,7 +160,7 @@ http
               : "audio.wav";
         // Isolated browser contexts choose a corpus without bypassing the real worker/auth path.
         const corpus =
-          /(?:^|; )reader-test-corpus=(long|mixed|untimed|words|mixedwords|editions|references|repaired|voices|voicepages)(?:;|$)/.exec(
+          /(?:^|; )reader-test-corpus=(long|mixed|untimed|words|mixedwords|editions|references|repaired|voices|voicepages|audioonly)(?:;|$)/.exec(
             req.headers.cookie || "",
           )?.[1];
         const wordBook = JSON.parse(
@@ -234,6 +234,14 @@ http
           ],
         };
         const variants = {
+          audioonly: {
+            ...voiceBase,
+            timing: "audio-only",
+            chapters: voiceBase.chapters.map((chapter: Record<string, unknown>) => ({
+              ...chapter,
+              segments: [],
+            })),
+          },
           voicepages: {
             ...longBook,
             preparedNarrations: { piper: "/books/demo/piper.json" },
