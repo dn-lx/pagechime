@@ -1,0 +1,8 @@
+project_id = "pagechime"
+[functions.book-reader-api]
+# Opaque custom reader sessions are verified inside the handler, not Supabase Auth JWTs.
+verify_jwt = false
+
+[functions.pagechime-library]
+# Opaque build/upload capabilities are verified in the handler.
+verify_jwt = false

@@ -1,0 +1,32 @@
+{
+  "name": "@pagechime/mobile",
+  "version": "0.2.0",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "node ../../scripts/prepare-assets.mjs && expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "export": "node ../../scripts/prepare-assets.mjs && expo export --platform android --platform ios --output-dir dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.2",
+    "@pagechime/core": "*",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-community/slider": "5.2.1",
+    "expo": "~58.0.17",
+    "expo-asset": "~58.0.18",
+    "expo-audio": "~58.0.10",
+    "expo-document-picker": "~58.0.4",
+    "expo-file-system": "~58.0.10",
+    "expo-font": "~58.0.9",
+    "expo-haptics": "~58.0.7",
+    "expo-secure-store": "58.0.2",
+    "expo-status-bar": "~58.0.4",
+    "react": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-safe-area-context": "~5.10.1",
+    "react-native-webview": "14.0.1"
+  }
+}

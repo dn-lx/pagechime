@@ -1,0 +1,25 @@
+{
+  "name": "@pagechime/web",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "dev": "node ../../scripts/prepare-assets.mjs && next dev --hostname 0.0.0.0",
+    "build": "node ../../scripts/prepare-assets.mjs && next build && node ../../scripts/build-service-worker.mjs",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pagechime/core": "*",
+    "next": "16.4.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "pdfjs-dist": "5.4.296",
+    "motion": "^12.23.24",
+    "@phosphor-icons/react": "^2.1.10",
+    "@fontsource-variable/newsreader": "^5.2.8",
+    "@fontsource-variable/dm-sans": "^5.2.8"
+  },
+  "devDependencies": {
+    "@types/react-dom": "~19.3.0"
+  }
+}

@@ -1,0 +1,74 @@
+# Secrets / local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+
+# Dependencies / generated
+node_modules/
+dist/
+build/
+coverage/
+target/
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+
+# Agent/dev tooling
+.graphify/
+.venv-graphify/
+.netlify/
+.tauri/
+.agent-artifacts/
+*.log
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Private host preferences and machine MCP configuration
+CLAUDE.local.md
+.claude/settings.local.json
+.gemini/settings.json
+.mcp.json
+
+# Reader local content and build outputs
+node_modules/
+dist/
+public/books/
+public/library.json
+.openai/
+playwright-report/
+test-results/
+*.log
+.env*
+
+bootstrap.local.json
+
+# Next / Expo and private book bundles
+apps/web/public/books/
+apps/web/public/library.json
+apps/web/public/pdf.worker.min.mjs
+apps/web/out/
+apps/web/.next/
+apps/mobile/.expo/
+apps/mobile/assets/books/
+apps/mobile/assets/catalog.generated.ts
+apps/mobile/assets/pdf-viewer.generated.html
+apps/mobile/dist/
+*.tsbuildinfo
+
+# Supabase CLI local state
+supabase/.temp/
+
+.generated/
+
+# Private preparation and temporary downloads
+**/*.download-*
+
+.cache/

@@ -1,0 +1,53 @@
+name: Agent reliability
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-reliability-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evidence:
+    name: quality / evidence-${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+      - name: Verify complete starter on Linux
+        if: runner.os == 'Linux'
+        run: node scripts/verify.mjs --profile starter --run --out starter-checks.json
+      - name: Test evidence tools on Windows
+        if: runner.os == 'Windows'
+        run: node --test tests/verification.test.mjs tests/agent-evals.test.mjs tests/partner-commands.test.mjs tests/entrypoint.test.mjs
+      - name: Validate Windows command adapters
+        if: runner.os == 'Windows'
+        run: node scripts/sync-partner-commands.mjs
+      - name: Linux failure diagnostics (original failure remains blocking)
+        if: failure() && runner.os == 'Linux'
+        run: node scripts/test-starter.mjs
+      - name: Preserve revision-bound command evidence
+        if: always() && runner.os == 'Linux'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: starter-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .agent-artifacts/starter-checks.json
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7

@@ -1,0 +1,5 @@
+# Optional offline preparation only; install CPU torch/torchaudio separately.
+# No alignment model or book contents are bundled into the website source.
+stable-ts[fw]==2.19.1
+faster-whisper==1.2.1
+socksio==1.0.0

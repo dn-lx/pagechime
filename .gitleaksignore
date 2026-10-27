@@ -1,0 +1,3 @@
+# Reviewed false positive: docs records a public Supabase function resource UUID,
+# not a credential. Ignore only this exact historical finding; retain all rules.
+27f86321aa73d883a69ddaef29a598460de689d0:docs/CURRENT-HANDOFF.md:generic-api-key:20

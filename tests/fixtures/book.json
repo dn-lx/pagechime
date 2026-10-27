@@ -1,0 +1,54 @@
+{
+  "id": "demo",
+  "title": "A Quiet Beginning",
+  "author": "Pagechime Test Library",
+  "pageCount": 2,
+  "pdf": "/books/demo/book.pdf",
+  "voice": "Kokoro \u00b7 Emma \u00b7 British English \u00b7 female",
+  "narration": "kokoro",
+  "duration": 16,
+  "chapters": [
+    {
+      "title": "A quiet beginning",
+      "audio": "/books/demo/1.wav",
+      "file": "1.wav",
+      "duration": 8,
+      "firstPage": 1,
+      "segments": [
+        {
+          "start": 0,
+          "end": 4,
+          "page": 1,
+          "text": "A quiet beginning. Make a little time for yourself."
+        },
+        {
+          "start": 4,
+          "end": 8,
+          "page": 1,
+          "text": "A small step is still a step."
+        }
+      ]
+    },
+    {
+      "title": "The next page",
+      "audio": "/books/demo/2.wav",
+      "file": "2.wav",
+      "duration": 8,
+      "firstPage": 2,
+      "segments": [
+        {
+          "start": 0,
+          "end": 4,
+          "page": 2,
+          "text": "The next page. Make a little time for yourself."
+        },
+        {
+          "start": 4,
+          "end": 8,
+          "page": 2,
+          "text": "A small step is still a step."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+[build]
+  command = "npm run build"
+  publish = "apps/web/out"
+  functions = "netlify/functions"
+  edge_functions = "netlify/edge-functions"
+[build.environment]
+  NODE_VERSION = "24"
+  # Next static export; custom API and media guard are deployed separately.
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+[functions]
+  node_bundler = "esbuild"
+[context.branch-deploy]
+  command = "npm run build"
+[context.develop.environment]
+  # Public endpoint/config only. PAGECHIME_LIBRARY_KEY stays a Netlify build secret.
+  PAGECHIME_LIBRARY_URL = "https://wbqnctrvxohxwiaignhg.supabase.co/functions/v1/pagechime-library"
+  PAGECHIME_LIBRARY_REQUIRED = "1"
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    X-Frame-Options = "DENY"
+[[headers]]
+  for = "/books/*"
+  [headers.values]
+    Cache-Control = "private, no-store"
+[[headers]]
+  for = "/library.json"
+  [headers.values]
+    Cache-Control = "private, no-store"
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"

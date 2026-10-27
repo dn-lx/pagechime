@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "checks": [
+    {
+      "id": "starter-policy",
+      "phase": "policy",
+      "description": "Validate the existing canonical agent stack",
+      "command": ["node", "scripts/validate-agent-stack.mjs"],
+      "timeout_ms": 180000
+    },
+    {
+      "id": "starter-docs",
+      "phase": "docs",
+      "description": "Validate repository documentation references",
+      "command": ["node", "scripts/validate-docs.mjs"],
+      "timeout_ms": 180000
+    },
+    {
+      "id": "starter-version",
+      "phase": "version",
+      "description": "Validate current version and changelog",
+      "command": ["node", "scripts/validate-version.mjs"],
+      "timeout_ms": 180000
+    },
+    {
+      "id": "partner-commands",
+      "phase": "adapters",
+      "description": "Check generated Gemini commands without rewriting",
+      "command": ["node", "scripts/sync-partner-commands.mjs"],
+      "timeout_ms": 180000
+    },
+    {
+      "id": "starter-tests",
+      "phase": "tests",
+      "description": "starter tests",
+      "command": ["node", "scripts/test-starter.mjs"],
+      "timeout_ms": 180000
+    },
+    {
+      "id": "application-build",
+      "phase": "build",
+      "description": "application build",
+      "command": ["npm", "run", "build"],
+      "timeout_ms": 180000
+    },
+    {
+      "id": "application-types",
+      "phase": "types",
+      "description": "application types",
+      "command": ["npm", "run", "typecheck"],
+      "timeout_ms": 180000
+    },
+    {
+      "id": "application-lint",
+      "phase": "lint",
+      "description": "application lint",
+      "command": ["node", "scripts/validate-docs.mjs", "--strict-project"],
+      "timeout_ms": 180000
+    },
+    {
+      "id": "application-tests",
+      "phase": "tests",
+      "description": "application tests",
+      "command": ["npm", "test"],
+      "timeout_ms": 180000
+    },
+    {
+      "id": "application-security",
+      "phase": "security",
+      "description": "Audit deployed web/core dependencies; Expo tooling advisory tracked separately in REQ-005",
+      "command": [
+        "npm",
+        "audit",
+        "--workspace",
+        "@pagechime/web",
+        "--workspace",
+        "@pagechime/core",
+        "--omit=dev",
+        "--audit-level=high"
+      ],
+      "timeout_ms": 180000
+    },
+    {
+      "id": "application-browser",
+      "phase": "browser",
+      "description": "application browser",
+      "command": ["npm", "run", "test:e2e"],
+      "timeout_ms": 180000
+    }
+  ],
+  "profiles": {
+    "starter": {
+      "scope": "starter tooling only; not a consuming application or production release",
+      "checks": [
+        "starter-policy",
+        "starter-docs",
+        "starter-version",
+        "partner-commands",
+        "starter-tests"
+      ],
+      "manual_evidence": []
+    },
+    "feature": {
+      "scope": "consuming application change",
+      "checks": [
+        "application-build",
+        "application-types",
+        "application-lint",
+        "application-tests",
+        "application-security"
+      ],
+      "manual_evidence": [
+        "Current acceptance criteria and diff review",
+        "Risk-specific runtime/browser and independent review when required"
+      ]
+    },
+    "release": {
+      "scope": "consuming application release candidate; not deployment authorization",
+      "checks": [
+        "application-build",
+        "application-types",
+        "application-lint",
+        "application-tests",
+        "application-security",
+        "application-browser"
+      ],
+      "manual_evidence": [
+        "Current acceptance and independent-review evidence",
+        "Required checks on the final release revision",
+        "Production runtime and deployed-revision verification",
+        "Rollback and compatibility review",
+        "Explicit production approval via the existing release workflow"
+      ]
+    }
+  }
+}

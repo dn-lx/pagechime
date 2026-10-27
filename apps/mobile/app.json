@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Pagechime",
+    "slug": "pagechime",
+    "version": "0.2.0",
+    "orientation": "default",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#f5f3ec",
+      "image": "./assets/icon.png",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.dnlx.leaf"
+    },
+    "android": {
+      "package": "app.dnlx.leaf",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#f5f3ec"
+      }
+    },
+    "plugins": [
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundPlayback": true,
+          "enableBackgroundRecording": false
+        }
+      ],
+      "expo-document-picker",
+      "expo-secure-store"
+    ],
+    "assetBundlePatterns": [
+      "assets/**/*"
+    ]
+  }
+}

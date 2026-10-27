@@ -1,0 +1,27 @@
+name: Reader backend contract
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      [
+        server/**,
+        supabase/**,
+        scripts/verify-reader-api.mjs,
+        .github/workflows/reader-backend.yml,
+      ]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-denied-paths:
+    if: github.repository == 'dn-lx/pagechime'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - run: node scripts/verify-reader-api.mjs
+        env:
+          READER_API_URL: https://wbqnctrvxohxwiaignhg.supabase.co/functions/v1/book-reader-api
