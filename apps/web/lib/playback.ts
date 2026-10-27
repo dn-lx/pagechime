@@ -42,7 +42,7 @@ export function usePlayback(
     navigation?: ReadingNavigation,
   ) => {
     const segment = Math.max(0, segmentAt(b.chapters[chapter].segments, time));
-    const next = navigation ?? {
+    const requested = navigation ?? {
       anchor: {
         chapter,
         segment,
@@ -50,14 +50,18 @@ export function usePlayback(
       },
       follow: true,
     };
+    const next = b.timing === "audio-only"
+      ? { ...requested, follow: false }
+      : requested;
     writeSaved("progress." + b.id, {
       ...readSaved<Progress | null>("progress." + b.id, null),
       chapter,
       time,
-      page:
-        b.chapters[chapter].segments[segment]?.page ||
-        b.chapters[chapter].firstPage ||
-        1,
+      page: b.timing === "audio-only"
+        ? pageRef.current
+        : b.chapters[chapter].segments[segment]?.page ||
+          b.chapters[chapter].firstPage ||
+          1,
       reading: next.anchor,
       updated: Date.now(),
     });
@@ -113,8 +117,9 @@ export function usePlayback(
         t = clamp(position, 0, Math.max(0, ch.duration - 0.01));
       save();
       a.pause();
-      pageRef.current =
-        ch.segments[segmentAt(ch.segments, t)]?.page || ch.firstPage || 1;
+      if (newBook || b.timing !== "audio-only")
+        pageRef.current =
+          ch.segments[segmentAt(ch.segments, t)]?.page || ch.firstPage || 1;
       setPageState(pageRef.current);
       if (newBook) {
         current.current = b;

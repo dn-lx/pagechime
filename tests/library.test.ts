@@ -236,3 +236,53 @@ test("build restore verifies digests and prevents redirects, outside origins, un
     await rm(root, { recursive: true, force: true });
   }
 });
+
+test("library aggregate size accepts 320 MiB and rejects one byte over without downloading", async () => {
+  const limit = 320 * 1024 * 1024;
+  const large = [...files];
+  let remaining = limit - files.reduce((n, f) => n + f.size, 0);
+  for (let i = 0; remaining > 0; i++) {
+    const size = Math.min(24 * 1024 * 1024, remaining);
+    large.push({ path: `books/manifest/improved/part-${i}.mp3`, sha256: sum("audio"), size, contentType: "audio/mpeg" });
+    remaining -= size;
+  }
+  large.sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
+  const candidate = { files: large, version: sum(JSON.stringify(large)) };
+  assert.equal((await libraryManifest(candidate)).files.length, large.length);
+  const over = large.map((file) => ({ ...file }));
+  over[over.length - 1].size++;
+  const tooLarge = { files: over, version: sum(JSON.stringify(over)) };
+  await assert.rejects(libraryManifest(tooLarge));
+  const oversized = [...files, { path: "books/manifest/improved/oversized.mp3", sha256: sum("audio"), size: 24 * 1024 * 1024 + 1, contentType: "audio/mpeg" }].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
+  await assert.rejects(libraryManifest({ files: oversized, version: sum(JSON.stringify(oversized)) }));
+  const root = await mkdtemp(join(tmpdir(), "reader-limit-"));
+  let downloads = 0;
+  const send = (m: LibraryManifest) => async (input: RequestInfo | URL) => {
+    if (String(input).endsWith("/manifest"))
+      return Response.json({ ...m, files: m.files.map((file) => ({ ...file, url: signed(m).find((x) => x.path === file.path)!.url })) });
+    downloads++;
+    throw Error("Accepted manifest reached download");
+  };
+  const env = { PAGECHIME_LIBRARY_URL: endpoint, PAGECHIME_LIBRARY_KEY: key, PAGECHIME_LIBRARY_REQUIRED: "1" };
+  try {
+    await assert.rejects(fetchPrivateLibrary(root, env, send(tooLarge)), /integrity/);
+    assert.equal(downloads, 0);
+    await assert.rejects(fetchPrivateLibrary(root, env, send(candidate)), /Accepted manifest reached download/);
+    assert.equal(downloads, 1);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+test("production restore requires its dedicated secret and fails closed", async () => {
+  const root = await mkdtemp(join(tmpdir(), "reader-production-"));
+  const env = { CONTEXT: "production", PAGECHIME_LIBRARY_REQUIRED: "1", PAGECHIME_LIBRARY_URL: endpoint, PAGECHIME_LIBRARY_KEY: key };
+  let requests = 0;
+  try {
+    await assert.rejects(fetchPrivateLibrary(root, env, async () => { requests++; throw Error("Unexpected request"); }), /PAGECHIME_PRODUCTION_LIBRARY_KEY/);
+    assert.equal(requests, 0);
+    await assert.rejects(fetchPrivateLibrary(root, { ...env, PAGECHIME_PRODUCTION_LIBRARY_KEY: key }, async () => { requests++; throw Error("Production secret selected"); }), /Production secret selected/);
+    assert.equal(requests, 1);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});

@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-27
+
+- Prepare the complete improved Kokoro Emma recording as a separate listening edition in six continuous parts. Preserve the source MP3's encoded audio, the original timed Kokoro edition and Piper; PDF pages remain manual until new acoustic timings are available.
+- Retain a manually selected PDF page across audio-only part navigation, automatic advance, seeks and reloads.
+- Bound the multi-voice private catalog at 320 MiB total while retaining the 24 MiB per-file cap, 256-file cap and existing digest, origin, path and authorization checks.
+- Require a dedicated production build secret and fail closed for a missing production private-library connection. Production publishing remains pending the verified private catalog upload and hosted checks.
+
 ## [0.2.0] - 2026-10-27
 
 - Promote the Pagechime web and native source from develop to main under the owner's explicit approval on 2026-10-27.

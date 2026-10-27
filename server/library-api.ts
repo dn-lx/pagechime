@@ -70,7 +70,7 @@ export async function libraryManifest(
     new Set(files.map((f) => f.path)).size !== files.length ||
     !files.some((f) => f.path === "library.json") ||
     !files.some((f) => f.path === "books/manifest/book.json") ||
-    files.reduce((n, f) => n + f.size, 0) > 256 * 1024 * 1024
+    files.reduce((n, f) => n + f.size, 0) > 320 * 1024 * 1024
   )
     throw Error("Invalid library contents.");
   if ((await digest(JSON.stringify(files))) !== manifest.version)

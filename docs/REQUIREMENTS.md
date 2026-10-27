@@ -1,6 +1,14 @@
 # Pagechime requirements
 
-Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-24.
+Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-27.
+
+## [ ] REQ-018 — Publish the complete improved Kokoro recording after main promotion
+- First merge develop into main under the owner's 2026-10-27 instruction; then add the whole improved Emma recording to Pagechime.
+- Preserve all encoded source audio across continuous listening parts; retain the original Kokoro and Piper editions. Represent missing acoustic timings honestly and support manual PDF reading without resetting its page when parts change.
+- Stage a new immutable private catalog, validate every file digest/size/path, retain the prior version and switch current.json only after every object exists. Keep per-file uploads bounded at 24 MiB; aggregate catalog is bounded at 320 MiB.
+- Production restores the catalog through a dedicated secret in Netlify build scope, with required-source failure and private visitor protection. Keep credentials and private content outside Git.
+- Acceptance: encoded-packet equality, full MP3 decoding, aggregate/per-file negative tests, production-secret isolation tests, desktop/mobile manual-PDF regression, fresh build hash restore and hosted full-book playback evidence.
+- Plan: docs/plans/REQ-018-improved-kokoro.md. First promotion completed in PR #5 at e272781f; upload and hosted acceptance remain pending.
 
 ## [x] REQ-017 — Preserve ebook location through playback and voice navigation
 - Playback chapter navigation, cross-chapter seeks and automatic advancement bring the ebook to the corresponding narration location, including after manual browsing. Ordinary same-chapter play/pause leaves detached reading intact.

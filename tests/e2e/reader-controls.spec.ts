@@ -209,3 +209,42 @@ test("normal start and automatic advance skip references while Contents retains 
   await contents.getByRole("button").first().click();
   await expect(page.locator(".ebook-heading")).toContainText("Chapter 1 of 5");
 });
+
+test("audio-only parts retain manual PDF pages across navigation, automatic advance and reload", async ({
+  page,
+}, info) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.route("**/books/demo/book.json", async (route) => {
+    const response = await route.fetch();
+    const book = await response.json();
+    book.timing = "audio-only";
+    book.chapters = book.chapters.map((chapter: Record<string, unknown>) => ({
+      ...chapter,
+      segments: [],
+    }));
+    await route.fulfill({ response, json: book });
+  });
+  await enter(page);
+  const pdfPage = page.getByLabel("PDF page number");
+  await expect(page.getByRole("button", { name: "Reading", exact: true })).toBeDisabled();
+  await expect(page.locator("canvas")).toBeVisible();
+  await pdfPage.fill("2");
+  await page.getByRole("button", { name: "Next audio chapter", exact: true }).click();
+  await expect(page.locator(".player-book")).toContainText("The next page");
+  await expect(pdfPage).toHaveValue("2");
+  await page.getByRole("button", { name: "Previous audio chapter", exact: true }).click();
+  await expect(page.locator(".player-book")).toContainText("A quiet beginning");
+  await expect(pdfPage).toHaveValue("2");
+  await page.getByLabel("Chapter playback position").fill("7.7");
+  await page.getByRole("button", { name: "Play narration", exact: true }).click();
+  await expect(page.locator(".player-book")).toContainText("The next page");
+  await page.getByRole("button", { name: "Pause narration", exact: true }).click();
+  await expect(pdfPage).toHaveValue("2");
+  await expect(page.getByRole("button", { name: "Follow audio", exact: true })).toBeDisabled();
+  await page.reload();
+  await page.getByRole("button", { name: "Continue reading", exact: true }).click();
+  await expect(pdfPage).toHaveValue("2");
+  await page.screenshot({ path: info.outputPath("audio-only-manual-pdf.png"), fullPage: true });
+  expect(errors).toEqual([]);
+});

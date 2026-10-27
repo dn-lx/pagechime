@@ -18,7 +18,11 @@ export async function fetchPrivateLibrary(
   env = process.env,
   send = fetch,
 ) {
-  const { PAGECHIME_LIBRARY_URL: endpoint, PAGECHIME_LIBRARY_KEY: token } = env;
+  const endpoint = env.PAGECHIME_LIBRARY_URL;
+  const keyName = env.CONTEXT === "production"
+    ? "PAGECHIME_PRODUCTION_LIBRARY_KEY"
+    : "PAGECHIME_LIBRARY_KEY";
+  const token = env[keyName];
   if (!endpoint || !token) {
     if (
       env.PAGECHIME_LIBRARY_REQUIRED === "1" ||
@@ -26,12 +30,12 @@ export async function fetchPrivateLibrary(
     ) {
       const missing = [
         !endpoint && "PAGECHIME_LIBRARY_URL",
-        !token && "PAGECHIME_LIBRARY_KEY",
+        !token && keyName,
       ].filter(Boolean);
       throw Error(
-        "The private develop library build connection is missing: " +
+        "The private library build connection is missing: " +
           missing.join(", ") +
-          ". Set these variables for develop builds in Netlify.",
+          ". Set these variables for this Netlify build context.",
       );
     }
     return null;
@@ -68,7 +72,7 @@ export async function fetchPrivateLibrary(
     new Set(canonical.map((f) => f.path)).size !== canonical.length ||
     !canonical.some((f) => f.path === "library.json") ||
     !canonical.some((f) => f.path === "books/manifest/book.json") ||
-    canonical.reduce((s, f) => s + f.size, 0) > 256 * 1024 * 1024
+    canonical.reduce((s, f) => s + f.size, 0) > 320 * 1024 * 1024
   )
     throw Error("Library manifest integrity check failed.");
   await mkdir(root, { recursive: true });

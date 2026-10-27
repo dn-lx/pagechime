@@ -4,10 +4,10 @@ Updated 2026-10-27 (Europe/Madrid).
 
 ## Promotion — 2026-10-27
 
-Owner approves develop → main, then audio upload (PR #5, v0.2.0). Merge [skip netlify]; private production config/upload pending. Recording recovery below remains blocked.
+PR #5 merged develop → main as 0.2.0 (e272781f), [skip netlify]. REQ-018 prepares the complete improved Kokoro upload; see its plan. Netlify team protection now covers all deploys. Recording recovery below remains blocked.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-016","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"ef3878f6109ff37caae0d2dc4762d3d8600f4ba4","next_step":"Use a persistent runtime for unattended recording. Restore pinned models/environments and current Library helpers, verify saved versions3/2 and WAV hashes, then resume from Qwen50/Chatterbox46.","updated_at":"2026-10-25T19:37:18.210Z"}
+{"task_id":"REQ-018","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"e272781f76b8d089e9abc7ce824f327216d71c16","next_step":"Finish REQ-018 plan: renew browser sign-in, upload staged version2b728601, then verify private build restore and hosted playback.","updated_at":"2026-10-27T05:49:45.455Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017

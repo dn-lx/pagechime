@@ -138,7 +138,9 @@ export default function BookReader({
   )?.reading;
   const initialPlace = request?.anchor ?? savedPlace;
   const [follow, setFollow] = useState(
-    request?.follow ?? readSaved("follow." + book.id, !initialPlace),
+    book.timing === "audio-only"
+      ? false
+      : request?.follow ?? readSaved("follow." + book.id, !initialPlace),
   );
   const [appearance, setAppearance] = useState(() =>
     readingAppearance(readSaved("reading.appearance", null)),
@@ -281,7 +283,7 @@ export default function BookReader({
     onReadingPosition,
   ]);
   useEffect(() => {
-    if (follow && !p.loading) {
+    if (follow && !p.loading && book.timing !== "audio-only") {
       const pending = pendingFollow.current;
       if (
         pending &&
@@ -303,6 +305,7 @@ export default function BookReader({
     p.chapter,
     trackingIndex,
     narratorPage,
+    book.timing,
     follow,
     request?.id,
     p.loading,
@@ -311,11 +314,14 @@ export default function BookReader({
   useEffect(() => {
     if (!chapter.segments.length) {
       setMode("pdf");
-      if (previousReadingChapter.current !== readingChapter)
+      if (
+        previousReadingChapter.current !== readingChapter &&
+        book.timing !== "audio-only"
+      )
         p.setPage(chapter.firstPage || 1);
     }
     previousReadingChapter.current = readingChapter;
-  }, [readingChapter, chapter.segments]);
+  }, [readingChapter, chapter.segments, book.timing]);
   useEffect(() => {
     writeSaved("view." + book.id, mode);
     writeSaved("follow." + book.id, follow);
