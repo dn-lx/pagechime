@@ -4,10 +4,10 @@ Updated 2026-10-27 (Europe/Madrid).
 
 ## Promotion — 2026-10-27
 
-PR #5 merged develop → main as 0.2.0 (e272781f), [skip netlify]. REQ-018 prepares the complete improved Kokoro upload; see its plan. Netlify team protection now covers all deploys. Recording recovery below remains blocked.
+PR #5 merged main0.2.0 (e272781f), [skip netlify]. REQ-018/PR #7 awaits browser login for upload. Library functionv2 and private production read secret are verified; team gate covers all deploys. Details/evidence: REQ-018 plan.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-018","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"e272781f76b8d089e9abc7ce824f327216d71c16","next_step":"Finish REQ-018 plan: renew browser sign-in, upload staged version2b728601, then verify private build restore and hosted playback.","updated_at":"2026-10-27T05:49:45.455Z"}
+{"task_id":"REQ-018","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"57b53f39472321a554b168dd31aa26504193292c","next_step":"Complete Supabase browser login, upload staged52-file version2b728601 after fresh base readback, then verify build hashes and hosted playback before PR #7 promotion.","updated_at":"2026-10-27T15:32:32.776Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017

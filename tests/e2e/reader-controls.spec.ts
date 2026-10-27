@@ -242,6 +242,8 @@ test("audio-only parts retain manual PDF pages across navigation, automatic adva
   await page.reload();
   await page.getByRole("button", { name: "Continue reading", exact: true }).click();
   await expect(pdfPage).toHaveValue("2");
+  await expect(page.locator("canvas")).toBeVisible();
+  await expect(page.locator(".pdf-loading")).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("audio-only-manual-pdf.png"), fullPage: true });
   expect(errors).toEqual([]);
 });

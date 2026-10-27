@@ -13,14 +13,16 @@ Owner request on 2026-10-27: merge develop into main first, then change/upload t
 - Six MP3 parts split at measured silence intervals preserve every encoded audio packet in order; the concatenated packet hash equals the input. Every part fully decoded. Combined duration13,091.904s; largest new part19,214,829 bytes. No re-encoding.
 - Prepared immutable version2b728601497d21e7361778a7f3a8240eccfe2a819da2d57e987b66577051e94d has52 files/291,793,012 bytes (278.28MiB); the largest file remains20,492,125 bytes.
 - Netlify pagechime73688a4b-90ab-4eac-be6d-ef305f33ebc3 now verifies team protection on all deploys. Current production deploy remains6adbe0d674ba4dbeb313e0b2.
-- The previous Supabase browser session expired. The available Supabase connector has no Storage upload operation; direct dashboard file upload requires renewed browser sign-in. Existing Netlify branch build secret is write-only, so production needs its own read-only build capability.
+- The Supabase app connection is healthy; the file-upload browser still shows sign-in. Direct Storage upload requires renewed browser authentication.
+- Library function pagechime-library v2 is ACTIVE and exactly matches the four verified source files from57b53f39472321a554b168dd31aa26504193292c. The only function change is the320MiB aggregate bound; custom capability authorization/verify_jwt=false are retained.
+- Dedicated PAGECHIME_PRODUCTION_LIBRARY_KEY is configured as a write-only production secret with the plan's minimum Builds/Functions/Runtime scopes, excluding Post processing; code consumes it only during builds. Its capability is read-only build scope. Setup-only capabilities were expired. Key-table RLS and denied anon/authenticated SELECT remain verified.
 
 ## Affected contracts
 
 - The improved edition is a separate catalog identity manifest-improved. Six listening parts are not presented as semantic chapter boundaries. It uses the retained237-page PDF with manual navigation, no invented text timings and no borrowed voice cues.
 - Audio-only navigation retains the manually chosen PDF page through loads, seeks, automatic advance and reloads. Existing timed-book navigation remains covered.
 - Library API and build restore allow320MiB aggregate; the24MiB per-file,256-file, MIME/path/origin/digest/redirect limits and capability authorization remain.
-- Production uses PAGECHIME_PRODUCTION_LIBRARY_KEY in Netlify Builds scope, separate from the existing development secret; endpoint/required-source flags are public configuration.
+- Production uses PAGECHIME_PRODUCTION_LIBRARY_KEY in Netlify's minimum Builds/Functions/Runtime scopes (no Post processing), separate from the existing development secret; endpoint/required-source flags are public configuration.
 - No database schema migration, payments, analytics or Google synthesis. No book media/text or keys enter public Git.
 
 ## Ordered implementation
@@ -28,10 +30,10 @@ Owner request on 2026-10-27: merge develop into main first, then change/upload t
 1. [x] Owner-approved develop → main promotion and ancestry synchronization.
 2. [x] Validate base archive, split the improved source losslessly and stage the new catalog.
 3. [ ] Pass code checks for bounded aggregate growth, production-secret isolation and manual PDF behavior; inspect desktop/mobile evidence.
-4. [ ] Deploy the backwards-compatible library function from the verified source.
+4. [x] Deploy the backwards-compatible library function from the verified source; v2 readback matches all source bytes.
 5. [ ] Renew signed-in Supabase dashboard access; freshly verify the base current.json, upload every object under the new version prefix and verify object metadata.
 6. [ ] Publish the pointer only after complete-object verification. Retain the previous version and pointer for recovery.
-7. [ ] Configure a dedicated read-only production build capability/secret after private perimeter verification. Never print credentials or signed URLs.
+7. [x] Configure a dedicated read-only production build capability/secret after private perimeter verification. Secret flag, production context and minimum server scopes were read back; credentials are not recorded.
 8. [ ] Trigger a develop build and require fresh SHA256 restore of all52 assets. Promote the verified source through develop → main and verify production revision, catalog, audio beginning/end, range/seek and manual PDF persistence.
 
 ## Verification strategy
@@ -53,4 +55,50 @@ The source has no acoustic timings. Use the existing supported PDF/manual-readin
 
 ## Completion evidence
 
-Staging audio and hash evidence exists locally; source, CI, function/version, catalog pointer and deploy evidence will be recorded here as each step completes. Do not report the upload or production runtime as complete before those checks.
+Source57b53f39472321a554b168dd31aa26504193292c passes53 Node tests/types,82 browser cases/4 private skips, web/native exports and568/900KiB budget; blocking security/policy checks pass. CI40529737177 contains desktop/mobile manual-PDF evidence. Mobile rendering was inspected; the desktop capture caught a transient loading frame, so the regression now waits for completed PDF rendering before its final screenshot. A fresh run will provide the replacement capture. The audio-only corpus uses the real test server/worker/auth path.
+
+Workspace maintenance removed temporary staging; the saved source was recovered and the52-file bundle was reproduced with the identical version2b728601497d21e7361778a7f3a8240eccfe2a819da2d57e987b66577051e94d. All source audio packet and complete-decoding checks passed again. No new Storage version or pointer has been uploaded; fresh build restoration and hosted playback remain pending browser authentication.
+
+## Reproduction metadata
+
+The following metadata permits rebuilding the six lossless listening parts from the same supplied MP3; it contains no book text, audio or credentials.
+
+```json
+{
+  "sourceSha256": "bd44f8c0baa7099c5bf41e9e94fb8a51c569c78fc5c89728d683e21f92674fc8",
+  "sourceAudioPacketHash": "SHA256=1fd2de9cd565ad56331af3d67dd09f34fab12a8a09c1f00993fb4c743e1739c9",
+  "cutTargetsSeconds": [
+    2399,
+    4799.415,
+    7201.225,
+    9598.89,
+    11999
+  ],
+  "parts": [
+    {
+      "file": "part-01.mp3",
+      "duration": 2399.016
+    },
+    {
+      "file": "part-02.mp3",
+      "duration": 2400.408
+    },
+    {
+      "file": "part-03.mp3",
+      "duration": 2401.824
+    },
+    {
+      "file": "part-04.mp3",
+      "duration": 2397.648
+    },
+    {
+      "file": "part-05.mp3",
+      "duration": 2400.12
+    },
+    {
+      "file": "part-06.mp3",
+      "duration": 1092.888
+    }
+  ]
+}
+```
