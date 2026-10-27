@@ -2,41 +2,20 @@
 
 ## [Unreleased]
 
-- Synchronize ebook position with playback chapter navigation and preserve the visible source-text anchor when switching voices across different chapter layouts. Ignore stale target-voice reading history without borrowing another voice’s timings. Intended impact: patch; develop only.
+## [0.2.0] - 2026-10-27
 
-- Add the complete British female Piper Cori recording to the develop library, with its own saved positions, passage timing and voice switching across chapter layouts. Preserve Kokoro and the Google $0 block. Intended impact: patch.
-
-- Add private, resumable full-book voice preparation with source-word fidelity, chunk integrity checks, exclusive workers and complete audio decoding. No app/runtime change.
-
-- Add an offline CPU voice-audition preparation script and model provenance for owner-only Qwen, Chatterbox and Piper samples. No website clips or runtime changes.
-
-- Make appearance settings explicitly dismissible with Close/Done, outside tap and Escape; keep close controls visible on short screens. Prevent accidental dialog dismissal from padding or drag gestures, preserve fallback fullscreen while dismissing cards, give the mobile library a focus-contained, dismissible drawer, and correct primary-button contrast in night mode. Intended impact: patch; develop only.
-
-- Clarify guest reading-place limits and update reading help for word highlighting, fullscreen, 10-second controls and reference skipping. Keep installation guidance focused on home-screen and offline reading. Intended impact: patch; develop only.
-
-- Rejoin verified page-end word fragments and support minimal reading-only text repairs with source-offset maps, keeping existing quotes, highlights and acoustic cues stable. Original editions and recordings remain intact.
-
-- Drain account changes made during an in-flight save and clear stale sync timers when switching accounts, so edits sync promptly without a reload.
-
-- Let short reading pages use smaller word counts and hide edition-download chrome during fullscreen, preventing mobile Manifest lines from falling below the visible page while preserving text and reading anchors.
-
-- Add real reader fullscreen with an explicit exit and full-window fallback, legible 10-second rewind/forward controls, and responsive page/player spacing. Ordinary listening starts at the introduction and skips reference sections while Contents retains every chapter and saved positions. Intended impact: patch within ongoing development; develop only.
-
-- Keep a selected audio position when chapter metadata arrives after an early seek, including slow connections. Intended impact: patch.
-
-- Repair the develop deployment’s private-library connection, retain required asset verification, and identify missing build settings by name. Intended impact: patch; no production promotion.
-
-- Enforce the owner’s $0 Google policy before credentials or network calls; retain Emma playback and offline preflight. Remember the selected PDF edition across chapter changes/reloads, rejecting unlisted saved URLs. Intended impact: patch within the current development work; no main promotion.
-
-- Restore the private Manifest editions/narration library through verified development build assets, add optional acoustic word-following cues, and repair stale/failing catalog cache behavior. Prepare matching British Neural2 audition and word-mark synthesis with explicit credentials/cost controls. Intended impact: next minor release; main remains unchanged.
-
-- Use develop for all Pagechime implementation and development deployment. Main promotion requires a later explicit owner instruction; CI and branch guards follow this policy.
-
-Added an interactive text reader for web and Expo with reflowable pages, typography/paper/sepia/night controls, exact quotation notes/highlights and reading anchors independent of narration. Original PDF remains available; synced reading places and manual PDF pages restore correctly. Intended version impact: next minor release (0.2.0).
-
-Renamed the product to Pagechime across website/mobile branding, install labels, workspace packages and project guidance. Renamed the existing Netlify development project in place to pagechime; kept one development environment, existing storage namespaces and native application IDs. The existing GitHub repository is now dn-lx/pagechime.
-
-Added standalone Me+ username/password accounts, invitation/admin access controls, private notes, account-scoped bookmarks/progress and offline sync; Next/Expo sign-in and logout; server-side sessions and protected Netlify media/API configuration. Development deployment awaits Netlify CLI/network setup. Intended version impact: next minor release (0.2.0); no production release made.
+- Promote the Pagechime web and native source from develop to main under the owner's explicit approval on 2026-10-27.
+- Add standalone reader accounts, guest reading/listening, private notes and account-scoped bookmarks and reading progress.
+- Add reflowable ebook pages, exact quotation notes and highlights, durable reading anchors, typography controls and paper, sepia and night themes.
+- Improve fullscreen reading, centered playback controls, 10-second seeking, early-seek handling and reference-section skipping while retaining complete Contents.
+- Synchronize ebook navigation with playback and preserve the visible source-text position when changing between narration layouts.
+- Add the complete Piper Cori narration with independent passage timings while retaining Kokoro Emma and its acoustic word cues.
+- Restore private book assets through a capability-protected, hash-verified immutable library; keep book text, media and credentials outside public Git.
+- Apply verified reading-only word joins and minimal editorial repairs while preserving source editions, quotation offsets and timing anchors.
+- Repair account save races and stale sync timers, PDF edition persistence, short-screen dialogs, mobile reading space and night-theme contrast.
+- Add private resumable local voice preparation; incomplete Qwen and Chatterbox recordings remain outside the website catalog.
+- Enforce the owner's Google synthesis budget of $0 before provider credentials or network requests.
+- Keep web/native exports separate from signed device/store acceptance. The tracked Expo native-tooling advisory remains open under REQ-005; the blocking web audit passes.
 
 ## [0.1.0] - 2026-10-23
 

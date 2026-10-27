@@ -1,6 +1,14 @@
 # Current Handoff
 
-Updated 2026-10-25 (Europe/Madrid).
+Updated 2026-10-27 (Europe/Madrid).
+
+## Owner-approved production promotion — 2026-10-27
+
+The owner explicitly requested: "first merge the develop into main and then do the change/ upload". This supersedes the earlier develop-only restriction for this promotion. Release 0.2.0 synchronizes VERSION, workspace/Expo versions and dated notes. Source baseline cadca81afacfc90767841698508832f5150b75a5 passes application, web dependency audit, Semgrep, Gitleaks and policy checks. The tracked non-blocking native-tooling advisory remains visible under REQ-005.
+
+Use a same-repository develop → main PR and record the owner instruction in its production-approved gate. Keep Netlify deployment held with [skip netlify] in the release merge until production's private-library configuration and access scope are checked. Production currently serves deploy 6adbe0d674ba4dbeb313e0b2; develop book inputs remain the isolated pagechime-library-develop bucket. No migrations, provider synthesis or library objects change in this merge. Follow-up: publish the complete improved Kokoro audio through a valid immutable library version, then verify the deployed source and catalog. For containment, retain the private perimeter and fix forward through develop → main; failed Netlify builds do not publish. No irreversible data operation is planned.
+
+The recording recovery task below is separate and remains blocked.
 
 <!-- AGENT_TASK_STATE_START -->
 {"task_id":"REQ-016","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"ef3878f6109ff37caae0d2dc4762d3d8600f4ba4","next_step":"Use a persistent runtime for unattended recording. Restore pinned models/environments and current Library helpers, verify saved versions3/2 and WAV hashes, then resume from Qwen50/Chatterbox46.","updated_at":"2026-10-25T19:37:18.210Z"}
