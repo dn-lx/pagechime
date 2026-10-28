@@ -1,12 +1,13 @@
 # Pagechime requirements
 
-Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-27.
+Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-28.
 
-## [ ] REQ-018 — Publish the complete improved Kokoro recording after main promotion
-- First merge develop into main under the owner's 2026-10-27 instruction; then add the whole improved Emma recording to Pagechime.
+## [ ] REQ-018 — Publish the complete improved Kokoro recording on develop
+- Current owner instruction (2026-10-28): work only on develop, do not touch main, and first reinstate Manifest in Action. PR #7 is closed unmerged; no further main promotion is authorized. The first historical promotion is already complete in PR #5.
+- Add the whole improved Emma recording to the develop catalog after restoring the existing book.
 - Preserve all encoded source audio across continuous listening parts; retain the original Kokoro and Piper editions. Represent missing acoustic timings honestly and support manual PDF reading without resetting its page when parts change.
 - Stage a new immutable private catalog, validate every file digest/size/path, retain the prior version and switch current.json only after every object exists. Keep per-file uploads bounded at 24 MiB; aggregate catalog is bounded at 320 MiB.
-- Production restores the catalog through a dedicated secret in Netlify build scope, with required-source failure and private visitor protection. Keep credentials and private content outside Git.
+- Develop restores the catalog through its existing read-only build secret, with required-source failure and private visitor protection. Production preparation remains historical and deferred. Keep credentials and private content outside Git.
 - Acceptance: encoded-packet equality, full MP3 decoding, aggregate/per-file negative tests, production-secret isolation tests, desktop/mobile manual-PDF regression, fresh build hash restore and hosted full-book playback evidence.
 - Plan: docs/plans/REQ-018-improved-kokoro.md. First promotion completed in PR #5 at e272781f; upload and hosted acceptance remain pending.
 

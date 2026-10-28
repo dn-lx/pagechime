@@ -1,5 +1,9 @@
 # REQ-018 — Complete improved Kokoro publication
 
+## Current scope — 2026-10-28
+
+The owner now requires work only on develop and no changes to main. PR #7 is closed without merging and its approval label is removed. First restore the existing Manifest in Action catalog (original Kokoro and Piper) with a fresh develop build. The complete improved recording remains pending upload; the historical production-preparation details below do not authorize further promotion.
+
 ## Requirement
 
 Owner request on 2026-10-27: merge develop into main first, then change/upload the complete improved recording. Preserve private content and existing synchronized editions. This task does not claim new word alignment, native signing, provider synthesis or completion of the separate Qwen/Chatterbox work.

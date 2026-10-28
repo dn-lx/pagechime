@@ -1,13 +1,13 @@
 # Current Handoff
 
-Updated 2026-10-27 (Europe/Madrid).
+Updated 2026-10-28 (Europe/Madrid).
 
-## Promotion — 2026-10-27
+## Develop restoration — 2026-10-28
 
-PR #5 merged main0.2.0 (e272781f), [skip netlify]. REQ-018/PR #7 awaits browser login for upload. Library functionv2 and private production read secret are verified; team gate covers all deploys. Details/evidence: REQ-018 plan.
+Owner: develop only; no main changes. PR #7 closed unmerged/approval removed. Main remains e272781f. Restore the existing Kokoro/Piper catalog first; improved upload remains pending (REQ-018 plan). Private pointer/base94da unchanged;45 files/187,054,263bytes and develop build capability present. Source0ebc passes blocking CI. Hosted checks need Netlify team sign-in.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-018","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"57b53f39472321a554b168dd31aa26504193292c","next_step":"Complete Supabase browser login, upload staged52-file version2b728601 after fresh base readback, then verify build hashes and hosted playback before PR #7 promotion.","updated_at":"2026-10-27T15:32:32.776Z"}
+{"task_id":"REQ-012","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"in_progress","last_verified_sha":"0ebc123f497cfaca3744e1647e36434033f35276","next_step":"Verify fresh develop build/45 hashes and hosted Manifest catalog/audio/PDF. Netlify browser sign-in needed; main promotion prohibited.","updated_at":"2026-10-28T19:00:00Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
@@ -24,7 +24,7 @@ Status check2026-10-25: workers/session57469 stopped; /tmp/pagechime-voice-lab m
 
 ## Policy and current work
 
-Work directly on develop with null PR, GitHub MCP writes. Main stays2396458e46609beb8c448221a647491fb90363c9 until explicit later promotion. Preserve leaf.* keys, app.dnlx.leaf identifiers, book-reader-api/book_reader_* identities. No production/outer-gate/payment/analytics/unrelated-app changes.
+Work directly on develop with null PR, GitHub MCP writes. Main stays e272781f76b8d089e9abc7ce824f327216d71c16; further promotion requires a new explicit owner instruction. Preserve leaf.* keys, app.dnlx.leaf identifiers, book-reader-api/book_reader_* identities. No production/outer-gate/payment/analytics/unrelated-app changes.
 
 Owner approved Google spend is $0. scripts/google-narration.py blocks provider requests before credentials or network, including --check/--generate. No budget/env/cache bypass. Existing Kokoro bf_emma remains available. This lock does not verify Cloud billing or control unrelated apps. Cloud project project-89a9b506-ff91-4cd1-a2d reports setup; account billing/API state unverified. See docs/CONTENT-AND-VOICES.md.
 
@@ -36,7 +36,7 @@ Editorial joins/deletion-only reading repairs preserve original text, cue offset
 
 Book: Manifest in Action,237 pages,19 chapters,1,136 passages; full Kokoro Emma recording13,682.328s. Acoustic word cues37,139/37,476 (99.1%); gaps stay visible without invented timings. Source originals/caches are private under /tmp/pagechime-*; screenshots/tests should use dedicated /tmp output directories. Supplied All-Editions ZIP remains in connected files if recovery is needed. See docs/REQ-012-VERIFICATION.md for historical acceptance.
 
-Me+ wbqnctrvxohxwiaignhg, isolated bucket pagechime-library-develop,24MiB file cap, no anon/authenticated storage policies. pagechime-library v1 verifies capability auth despite verify_jwt=false. book_reader_library_keys has RLS/revoked public grants. Existing read-only build capability cannot modify assets or accounts.
+Me+ wbqnctrvxohxwiaignhg, isolated bucket pagechime-library-develop,24MiB file cap, no anon/authenticated storage policies. pagechime-library v2 verifies capability auth despite verify_jwt=false. book_reader_library_keys has RLS/revoked public grants. Existing read-only build capability cannot modify assets or accounts.
 
 Earlier immutable library0e4a2bc8f8faf3292e231cd8fd2ce50e330cc8f075c021b9ecb755c4350824ae had27 files; the current Piper version above preserves those originals. Earlier editorial upload was denied without disclosure authorization; current owner instruction explicitly authorizes full Piper website upload. Hash-bound reading overlays and all original Kokoro cues remain. Never print capabilities or signed URLs.
 
