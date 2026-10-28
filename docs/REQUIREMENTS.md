@@ -2,6 +2,14 @@
 
 Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-28.
 
+## [ ] REQ-019 — Reusable book format and admin shared-library uploads
+- The owner creates each book's PDFs and narration, then publishes it to the shared library from the website, including on Android. Work and deployment stay on develop; main remains unchanged.
+- Support multiple PDF editions with individual page counts, ordered audio tracks, optional cover and a reusable versioned book description. Read page counts/durations from supplied files. Keep ordinary untimed uploads in manual-PDF mode.
+- Only an authenticated admin may prepare, upload, verify or publish. Drafts stay hidden; every file must match its declared digest/type/size before atomic publication. Credentials remain server-only; storage remains private and capacity bounded.
+- Readers/guests see published books across devices without a website rebuild. Preserve the packaged Manifest catalog and personal device imports; refresh/error handling must distinguish service failure from a valid empty catalog.
+- Acceptance: security/negative paths, retries, publication isolation, fresh-reader catalog/audio/ranges/PDF editions, desktop/mobile visual verification, source checks, budget and hosted develop evidence.
+- Plan: docs/plans/REQ-019-shared-book-upload.md; format/workflow: docs/SHARED-BOOK-FORMAT.md.
+
 ## [ ] REQ-018 — Publish the complete improved Kokoro recording on develop
 - Current owner instruction (2026-10-28): work only on develop, do not touch main, and first reinstate Manifest in Action. PR #7 is closed unmerged; no further main promotion is authorized. The first historical promotion is already complete in PR #5.
 - Add the whole improved Emma recording to the develop catalog after restoring the existing book.

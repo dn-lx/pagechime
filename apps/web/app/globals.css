@@ -3642,3 +3642,51 @@ progress::-webkit-progress-value {
 .focus-reading .book-editions {
   display: none;
 }
+:where(.shared-upload) fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  display: grid;
+  gap: 18px;
+}
+.shared-upload fieldset[hidden] {
+  display: none;
+}
+.upload-file-list {
+  padding-left: 24px;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.upload-file-list li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.upload-file-list li span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.upload-file-list button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.upload-review {
+  border: 1px solid var(--line);
+  padding: 16px;
+  border-radius: 16px;
+  overflow-wrap: anywhere;
+}
+.shared-upload progress {
+  width: 100%;
+  accent-color: var(--olive);
+}
+
+.upload-review .text-button { margin: 8px 12px 0 0; min-height: 44px; }

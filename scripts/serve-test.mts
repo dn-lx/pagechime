@@ -3,6 +3,9 @@ import { readFile, stat } from "node:fs/promises";
 import { resolve, extname } from "node:path";
 import { createReaderApi } from "../server/reader-api.ts";
 import { proxyReader, authorizeMedia } from "../server/web-boundary.ts";
+import { createSharedLibraryApi } from "../server/shared-library-api.ts";
+import { proxySharedLibrary } from "../server/shared-library-boundary.ts";
+import { fixtureSharedStore } from "../tests/fixtures/shared-library.ts";
 import {
   longBook,
   repairedBook,
@@ -15,6 +18,8 @@ import {
 } from "../tests/fixtures/reader-database.ts";
 const db = await fixtureDatabase();
 const handler = createReaderApi(db, "fixture-pepper");
+const sharedGroups = new Map<string, ReturnType<typeof fixtureSharedStore>>();
+const sharedKey = "f".repeat(64);
 const failInitialSync = new Set<string>();
 const send: typeof fetch = async (input, init) => {
   const request = new Request(input as string, init);
@@ -89,6 +94,108 @@ http
         headers,
         body: raw.length ? raw : undefined,
       });
+      const sharedGroup =
+        /(?:^|; )reader-test-shared=([a-f0-9-]{36})(?:;|$)/.exec(
+          req.headers.cookie || "",
+        )?.[1] || "default";
+      if (!sharedGroups.has(sharedGroup))
+        sharedGroups.set(sharedGroup, fixtureSharedStore());
+      const shared = sharedGroups.get(sharedGroup)!;
+      if (path.startsWith("/api/library/")) {
+        const api = createSharedLibraryApi(
+          shared.store,
+          async (k) => k === sharedKey,
+          async (r) => {
+            const result = await handler(
+              new Request("http://fixture/book-reader-api/me", {
+                headers: {
+                  Authorization: r.headers.get("authorization") || "",
+                },
+              }),
+            );
+            return result.ok ? (await result.json()).account : null;
+          },
+        );
+        const response = await proxySharedLibrary(
+          request,
+          sharedKey,
+          async (input, init) => api(new Request(input, init)),
+        );
+        res.writeHead(response.status, Object.fromEntries(response.headers));
+        res.end(Buffer.from(await response.arrayBuffer()));
+        return;
+      }
+      const sharedObject =
+        /^\/storage\/v1\/object\/(upload\/sign|sign)\/pagechime-shared-books-develop\/(shared-[a-f0-9-]{36})\/(asset-\d{3}\.[a-z0-9]+)$/.exec(
+          path,
+        );
+      if (sharedObject) {
+        const [, kind, id, key] = sharedObject,
+          row = shared.rows.get(id),
+          asset = row?.files.find((f) => f.key === key),
+          name = id + "/" + key;
+        if (!asset || !row) {
+          res.writeHead(404);
+          res.end();
+          return;
+        }
+        if (kind === "upload/sign" && req.method === "PUT") {
+          if (row.status !== "draft" || shared.objects.has(name)) {
+            res.writeHead(409);
+            res.end();
+            return;
+          }
+          shared.objects.set(name, raw);
+          res.writeHead(200);
+          res.end("{}");
+          return;
+        }
+        if (kind !== "sign" || row.status !== "published") {
+          res.writeHead(404);
+          res.end();
+          return;
+        }
+        const bytes = shared.objects.get(name);
+        if (!bytes) {
+          res.writeHead(404);
+          res.end();
+          return;
+        }
+        const range = /^bytes=(\d+)-(\d*)$/.exec(req.headers.range || "");
+        if (range) {
+          const from = Number(range[1]),
+            to = Math.min(
+              Number(range[2] || bytes.length - 1),
+              bytes.length - 1,
+            );
+          res.writeHead(206, {
+            "Content-Type": asset.contentType,
+            "Accept-Ranges": "bytes",
+            "Content-Range": `bytes ${from}-${to}/${bytes.length}`,
+            "Content-Length": to - from + 1,
+          });
+          res.end(bytes.subarray(from, to + 1));
+          return;
+        }
+        res.writeHead(200, {
+          "Content-Type": asset.contentType,
+          "Accept-Ranges": "bytes",
+          "Content-Length": bytes.length,
+        });
+        res.end(bytes);
+        return;
+      }
+      const sharedMedia =
+        /^\/books\/(shared-[a-f0-9-]{36})\/(asset-\d{3}\.[a-z0-9]+)$/.exec(
+          path,
+        );
+      if (sharedMedia) {
+        res.writeHead(302, {
+          Location: `/api/library/media/${sharedMedia[1]}/${sharedMedia[2]}`,
+        });
+        res.end();
+        return;
+      }
       if (path === "/__test/fail-initial-sync" && req.method === "POST") {
         failInitialSync.add(JSON.parse(raw.toString()).username);
         res.writeHead(204);
@@ -237,10 +344,12 @@ http
           audioonly: {
             ...voiceBase,
             timing: "audio-only",
-            chapters: voiceBase.chapters.map((chapter: Record<string, unknown>) => ({
-              ...chapter,
-              segments: [],
-            })),
+            chapters: voiceBase.chapters.map(
+              (chapter: Record<string, unknown>) => ({
+                ...chapter,
+                segments: [],
+              }),
+            ),
           },
           voicepages: {
             ...longBook,

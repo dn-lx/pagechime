@@ -4,6 +4,18 @@ export default async (
   request: Request,
   context: { next: () => Promise<Response> },
 ) => {
+  const shared =
+    /^\/books\/(shared-[a-f0-9-]{36})\/(asset-\d{3}\.(?:pdf|mp3|m4a|wav|ogg|png|jpe?g|webp))$/.exec(
+      new URL(request.url).pathname,
+    );
+  if (shared && ["GET", "HEAD"].includes(request.method))
+    return new Response(null, {
+      status: 302,
+      headers: {
+        ...privateHeaders,
+        Location: `/api/library/media/${shared[1]}/${shared[2]}`,
+      },
+    });
   if (!(await authorizeMedia(request, fetch, guestPaths)))
     return new Response("Please sign in to read this book.", {
       status: 401,

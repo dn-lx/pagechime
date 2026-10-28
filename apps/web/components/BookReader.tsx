@@ -140,7 +140,7 @@ export default function BookReader({
   const [follow, setFollow] = useState(
     book.timing === "audio-only"
       ? false
-      : request?.follow ?? readSaved("follow." + book.id, !initialPlace),
+      : (request?.follow ?? readSaved("follow." + book.id, !initialPlace)),
   );
   const [appearance, setAppearance] = useState(() =>
     readingAppearance(readSaved("reading.appearance", null)),
@@ -172,6 +172,12 @@ export default function BookReader({
       : book.pdf;
   });
   const { isGuest } = useAccount();
+  const pdfPageCount =
+    book.editions?.find((e) => e.url === pdfEdition)?.pageCount ||
+    book.pageCount;
+  useEffect(() => {
+    if (mode === "pdf" && p.page > pdfPageCount) p.setPage(pdfPageCount);
+  }, [pdfEdition, pdfPageCount, mode, p.page]);
   useEffect(() => {
     writeSaved("pdf.edition." + book.id, pdfEdition);
   }, [book.id, pdfEdition]);
@@ -388,7 +394,7 @@ export default function BookReader({
     setSelection(null);
     window.getSelection()?.removeAllRanges();
     if (mode === "pdf") {
-      p.setPage(clamp(p.page + direction, 1, book.pageCount));
+      p.setPage(clamp(p.page + direction, 1, pdfPageCount));
       return;
     }
     const next = pageIndex + direction;
@@ -505,7 +511,7 @@ export default function BookReader({
         adjacentListeningChapter(book.chapters, readingChapter, -1) === null;
   const nextDisabled =
     mode === "pdf"
-      ? p.page >= book.pageCount
+      ? p.page >= pdfPageCount
       : pageIndex >= pages.length - 1 &&
         adjacentListeningChapter(book.chapters, readingChapter, 1) === null;
   return (
@@ -578,7 +584,9 @@ export default function BookReader({
               value={pdfEdition}
               onChange={(e) => setPdfEdition(e.target.value)}
             >
-              <option value={book.pdf}>Page-matched PDF</option>
+              {!book.editions.some(
+                (e) => e.kind === "pdf" && e.url === book.pdf,
+              ) && <option value={book.pdf}>Page-matched PDF</option>}
               {book.editions
                 .filter((e) => e.kind === "pdf")
                 .map((e) => (
@@ -917,14 +925,14 @@ export default function BookReader({
                 aria-label="PDF page number"
                 type="number"
                 min={1}
-                max={book.pageCount}
+                max={pdfPageCount}
                 value={p.page}
                 onChange={(e) => {
                   setFollow(false);
-                  p.setPage(clamp(Number(e.target.value), 1, book.pageCount));
+                  p.setPage(clamp(Number(e.target.value), 1, pdfPageCount));
                 }}
               />{" "}
-              of {book.pageCount}
+              of {pdfPageCount}
             </label>
           ) : (
             <>

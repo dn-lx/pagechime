@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-28
+
+- Add a versioned reusable book description and admin publishing of multiple PDF editions, ordered audio tracks and an optional cover to a private shared library.
+- Load published books at runtime across devices without a website rebuild; preserve the packaged Manifest editions and personal imports.
+- Verify each immutable upload's hash, size and file signature before publication, retain resumable drafts, enforce administrator sessions and bound shared storage.
+- Show each PDF edition's own page count and retain manual reading position through untimed audio navigation.
+
 ## [0.2.1] - 2026-10-27
 
 - Prepare the complete improved Kokoro Emma recording as a separate listening edition in six continuous parts. Preserve the source MP3's encoded audio, the original timed Kokoro edition and Piper; PDF pages remain manual until new acoustic timings are available.

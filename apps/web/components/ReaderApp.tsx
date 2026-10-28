@@ -66,6 +66,8 @@ import { useAccount } from "../lib/account";
 import { type ReaderNote } from "@pagechime/core";
 import AccountPanel from "./AccountPanel";
 import Modal from "./Modal";
+import SharedBookUpload from "./SharedBookUpload";
+import { sharedCatalog } from "../lib/shared-library";
 import { usePlayback, type Playback } from "../lib/playback";
 import { pdfLibrary } from "../lib/pdf";
 import Reader, {
@@ -155,6 +157,8 @@ export default function ReaderApp() {
     readSaved("notes", []),
   );
   const [noteText, setNoteText] = useState("");
+  const [sharedNext, setSharedNext] = useState<string | null>(null);
+  const [sharedBusy, setSharedBusy] = useState(false);
   const [noteDraft, setNoteDraft] = useState<AnnotationDraft | null>(null);
   const [editingNote, setEditingNote] = useState<ReaderNote | null>(null);
   const [books, setBooks] = useState<Book[]>([]),
@@ -207,6 +211,14 @@ export default function ReaderApp() {
       .catch(() => {
         notify("Local library storage is unavailable in this browser.");
         return [] as Book[];
+      });
+    const sharedPromise = sharedCatalog()
+      .then((d) => ({ ...d, failed: false }))
+      .catch(() => {
+        notify(
+          "Newly published books could not refresh. Please retry the library.",
+        );
+        return { books: [] as Book[], next: null, failed: true };
       });
     let entries: Book[] = [],
       onlineFailed = false,
@@ -261,8 +273,15 @@ export default function ReaderApp() {
     locals.forEach((b) =>
       objects.current.push(b.pdf, ...b.chapters.map((c) => c.audio)),
     );
-    setBooks([...entries, ...locals]);
-    if (onlineFailed && !entries.length && !locals.length)
+    const shared = await sharedPromise;
+    setSharedNext(shared.next);
+    setBooks([...entries, ...shared.books, ...locals]);
+    if (
+      (onlineFailed || shared.failed) &&
+      !entries.length &&
+      !shared.books.length &&
+      !locals.length
+    )
       setError(
         libraryError ||
           (isGuest
@@ -271,6 +290,22 @@ export default function ReaderApp() {
       );
     setBoot(false);
   }, [notify]);
+  async function moreSharedBooks() {
+    if (!sharedNext || sharedBusy) return;
+    setSharedBusy(true);
+    try {
+      const data = await sharedCatalog(sharedNext);
+      setBooks((bs) => [
+        ...bs,
+        ...data.books.filter((b) => !bs.some((x) => x.id === b.id)),
+      ]);
+      setSharedNext(data.next);
+    } catch {
+      notify("More books could not load. Please retry.");
+    } finally {
+      setSharedBusy(false);
+    }
+  }
   useEffect(() => {
     loadBooks();
     setTheme(readSaved("theme", "paper"));
@@ -708,6 +743,12 @@ export default function ReaderApp() {
           <Plus />
           Add a book
         </button>
+        {account?.role === "admin" && (
+          <button className="nav-item" onClick={() => openModal("publish")}>
+            <UploadSimple />
+            Publish a book
+          </button>
+        )}
         <div className="sidebar-foot">
           <span>A little time for yourself.</span>
           <IconButton
@@ -1076,6 +1117,12 @@ export default function ReaderApp() {
                       Yours to get lost in
                     </span>
                   </div>
+                  <IconButton
+                    label="Refresh library"
+                    onClick={() => void loadBooks()}
+                  >
+                    <ArrowClockwise size={18} />
+                  </IconButton>
                   <button
                     className="text-button"
                     onClick={() => openModal(isGuest ? "join" : "import")}
@@ -1240,6 +1287,15 @@ export default function ReaderApp() {
                     </button>
                   </div>
                 )}
+                {sharedNext && (
+                  <button
+                    className="secondary-button"
+                    onClick={() => void moreSharedBooks()}
+                    disabled={sharedBusy}
+                  >
+                    {sharedBusy ? "Loading books…" : "More shared books"}
+                  </button>
+                )}
                 <div className="library-footer">
                   <div>
                     <Leaf size={20} />
@@ -1283,6 +1339,19 @@ export default function ReaderApp() {
               setBooks((x) => [...x, b]);
               setModal("");
               notify("Your book is on the shelf.");
+            }}
+          />
+        )}
+        {modal === "publish" && account?.role === "admin" && (
+          <SharedBookUpload
+            onClose={() => setModal("")}
+            onPublished={(book) => {
+              setBooks((bs) => [
+                ...bs.filter((b) => b.id !== book.id),
+                validateBook(book),
+              ]);
+              setModal("");
+              notify("Your book is published to the shared library.");
             }}
           />
         )}

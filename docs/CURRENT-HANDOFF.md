@@ -2,14 +2,12 @@
 
 Updated 2026-10-28 (Europe/Madrid).
 
-## Develop restoration — 2026-10-28
+## Current work — REQ-019
 
-Manifest in Action is restored on develop source d0f5090e / ready branch deploy6ae24564449c3378cbf38061. Fresh build verified45 files from private version94da1b70b50c; hosted guest catalog shows complete Kokoro3h48m/19 chapters and Piper3h27m/17 chapters. Verified both opening narrations, Kokoro final-track end seek/playback, PDF pages1/8/236/237 and rendered reading text; no app-origin console errors. Blocking CI passes; tracked native tooling advisory remains REQ-005.
-
-Owner: develop only; main e272781f and production deploy6adbe0d674ba4dbeb313e0b2 unchanged. PR #7 closed unmerged/approval removed. Improved3h38m upload remains pending; see REQ-018 plan.
+Owner confirmed Manifest is visible. Build a standard for their PDFs/audio and admin publication to a shared runtime library. Develop only; main e272781f and production6adbe0d6 unchanged. PR #7 remains closed. REQ-018 improved upload is pending separately. Shared schema/functionv1 deployed with private access verified; see REQ-019 plan. Prior restoration: source d0f5090e / ready develop6ae24564,45 verified files, both voices, first/last PDF/audio checks.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":null,"repository":null,"base":null,"branch":null,"pr":null,"status":"idle","last_verified_sha":null,"next_step":null,"updated_at":"2026-10-28T19:09:00Z"}
+{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"implementing","last_verified_sha":"d0f5090e98883e4ee260fa29ae99d5b530ba795b","next_step":"Verify admin shared-book upload on desktop/mobile, deploy additive backend and develop, inspect hosted flow. Main stays unchanged.","updated_at":"2026-10-28T19:50:00Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
