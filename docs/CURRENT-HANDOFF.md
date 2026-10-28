@@ -4,10 +4,12 @@ Updated 2026-10-28 (Europe/Madrid).
 
 ## Develop restoration — 2026-10-28
 
-Owner: develop only; no main changes. PR #7 closed unmerged/approval removed. Main remains e272781f. Restore the existing Kokoro/Piper catalog first; improved upload remains pending (REQ-018 plan). Private pointer/base94da unchanged;45 files/187,054,263bytes and develop build capability present. Source0ebc passes blocking CI. Hosted checks need Netlify team sign-in.
+Manifest in Action is restored on develop source d0f5090e / ready branch deploy6ae24564449c3378cbf38061. Fresh build verified45 files from private version94da1b70b50c; hosted guest catalog shows complete Kokoro3h48m/19 chapters and Piper3h27m/17 chapters. Verified both opening narrations, Kokoro final-track end seek/playback, PDF pages1/8/236/237 and rendered reading text; no app-origin console errors. Blocking CI passes; tracked native tooling advisory remains REQ-005.
+
+Owner: develop only; main e272781f and production deploy6adbe0d674ba4dbeb313e0b2 unchanged. PR #7 closed unmerged/approval removed. Improved3h38m upload remains pending; see REQ-018 plan.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-012","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"testing","last_verified_sha":"0ebc123f497cfaca3744e1647e36434033f35276","next_step":"Verify fresh develop build/45 hashes and hosted Manifest catalog/audio/PDF. Netlify browser sign-in needed; main promotion prohibited.","updated_at":"2026-10-28T19:00:00Z"}
+{"task_id":null,"repository":null,"base":null,"branch":null,"pr":null,"status":"idle","last_verified_sha":null,"next_step":null,"updated_at":"2026-10-28T19:09:00Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017

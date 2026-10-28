@@ -2,7 +2,7 @@
 
 ## Current scope — 2026-10-28
 
-The owner now requires work only on develop and no changes to main. PR #7 is closed without merging and its approval label is removed. First restore the existing Manifest in Action catalog (original Kokoro and Piper) with a fresh develop build. The complete improved recording remains pending upload; the historical production-preparation details below do not authorize further promotion.
+The owner now requires work only on develop and no changes to main. PR #7 is closed without merging and its approval label is removed. Existing Manifest in Action catalog restoration is now verified: develop source d0f5090e98883e4ee260fa29ae99d5b530ba795b, ready branch deploy6ae24564449c3378cbf38061. Fresh build log verifies all45 files from version94da1b70b50c. Hosted guest catalog shows Kokoro3h48m/19chapters and Piper3h27m/17chapters; both opening narrations, Kokoro final-track playback/end seek, first/last PDF pages and reading text were checked. Blocking source CI passes; REQ-005 advisory remains separately tracked. Main e272781f and production deploy6adbe0d674ba4dbeb313e0b2 remain unchanged. The complete improved recording remains pending upload; the historical production-preparation details below do not authorize further promotion.
 
 ## Requirement
 
