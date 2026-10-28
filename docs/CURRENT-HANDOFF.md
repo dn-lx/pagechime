@@ -7,14 +7,12 @@ Updated 2026-10-28 (Europe/Madrid).
 Owner: develop only; no main changes. PR #7 closed unmerged/approval removed. Main remains e272781f. Restore the existing Kokoro/Piper catalog first; improved upload remains pending (REQ-018 plan). Private pointer/base94da unchanged;45 files/187,054,263bytes and develop build capability present. Source0ebc passes blocking CI. Hosted checks need Netlify team sign-in.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-012","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"in_progress","last_verified_sha":"0ebc123f497cfaca3744e1647e36434033f35276","next_step":"Verify fresh develop build/45 hashes and hosted Manifest catalog/audio/PDF. Netlify browser sign-in needed; main promotion prohibited.","updated_at":"2026-10-28T19:00:00Z"}
+{"task_id":"REQ-012","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"testing","last_verified_sha":"0ebc123f497cfaca3744e1647e36434033f35276","next_step":"Verify fresh develop build/45 hashes and hosted Manifest catalog/audio/PDF. Netlify browser sign-in needed; main promotion prohibited.","updated_at":"2026-10-28T19:00:00Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
 
-Playback load/seek now carries an explicit reading request, so previous/next, Contents, cross-chapter seeks and automatic advancement align a detached ebook. Opening a saved book still restores its manual place; same-chapter play/pause remains independent. Voice selection maps the visible UTF-16 source anchor through ordered normalized text across different chapter/chunk layouts, preserving view/follow state and overriding stale target history. Real cue/passage timestamps only; unmatched sections keep the original voice/place. Main and Google remain unchanged.
-
-Local checks:51 Node tests/types/docs,80 browser passes/4 private skips, web export and568/900KiB budget. Ten focused desktop/mobile cases and inspected screenshots verify round trips and retained layout. Direct live check reaches Netlify team-protection sign-in; hosted verification is blocked without weakening the gate. Source ef3878f6 passes CI40183409963 (51 tests,80 browser cases, web/mobile exports); direct live check remains gated. See docs/plans/REQ-017-reader-narration-position.md.
+Source ef3878f6 passes51 Node/80 browser cases, web/mobile exports and budget. Playback/voice navigation retains real reading anchors; hosted verification remains behind Netlify team sign-in. See docs/plans/REQ-017-reader-narration-position.md.
 
 ## Recordings — REQ-016
 
