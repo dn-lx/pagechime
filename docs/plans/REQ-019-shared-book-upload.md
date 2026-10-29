@@ -23,6 +23,12 @@ Test forged roles, absent/expired sessions/capabilities, draft isolation, malfor
 
 ## State
 
-Implementation passes60 Node tests/types,84 browser cases/4 private-asset skips, web build and574/900KiB budget. Desktop/mobile publishing tests use the actual API, BFF and reader path with isolated synthetic storage. An upload-review layout improvement now collapses file selection; the focused checks are being rerun.
+Implementation passes60 Node tests/types,84 browser cases/4 private-asset skips, web build and574/900KiB budget. Desktop/mobile publishing tests use the actual API, BFF and reader path with isolated synthetic storage. The final upload-review layout collapses file selection and was checked on desktop/mobile; the focused tests passed after that change.
 
 Applied additive remote migrations20261028195551 (shared_reader_books) and20261028195810 (shared_book_owner_index); local filenames match returned history. RLS and denied anon/authenticated table/RPC access are verified. A rolled-back database test proved prepare, incomplete/partial rejection, complete publication and published-request replay; no test book row remains. Security advisor reports only the expected INFO for RLS with no client policies on the service-only table. Function pagechime-shared-library v1 is ACTIVE and its five files were read back against source; it rejects missing capability auth. No test book row remains. First bucket creation and hosted upload acceptance remain pending.
+
+## Hosted checkpoint — 2026-10-29
+
+Source2b76a9347b6e7fa98e0938dcfc384bfc7fda22ec is deployed as ready develop branch deploy6ae254bee65dedda6c007dd1 (library/reader functions plus media edge). CI40759632632 passed application checks,84 browser cases/4 private skips, web/native exports and574/900KiB budget; all blocking policy/security checks passed. Tracked REQ-005 tooling advisory remains separate. The committed tree matched the locally checked files exactly.
+
+The protected hosted /api/library/catalog returned200 with {books:[],next:null}, verifying Netlify's server-only capability path to the live service. The existing packaged Manifest catalog is retained. No shared book row or dynamic bucket has been created; first real upload/publish remains unverified on the hosted system. Netlify and PageChime browser login are required for that acceptance. The secure PageChime sign-in request was interrupted before success could be verified, and the refreshed browser now shows the Netlify team gate. Main e272781f and production deploy6adbe0d674ba4dbeb313e0b2 remain unchanged. Do not mark REQ-019 complete from source-only or catalog-read checks.

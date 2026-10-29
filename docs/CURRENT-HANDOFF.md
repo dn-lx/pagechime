@@ -1,13 +1,15 @@
 # Current Handoff
 
-Updated 2026-10-28 (Europe/Madrid).
+Updated 2026-10-29 (Europe/Madrid).
 
 ## Current work — REQ-019
 
-Owner confirmed Manifest is visible. Build a standard for their PDFs/audio and admin publication to a shared runtime library. Develop only; main e272781f and production6adbe0d6 unchanged. PR #7 remains closed. REQ-018 improved upload is pending separately. Shared schema/functionv1 deployed with private access verified; see REQ-019 plan. Prior restoration: source d0f5090e / ready develop6ae24564,45 verified files, both voices, first/last PDF/audio checks.
+Shared PDF/audio publishing is live on develop2b76a934 / ready deploy6ae254bee65dedda6c007dd1. CI40759632632 passes60 Node/84 browser cases (4 private skips), web/mobile exports and574/900KiB budget; blocking policy/security pass (REQ-005 advisory remains). Hosted catalog returned200 with an empty dynamic list; packaged Manifest stays present. Schema/functionv1 and private auth are verified; no shared book has been uploaded. Netlify browser session expired; remaining hosted admin upload check needs Netlify + PageChime admin sign-in. See REQ-019 plan.
+
+Develop only; main e272781f and production6adbe0d6 unchanged. PR #7 closed; improved-audio REQ-018 remains pending.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"implementing","last_verified_sha":"d0f5090e98883e4ee260fa29ae99d5b530ba795b","next_step":"Verify admin shared-book upload on desktop/mobile, deploy additive backend and develop, inspect hosted flow. Main stays unchanged.","updated_at":"2026-10-28T19:50:00Z"}
+{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"2b76a9347b6e7fa98e0938dcfc384bfc7fda22ec","next_step":"Complete hosted admin upload acceptance after Netlify and PageChime admin browser sign-in. Keep main unchanged.","updated_at":"2026-10-29T02:21:24.365Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
