@@ -4,12 +4,12 @@ Updated 2026-10-29 (Europe/Madrid).
 
 ## Current work — REQ-019
 
-Shared PDF/audio publishing is live on develop2b76a934 / ready deploy6ae254bee65dedda6c007dd1. CI40759632632 passes60 Node/84 browser cases (4 private skips), web/mobile exports and574/900KiB budget; blocking policy/security pass (REQ-005 advisory remains). Hosted catalog returned200 with an empty dynamic list; packaged Manifest stays present. Schema/functionv1 and private auth are verified; no shared book has been uploaded. Netlify browser session expired; remaining hosted admin upload check needs Netlify + PageChime admin sign-in. See REQ-019 plan.
+Shared PDF/audio publishing is live on develop2b76a934 / ready deploy6ae254bee65dedda6c007dd1. CI40759632632 passes60 Node/84 browser cases (4 private skips), exports and574/900KiB budget; blocking policy/security pass (REQ-005 advisory remains). Hosted catalog returns200. Netlify sign-in succeeded; PageChime admin login briefly showed both Manifest books and Publish a book. Later reader/me and admin/drafts return401: browser requests reused the previous session lookup, while the new session remains valid. Direct browser sign-in is the next recovery; hosted upload is still unverified. No code/security change justified yet. See REQ-019 plan.
 
 Develop only; main e272781f and production6adbe0d6 unchanged. PR #7 closed; improved-audio REQ-018 remains pending.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"2b76a9347b6e7fa98e0938dcfc384bfc7fda22ec","next_step":"Complete hosted admin upload acceptance after Netlify and PageChime admin browser sign-in. Keep main unchanged.","updated_at":"2026-10-29T02:21:24.365Z"}
+{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"2b76a9347b6e7fa98e0938dcfc384bfc7fda22ec","next_step":"Recover persistent PageChime admin browser sign-in, then verify hosted upload with owner-provided files. Keep main unchanged.","updated_at":"2026-10-29T20:35:00.000Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
