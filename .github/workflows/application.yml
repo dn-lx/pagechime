@@ -12,7 +12,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
   web-and-mobile:
-    runs-on: ubuntu-latest
+    # Playwright 1.56.1 supports Ubuntu 24.04; avoid newer runner-image drift.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6

@@ -4,14 +4,14 @@ Updated 2026-11-02 (Europe/Madrid).
 
 ## Current work — REQ-019
 
-Owner requested one Manifest bookshelf card on Nov2. The newer Piper card now replaces the original Kokoro card; source files, notes, voice switching and fallback remain available. Local checks:60 Node tests/types, web build,574/900KiB budget and desktop/mobile shelf/voice/fallback tests pass; screenshots inspected. Develop deployment pending.
+Owner requested one Manifest bookshelf card on Nov2. The newer Piper card now replaces the original Kokoro card; source files, notes, voice switching and fallback remain available. Source6f5c3919 is on develop. Local60 Node tests/types, web build,574/900KiB budget and16 desktop/mobile reader cases pass; screenshots inspected. CI passed checks/build but browser setup hit Ubuntu26.04 incompatibility; pinning the application runner to24.04. Hosted deploy/UI confirmation remains behind the Netlify gate.
 
 Shared publishing remains deployed at2b76a934 / deploy6ae254bee65dedda6c007dd1; CI40759632632 passes. Hosted catalog works; admin upload and full improved Kokoro publication remain blocked by persistent browser sign-in. No shared book is published. See REQ-019/018 plans.
 
 Develop only; main e272781f and production6adbe0d6 unchanged. PR #7 closed; improved-audio REQ-018 remains pending.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"testing","last_verified_sha":"2b76a9347b6e7fa98e0938dcfc384bfc7fda22ec","next_step":"Deploy and verify the single Piper bookshelf card, then recover admin sign-in for improved-book upload acceptance. Keep main unchanged.","updated_at":"2026-11-02T22:15:13.776951Z"}
+{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"testing","last_verified_sha":"6f5c3919e0752bbd7fd1dfd3fcba8e4ab9899572","next_step":"Verify supported-runner CI and hosted single-card deployment; recover admin sign-in for improved-book upload. Keep main unchanged.","updated_at":"2026-11-02T22:20:31.957509Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
