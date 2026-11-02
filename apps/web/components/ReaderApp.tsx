@@ -185,6 +185,17 @@ export default function ReaderApp() {
     timeout.current = setTimeout(() => setNotice(""), 4500);
   }, []);
   const p = usePlayback(notify, storage);
+  // Keep the source available for voice switching without repeating its shelf card.
+  const shelfBooks = books.filter(
+    (book) =>
+      book.local ||
+      !books.some(
+        (replacement) =>
+          !replacement.local &&
+          replacement.narration === "piper" &&
+          replacement.sourceBookId === book.id,
+      ),
+  );
   const readingLocation = useRef<ReadingLocation | null>(null);
   const reportReadingPosition = useCallback((location: ReadingLocation) => {
     readingLocation.current = location;
@@ -581,7 +592,7 @@ export default function ReaderApp() {
         }}
       >
         <BookOpen />
-        My library<span className="count">{books.length}</span>
+        My library<span className="count">{shelfBooks.length}</span>
       </button>
       <button className="nav-item" onClick={() => openModal("search")}>
         <MagnifyingGlass />
@@ -1113,8 +1124,9 @@ export default function ReaderApp() {
                   <div>
                     <h2>On your bookshelf</h2>
                     <span>
-                      {books.length} {books.length === 1 ? "book" : "books"} ·
-                      Yours to get lost in
+                      {shelfBooks.length}{" "}
+                      {shelfBooks.length === 1 ? "book" : "books"} · Yours to
+                      get lost in
                     </span>
                   </div>
                   <IconButton
@@ -1152,9 +1164,9 @@ export default function ReaderApp() {
                       Retry library
                     </button>
                   </div>
-                ) : books.length ? (
+                ) : shelfBooks.length ? (
                   <div className="book-grid">
-                    {books.map((b, i) => {
+                    {shelfBooks.map((b, i) => {
                       const saved = readSaved<Progress | null>(
                         "progress." + b.id,
                         null,

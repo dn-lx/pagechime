@@ -1,15 +1,17 @@
 # Current Handoff
 
-Updated 2026-10-29 (Europe/Madrid).
+Updated 2026-11-02 (Europe/Madrid).
 
 ## Current work — REQ-019
 
-Shared PDF/audio publishing is live on develop2b76a934 / ready deploy6ae254bee65dedda6c007dd1. CI40759632632 passes60 Node/84 browser cases (4 private skips), exports and574/900KiB budget; blocking policy/security pass (REQ-005 advisory remains). Hosted catalog returns200. Netlify sign-in succeeded; PageChime admin login briefly showed both Manifest books and Publish a book. Later reader/me and admin/drafts return401: browser requests reused the previous session lookup, while the new session remains valid. Direct browser sign-in is the next recovery; hosted upload is still unverified. No code/security change justified yet. See REQ-019 plan.
+Owner requested one Manifest bookshelf card on Nov2. The newer Piper card now replaces the original Kokoro card; source files, notes, voice switching and fallback remain available. Local checks:60 Node tests/types, web build,574/900KiB budget and desktop/mobile shelf/voice/fallback tests pass; screenshots inspected. Develop deployment pending.
+
+Shared publishing remains deployed at2b76a934 / deploy6ae254bee65dedda6c007dd1; CI40759632632 passes. Hosted catalog works; admin upload and full improved Kokoro publication remain blocked by persistent browser sign-in. No shared book is published. See REQ-019/018 plans.
 
 Develop only; main e272781f and production6adbe0d6 unchanged. PR #7 closed; improved-audio REQ-018 remains pending.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"2b76a9347b6e7fa98e0938dcfc384bfc7fda22ec","next_step":"Recover persistent PageChime admin browser sign-in, then verify hosted upload with owner-provided files. Keep main unchanged.","updated_at":"2026-10-29T20:35:00.000Z"}
+{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"testing","last_verified_sha":"2b76a9347b6e7fa98e0938dcfc384bfc7fda22ec","next_step":"Deploy and verify the single Piper bookshelf card, then recover admin sign-in for improved-book upload acceptance. Keep main unchanged.","updated_at":"2026-11-02T22:15:13.776951Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017

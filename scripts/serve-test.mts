@@ -242,6 +242,9 @@ http
       }
       let body: Buffer, type: string;
       if (path === "/library.json") {
+        const showPiper = /(?:^|; )reader-test-shelf=piper(?:;|$)/.test(
+          req.headers.cookie || "",
+        );
         body =
           process.env.READER_TEST_MANIFEST === "1"
             ? await readFile(resolve(root, "library.json"))
@@ -254,11 +257,20 @@ http
                           ? "/books/manifest/book.json"
                           : "/books/demo/book.json",
                     },
+                    ...(showPiper ? [{ url: "/books/demo/piper.json" }] : []),
                   ],
                 }),
               );
         type = "application/json";
       } else if (path.startsWith("/books/demo/")) {
+        if (
+          path.endsWith("/piper.json") &&
+          /(?:^|; )reader-test-piper-unavailable=1(?:;|$)/.test(req.headers.cookie || "")
+        ) {
+          res.writeHead(503, { "Cache-Control": "no-store" });
+          res.end("Unavailable");
+          return;
+        }
         const name =
           path.endsWith("book.json") || path.endsWith("piper.json")
             ? "book.json"
@@ -295,6 +307,7 @@ http
           id: "demo-piper",
           sourceBookId: "demo",
           narration: "piper",
+          voice: "Piper · Cori",
           chapters: [
             {
               ...voiceBase.chapters[0],

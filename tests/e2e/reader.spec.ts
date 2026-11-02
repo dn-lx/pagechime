@@ -20,6 +20,51 @@ async function menu(page: any) {
   const b = page.getByRole("button", { name: "Open library menu" });
   if (await b.isVisible()) await b.click();
 }
+test("the newer narration has one shelf card and retains original voice access", async ({
+  page,
+  context,
+}, info) => {
+  await context.addCookies([
+    {
+      name: "reader-test-corpus",
+      value: "voices",
+      url: "http://localhost:4174",
+    },
+    { name: "reader-test-shelf", value: "piper", url: "http://localhost:4174" },
+  ]);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/");
+  await expect(page.locator(".featured-book")).toHaveCount(1);
+  await expect(page.locator(".voice-note")).toHaveText("Piper · Cori");
+  await expect(page.locator(".section-heading")).toContainText("1 book");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: info.outputPath("single-book-shelf.png"),
+    fullPage: true,
+  });
+  await page.getByRole("button", { name: "Open book", exact: true }).click();
+  await expect(page.locator(".ebook-heading")).toContainText("Piper reading");
+  await page.getByRole("button", { name: "Choose narration voice" }).click();
+  await page.getByRole("button", { name: /Kokoro · Emma/ }).click();
+  await expect(page.locator(".ebook-heading")).toContainText(
+    "A quiet beginning",
+  );
+  await page.getByRole("button", { name: "Choose narration voice" }).click();
+  await page.getByRole("button", { name: /Piper · Cori/ }).click();
+  await expect(page.locator(".ebook-heading")).toContainText("Piper reading");
+  await context.addCookies([
+    { name: "reader-test-piper-unavailable", value: "1", url: "http://localhost:4174" },
+  ]);
+  await page.reload();
+  await expect(page.locator(".featured-book")).toHaveCount(1);
+  await expect(page.locator(".voice-note")).toContainText("Kokoro");
+  expect(errors).toEqual([]);
+});
 test("listen, follow passages, change chapter, bookmark and restore a reading place", async ({
   page,
 }) => {

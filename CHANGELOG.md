@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Show the newer Piper edition once on the bookshelf when its original narration is also in the catalog; retain the original files, reading data and voice switching.
+
 ## [0.3.0] - 2026-10-28
 
 - Add a versioned reusable book description and admin publishing of multiple PDF editions, ordered audio tracks and an optional cover to a private shared library.
