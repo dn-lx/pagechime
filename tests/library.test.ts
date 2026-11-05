@@ -273,6 +273,22 @@ test("library aggregate size accepts 320 MiB and rejects one byte over without d
     await rm(root, { recursive: true, force: true });
   }
 });
+test("pull-request previews do not load private media from branch configuration", async () => {
+  const env = {
+    CONTEXT: "deploy-preview",
+    BRANCH: "develop",
+    PAGECHIME_LIBRARY_REQUIRED: "1",
+    PAGECHIME_LIBRARY_URL: endpoint,
+  };
+  const send = async () => {
+    throw Error("A preview must not request private media");
+  };
+  assert.equal(await fetchPrivateLibrary("unused", env, send), null);
+  assert.equal(
+    await fetchPrivateLibrary("unused", { ...env, PAGECHIME_LIBRARY_KEY: key }, send),
+    null,
+  );
+});
 test("production restore requires its dedicated secret and fails closed", async () => {
   const root = await mkdtemp(join(tmpdir(), "reader-production-"));
   const env = { CONTEXT: "production", PAGECHIME_LIBRARY_REQUIRED: "1", PAGECHIME_LIBRARY_URL: endpoint, PAGECHIME_LIBRARY_KEY: key };

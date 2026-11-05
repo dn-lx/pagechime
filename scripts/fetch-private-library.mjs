@@ -18,6 +18,8 @@ export async function fetchPrivateLibrary(
   env = process.env,
   send = fetch,
 ) {
+  // Pull-request previews may inherit branch configuration without its private assets.
+  if (env.CONTEXT === "deploy-preview") return null;
   const endpoint = env.PAGECHIME_LIBRARY_URL;
   const keyName = env.CONTEXT === "production"
     ? "PAGECHIME_PRODUCTION_LIBRARY_KEY"
