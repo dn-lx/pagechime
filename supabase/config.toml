@@ -3,6 +3,10 @@ project_id = "pagechime"
 # Opaque custom reader sessions are verified inside the handler, not Supabase Auth JWTs.
 verify_jwt = false
 
+[functions.pagechime-shared-library]
+# Server-only build capability plus fresh custom admin sessions protect mutations.
+verify_jwt = false
+
 [functions.pagechime-library]
 # Opaque build/upload capabilities are verified in the handler.
 verify_jwt = false

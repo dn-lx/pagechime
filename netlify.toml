@@ -11,6 +11,10 @@
   node_bundler = "esbuild"
 [context.branch-deploy]
   command = "npm run build"
+[context.production.environment]
+  # Secret PAGECHIME_PRODUCTION_LIBRARY_KEY is stored in Netlify Builds scope.
+  PAGECHIME_LIBRARY_URL = "https://wbqnctrvxohxwiaignhg.supabase.co/functions/v1/pagechime-library"
+  PAGECHIME_LIBRARY_REQUIRED = "1"
 [context.develop.environment]
   # Public endpoint/config only. PAGECHIME_LIBRARY_KEY stays a Netlify build secret.
   PAGECHIME_LIBRARY_URL = "https://wbqnctrvxohxwiaignhg.supabase.co/functions/v1/pagechime-library"

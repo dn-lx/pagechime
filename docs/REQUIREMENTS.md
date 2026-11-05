@@ -1,6 +1,24 @@
 # Pagechime requirements
 
-Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-24.
+Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-28.
+
+## [ ] REQ-019 — Reusable book format and admin shared-library uploads
+- The owner creates each book's PDFs and narration, then publishes it to the shared library from the website, including on Android. The owner approved promotion of verified publishing and playback changes from develop to main for 0.3.0.
+- Support multiple PDF editions with individual page counts, ordered audio tracks, optional cover and a reusable versioned book description. Read page counts/durations from supplied files. Keep ordinary untimed uploads in manual-PDF mode.
+- Only an authenticated admin may prepare, upload, verify or publish. Drafts stay hidden; every file must match its declared digest/type/size before atomic publication. Credentials remain server-only; storage remains private and capacity bounded.
+- Show one Manifest bookshelf card with Kokoro Emma as the default when both linked narrations are loaded. Keep Piper selectable and use its matching passage when resuming newer saved Piper progress. Keep the available edition on the shelf if the other fails to load.
+- Readers/guests see published books across devices without a website rebuild. Preserve the packaged Manifest catalog and personal device imports; refresh/error handling must distinguish service failure from a valid empty catalog.
+- Acceptance: security/negative paths, retries, publication isolation, fresh-reader catalog/audio/ranges/PDF editions, desktop/mobile visual verification, source checks, budget and hosted evidence.
+- Plan: docs/plans/REQ-019-shared-book-upload.md; format/workflow: docs/SHARED-BOOK-FORMAT.md.
+
+## [ ] REQ-018 — Publish the complete improved Kokoro recording on develop
+- The owner asked on 2026-10-28 to reinstate Manifest in Action on develop first. PR #7 closed unmerged. Release 0.3.0 promotes the existing Manifest catalog and shared publishing. Uploading the improved recording is a separate follow-up.
+- Add the whole improved Emma recording to the develop catalog after restoring the existing book.
+- Preserve all encoded source audio across continuous listening parts; retain the original Kokoro and Piper editions. Represent missing acoustic timings honestly and support manual PDF reading without resetting its page when parts change.
+- Stage a new immutable private catalog, validate every file digest/size/path, retain the prior version and switch current.json only after every object exists. Keep per-file uploads bounded at 24 MiB; aggregate catalog is bounded at 320 MiB.
+- Develop restores the catalog through its existing read-only build secret, with required-source failure and private visitor protection. Production preparation remains historical and deferred. Keep credentials and private content outside Git.
+- Acceptance: encoded-packet equality, full MP3 decoding, aggregate/per-file negative tests, production-secret isolation tests, desktop/mobile manual-PDF regression, fresh build hash restore and hosted full-book playback evidence.
+- Plan: docs/plans/REQ-018-improved-kokoro.md. First promotion completed in PR #5 at e272781f; upload and hosted acceptance remain pending.
 
 ## [x] REQ-017 — Preserve ebook location through playback and voice navigation
 - Playback chapter navigation, cross-chapter seeks and automatic advancement bring the ebook to the corresponding narration location, including after manual browsing. Ordinary same-chapter play/pause leaves detached reading intact.

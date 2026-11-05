@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-05
+
+- Add a versioned reusable book description and admin publishing of multiple PDF editions, ordered audio tracks and an optional cover to a private shared library.
+- Load published books at runtime without a website rebuild. Use production's configured private connection on the main site and retain the packaged Manifest editions and personal imports.
+- Verify each immutable upload's hash, size and file signature before publication, retain resumable drafts, enforce administrator sessions and bound shared storage.
+- Show each PDF edition's own page count and retain manual reading position through untimed audio navigation.
+- Open the single Manifest in Action shelf card with Kokoro Emma by default. Keep Piper Cori in the voice menu and continue from the matching passage when the latest saved progress is from Piper.
+- Show the selected voice accurately, including for books that use supplied audio, and start shelf playback at the first listening chapter or the saved position.
+
+## [0.2.1] - 2026-10-27
+
+- Prepare the complete improved Kokoro Emma recording as a separate listening edition in six continuous parts. Preserve the source MP3's encoded audio, the original timed Kokoro edition and Piper; PDF pages remain manual until new acoustic timings are available.
+- Retain a manually selected PDF page across audio-only part navigation, automatic advance, seeks and reloads.
+- Bound the multi-voice private catalog at 320 MiB total while retaining the 24 MiB per-file cap, 256-file cap and existing digest, origin, path and authorization checks.
+- Require a dedicated production build secret and fail closed for a missing production private-library connection. Production publishing remains pending the verified private catalog upload and hosted checks.
+
 ## [0.2.0] - 2026-10-27
 
 - Promote the Pagechime web and native source from develop to main under the owner's explicit approval on 2026-10-27.

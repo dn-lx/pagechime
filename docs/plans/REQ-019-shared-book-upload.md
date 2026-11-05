@@ -1,0 +1,46 @@
+# REQ-019 — Reusable books and admin publishing
+
+Owner confirmed 2026-10-28: Manifest is visible. They create PDFs/audio and want to upload many books to a shared library. Work stays on develop; main and its deployment stay unchanged.
+
+## Outcome and contracts
+
+- A versioned PageChime book description pairs a title/author, PDF editions with individual page counts, and ordered audio tracks. No timing is invented; ordinary uploads use manual PDF navigation.
+- Admins select files on mobile/desktop, review order and details, upload privately, and publish after every declared digest is verified. Readers/guests see published books at runtime without a site rebuild. Existing packaged Manifest and personal imports remain supported.
+- A separate private bucket and service-only RLS table hold immutable assets and draft/published metadata. Existing reader sessions enforce admin authority. The Netlify server uses the existing build capability for backend access; no privileged credential reaches clients. Draft files are never served to readers.
+- Initial bounds: 8 PDFs, 64 tracks, optional cover; 50 MiB per object, 400 MiB shared-library reservation quota and 3 unfinished drafts per owner. These are capacity controls, not a fixed book-count limit. Large recordings should be exported as ordered parts. No paid provider or plan change.
+
+## Delivery order
+
+1. Implement/validate the reusable format and additive schema; preserve old catalog contracts.
+2. Add capability-protected shared API, admin-only preparation/verification/publication, bounded signed uploads and stable media routing.
+3. Add the admin uploader and runtime catalog merge, including retry/error/loading behavior and per-edition PDF page counts.
+4. Verify contract/security/negative paths and desktop/mobile upload → publish → fresh reader → play/PDF; inspect screenshots and budget.
+5. Apply additive backend schema/function; deploy develop and verify the same hosted path. Record limitations precisely.
+
+## Verification and recovery
+
+Test forged roles, absent/expired sessions/capabilities, draft isolation, malformed paths/types/digests, incomplete publication, bounded uploads and quota/concurrent reservation. Preserve private visitor gate, existing account data, static assets and paid-speech block. Source checks and runtime evidence precede completion. Schema is additive; unfinished drafts stay hidden and old clients keep the static catalog. Fix forward on develop; do not promote main or replace old immutable files.
+
+## State
+
+Implementation passes60 Node tests/types,84 browser cases/4 private-asset skips, web build and574/900KiB budget. Desktop/mobile publishing tests use the actual API, BFF and reader path with isolated synthetic storage. The final upload-review layout collapses file selection and was checked on desktop/mobile; the focused tests passed after that change.
+
+Applied additive remote migrations20261028195551 (shared_reader_books) and20261028195810 (shared_book_owner_index); local filenames match returned history. RLS and denied anon/authenticated table/RPC access are verified. A rolled-back database test proved prepare, incomplete/partial rejection, complete publication and published-request replay; no test book row remains. Security advisor reports only the expected INFO for RLS with no client policies on the service-only table. Function pagechime-shared-library v1 is ACTIVE and its five files were read back against source; it rejects missing capability auth. No test book row remains. First bucket creation and hosted upload acceptance remain pending.
+
+## Hosted checkpoint — 2026-10-29
+
+Source2b76a9347b6e7fa98e0938dcfc384bfc7fda22ec is deployed as ready develop branch deploy6ae254bee65dedda6c007dd1 (library/reader functions plus media edge). CI40759632632 passed application checks,84 browser cases/4 private skips, web/native exports and574/900KiB budget; all blocking policy/security checks passed. Tracked REQ-005 tooling advisory remains separate. The committed tree matched the locally checked files exactly.
+
+The protected hosted /api/library/catalog returned200 with {books:[],next:null}, verifying Netlify's server-only capability path to the live service. The existing packaged Manifest catalog is retained. No shared book row or dynamic bucket has been created; first real upload/publish remains unverified on the hosted system. Main e272781f and production deploy6adbe0d674ba4dbeb313e0b2 remain unchanged. Do not mark REQ-019 complete from source-only or catalog-read checks.
+
+On the next resume, secure Google sign-in passed the Netlify gate, and secure PageChime admin login returned200. The live UI showed both Manifest books and the complete Publish a book form. Its initial reader state request succeeded. Subsequent admin/drafts and reader/me returned401 and the normal account check signed the UI out. Safe log aggregation (no session values extracted) showed that these failed lookups matched the pre-login lookup; only the initial state request used the newly issued session. Database aggregates confirmed all three remaining sessions were unexpired with valid account versions, including the new session. Deployed reader-api.ts matches source, and the service worker passes /api/ requests to the network. This narrows the blocker to session persistence/forwarding in the browser path; its exact cause is not proven. No account, token, security gate or application code was changed. Next recovery is direct browser sign-in, then live admin/drafts verification and an upload using owner-provided book files. Do not retry secure credentials repeatedly or publish a synthetic acceptance book to the shared shelf.
+
+## Bookshelf cleanup — 2026-11-02
+
+The owner requested removal of the older same-title book card. Current catalog state has no dynamically published books; the two packaged cards are original Kokoro and newer Piper. Show only the newer Piper card when both linked entries load, and count visible cards consistently. Keep the original catalog object for voice switching and saved account data; if the newer edition fails to load, the original remains readable. Use explicit sourceBookId/narration metadata, not matching titles, so unrelated books and personal imports are retained. No Storage, account or main changes.
+
+Local60 Node tests/types, web build and574/900KiB budget pass. The new desktop/mobile regression uses the real test server, account boundary and worker; it verifies one card/count, opening Piper, switching to/from Kokoro and the unavailable-Piper fallback without page errors. Both screenshots were inspected. The first route-mocked test failed because service-worker fetches bypass page routing; replacing that setup with isolated server fixtures fixed the test without changing product assertions. Hosted deployment and remaining application CI are pending. Version impact is a compatible patch recorded under Unreleased; planned0.3.0 is unchanged.
+
+The full local reader suite passes16 desktop/mobile cases, including accessibility, offline audio ranges and imports. Source6f5c3919 matched the locally checked files. CI41535789857 passed types,60 tests, web build and budget, then failed before browser tests because ubuntu-latest resolved to unsupported Ubuntu26.04. Pin only the application runner to Ubuntu24.04, which Playwright1.56.1 explicitly supports in its official nativeDeps.ts source. No assertions, dependency versions or security checks are relaxed. Other blocking policy/security checks passed; REQ-005 remains advisory. Hosted UI confirmation still encounters the private Netlify sign-in gate.
+
+Supported-runner follow-up aa5e6b5f0a603e74c7fb3aaed410da8ca8c99e80 passes Application41536488317:60 Node tests/types,86 browser cases/4 private skips, web/native exports and574/900KiB budget. Required policy/security/evidence checks pass; the existing REQ-005 native-tooling advisory remains non-blocking. Local starter suite95/95 passes. Main e272781f and production deployment6adbe0d674ba4dbeb313e0b2 are unchanged. Source6f5c3919 was pushed for the configured Git deployment; the connector cannot enumerate branch deploys and the fresh browser shows Netlify team login, so no new ready deploy ID or hosted single-card confirmation is claimed. Do not repeat the interrupted secure sign-in request without a new user request. Original shared-upload/full improved-audio acceptance remains pending; no private files or database rows were deleted.

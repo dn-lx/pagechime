@@ -38,7 +38,12 @@ export type Book = {
   preparedNarrations?: { piper?: string };
   sourceBookId?: string;
   alternateNarration?: string;
-  editions?: { label: string; kind: "pdf" | "epub"; url: string }[];
+  editions?: {
+    label: string;
+    kind: "pdf" | "epub";
+    url: string;
+    pageCount?: number;
+  }[];
   timingProvenance?: string;
   credits?: string;
 };
@@ -339,6 +344,10 @@ export function validateBook(value: unknown): Book {
           e.label.length > 80 ||
           !["pdf", "epub"].includes(e.kind) ||
           typeof e.url !== "string" ||
+          (e.pageCount !== undefined &&
+            (!Number.isInteger(e.pageCount) ||
+              e.pageCount < 1 ||
+              e.pageCount > b.pageCount)) ||
           !e.url.startsWith(`/books/${b.id}/`) ||
           e.url.split("/").some((part) => part === "." || part === "..") ||
           !e.url.endsWith("." + e.kind) ||
@@ -381,3 +390,4 @@ export * from "./reading";
 export * from "./word-following";
 
 export * from "./account-details";
+export * from "./shared-book";

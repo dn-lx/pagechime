@@ -1,5 +1,7 @@
 # Documentation Map
 
+- `docs/SHARED-BOOK-FORMAT.md` — create and publish shared books.
+
 Use this map only when you need to locate a policy or template. Do not preload the documentation set.
 
 ## Always / startup context
