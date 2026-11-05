@@ -2,18 +2,12 @@
 
 Updated 2026-11-05 (Europe/Madrid).
 
-## Current work — REQ-019
+## Current work — PageChime 0.3.0
 
-The Nov 5 change makes the existing word-synced Kokoro Emma recording the default for the single Manifest shelf card. Piper remains in the voice menu and remains on the shelf if Kokoro metadata fails to load. Newer saved Piper progress maps to Kokoro on resume when the source passage matches. The shelf Play action uses the saved position or the first listening chapter.
-
-Source 4406456f is ready on Netlify develop deploy 6aecf569e5cc29ddc9be74a0. Application CI 42113229593 passed types, 60 Node tests, 88 desktop/mobile browser cases with four private-media skips, web and Android/iOS exports, and the 574/900 KiB budget. Security, agent reliability, agent stack and version checks passed. Six focused local browser cases passed. Desktop and mobile shelf screenshots show one Kokoro card. The hosted browser reaches Netlify team sign-in, so private playback remains unverified.
-
-Shared publishing remains deployed at2b76a934 / deploy6ae254bee65dedda6c007dd1; CI40759632632 passes. Hosted catalog works; admin upload and full improved Kokoro publication remain blocked by persistent browser sign-in. No shared book is published. See REQ-019/018 plans.
-
-Develop only; main e272781f and production6adbe0d6 unchanged. PR #7 closed; improved-audio REQ-018 remains pending.
+Owner approved develop → main once verified. Release includes admin shared publishing and Kokoro as the single Manifest card's default. Netlify has distinct production and branch credentials with Functions scope. Both sites use the same private shared catalog. Source 4406456f passed Application 42113229593 and deploy 6aecf569e5cc29ddc9be74a0 is ready. The exact sample PDF/MP3s passed isolated desktop and Pixel 7 publishing tests. Team sign-in still gates hosted UI verification. See REQ-019/018 plans.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"4406456fd4df32910f4145a7d77f14eaaf05d374","next_step":"Verify private Manifest playback after Netlify team sign-in. The admin sign-in and improved-book upload remain separate follow-ups.","updated_at":"2026-11-05T21:35:37Z"}
+{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"testing","last_verified_sha":"4406456fd4df32910f4145a7d77f14eaaf05d374","next_step":"Verify 0.3.0 CI, merge through the approved release PR, then check the main deploy and catalog.","updated_at":"2026-11-05T22:05:54Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
@@ -28,7 +22,7 @@ Status check2026-10-25: workers/session57469 stopped; /tmp/pagechime-voice-lab m
 
 ## Policy and current work
 
-Work directly on develop with null PR, GitHub MCP writes. Main stays e272781f76b8d089e9abc7ce824f327216d71c16; further promotion requires a new explicit owner instruction. Preserve leaf.* keys, app.dnlx.leaf identifiers, book-reader-api/book_reader_* identities. No production/outer-gate/payment/analytics/unrelated-app changes.
+Implement on develop and promote only after explicit owner approval. Preserve leaf.* keys, app.dnlx.leaf identifiers, book-reader-api/book_reader_* identities and the private site gate.
 
 Owner approved Google spend is $0. scripts/google-narration.py blocks provider requests before credentials or network, including --check/--generate. No budget/env/cache bypass. Existing Kokoro bf_emma remains available. This lock does not verify Cloud billing or control unrelated apps. Cloud project project-89a9b506-ff91-4cd1-a2d reports setup; account billing/API state unverified. See docs/CONTENT-AND-VOICES.md.
 
@@ -46,6 +40,6 @@ Earlier immutable library0e4a2bc8f8faf3292e231cd8fd2ce50e330cc8f075c021b9ecb755c
 
 ## Hosting and remaining acceptance
 
-Netlify site73688a4b-90ab-4eac-be6d-ef305f33ebc3, team don-alex-perera, linked dn-lx/pagechime. main production, only develop branch deploys, npm run build→apps/web/out, reader BFF/media edge. Develop URL https://develop--pagechime.netlify.app/. Team-login gate unchanged. Secret read-only connection is branch-deploy only with plan minimum Builds/Functions/Runtime scopes, no Post processing. Required asset verification stays fail-closed. Prior missing connection is repaired; no env change is needed for current work.
+Netlify site73688a4b-90ab-4eac-be6d-ef305f33ebc3, team don-alex-perera, linked dn-lx/pagechime. Main production and develop branch deploys use npm run build → apps/web/out. The team-login gate applies to both. Build-time media verification fails closed. Production and develop library credentials stay scoped to their deploy contexts.
 
 REQ-011 guest/signup/Show-Hide fields are implemented; signup grants reader, admin requires invitation. Me+ book-reader-api v3 unchanged. Owner invite expired 2026-10-25T22:48:44Z; no replacement created. Guests lack personal persistence. Hosted/device/provider acceptance remains separate. Native exports are unsigned; REQ-005 tooling advisories remain.

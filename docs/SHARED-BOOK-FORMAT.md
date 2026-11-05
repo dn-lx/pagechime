@@ -2,7 +2,7 @@
 
 ## From your phone
 
-1. Open the develop website, pass its private Netlify gate, and sign in to your PageChime **admin** account.
+1. Open PageChime on a website deployment running 0.3.0 or later, pass its private Netlify gate, and sign in to your PageChime **admin** account.
 2. Open the library menu and choose **Publish a book**. Enter the book title, author and optional narrator.
 3. Select the book's PDFs and audio files. The first PDF is the default edition. Audio filenames sort naturally; use the up/down buttons to change the listening order. Optionally select a cover image.
 4. Choose **Review book**. PageChime reads PDF page counts and audio durations, checks filenames/sizes, and shows the publication summary. You can download a reusable `pagechime-book.json` description.
@@ -10,6 +10,8 @@
 6. Readers see the book when opening PageChime or choosing **Refresh library**. A website build is not needed.
 
 **Add a book** remains the separate personal, device-local import. It does not publish to other readers. Shared publishing requires the PageChime admin role, independently of signing into Netlify.
+
+Main and develop use the same private shared catalog. Published books appear on both websites.
 
 If a connection fails, retry on the same form. After closing/reloading it, choose the unfinished upload and reselect the same files. Already verified files are retained. A draft never appears on readers' shelves. Choose a draft rather than repeatedly creating another upload for the same book.
 

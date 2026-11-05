@@ -13,6 +13,7 @@ import {
   storageSignature,
 } from "../server/shared-library-api.ts";
 import { proxySharedLibrary } from "../server/shared-library-boundary.ts";
+import serveSharedLibrary from "../netlify/functions/library.ts";
 import { fixtureSharedStore } from "./fixtures/shared-library.ts";
 const id = "shared-11111111-1111-4111-8111-111111111111",
   owner = "owner",
@@ -100,6 +101,37 @@ test("backend requires private proxy capability and real admin session", async (
     401,
   );
   assert.equal((await setup().req("admin/prepare", null)).status, 400);
+});
+test("Netlify forwards the shared library through the credential for each deploy", async (t) => {
+  const variables = new Map<string, string>();
+  Object.defineProperty(globalThis, "Netlify", {
+    configurable: true,
+    value: { env: { get: (name: string) => variables.get(name) } },
+  });
+  t.after(() => Reflect.deleteProperty(globalThis, "Netlify"));
+  const forward = t.mock.method(
+    globalThis,
+    "fetch",
+    async (_url: string, _init: RequestInit) =>
+      Response.json({ books: [], next: null }),
+  );
+  const catalog = () =>
+    serveSharedLibrary(new Request("https://reader.test/api/library/catalog"));
+  const productionKey = "c".repeat(64);
+  variables.set("PAGECHIME_PRODUCTION_LIBRARY_KEY", productionKey);
+  assert.equal((await catalog()).status, 200);
+  variables.delete("PAGECHIME_PRODUCTION_LIBRARY_KEY");
+  variables.set("PAGECHIME_LIBRARY_KEY", key);
+  assert.equal((await catalog()).status, 200);
+  variables.clear();
+  assert.equal((await catalog()).status, 503);
+  assert.equal(forward.mock.callCount(), 2);
+  assert.deepEqual(
+    forward.mock.calls.map(({ arguments: [, init] }) =>
+      new Headers(init.headers).get("X-Pagechime-Library-Key"),
+    ),
+    [productionKey, key],
+  );
 });
 test("draft files remain hidden; incomplete and corrupt uploads cannot publish; retries are idempotent", async () => {
   const f = setup(),
