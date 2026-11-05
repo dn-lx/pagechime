@@ -4,14 +4,16 @@ Updated 2026-11-05 (Europe/Madrid).
 
 ## Current work — REQ-019
 
-The Nov 5 change makes the existing word-synced Kokoro Emma recording the default for the single Manifest shelf card. Piper remains in the voice menu and remains on the shelf if Kokoro metadata fails to load. Newer saved Piper progress maps to Kokoro on resume when the source passage matches. The shelf Play action uses the saved position or the first listening chapter. Local types, 60 Node tests, web export and the 574/900 KiB budget pass. Browser verification runs through Application CI on Ubuntu 24.04. Netlify confirmed the previous bookshelf deployment 6ae90ba907b9a300a27a367f was ready.
+The Nov 5 change makes the existing word-synced Kokoro Emma recording the default for the single Manifest shelf card. Piper remains in the voice menu and remains on the shelf if Kokoro metadata fails to load. Newer saved Piper progress maps to Kokoro on resume when the source passage matches. The shelf Play action uses the saved position or the first listening chapter.
+
+Source 4406456f is ready on Netlify develop deploy 6aecf569e5cc29ddc9be74a0. Application CI 42113229593 passed types, 60 Node tests, 88 desktop/mobile browser cases with four private-media skips, web and Android/iOS exports, and the 574/900 KiB budget. Security, agent reliability, agent stack and version checks passed. Six focused local browser cases passed. Desktop and mobile shelf screenshots show one Kokoro card. The hosted browser reaches Netlify team sign-in, so private playback remains unverified.
 
 Shared publishing remains deployed at2b76a934 / deploy6ae254bee65dedda6c007dd1; CI40759632632 passes. Hosted catalog works; admin upload and full improved Kokoro publication remain blocked by persistent browser sign-in. No shared book is published. See REQ-019/018 plans.
 
 Develop only; main e272781f and production6adbe0d6 unchanged. PR #7 closed; improved-audio REQ-018 remains pending.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"testing","last_verified_sha":"aa5e6b5f0a603e74c7fb3aaed410da8ca8c99e80","next_step":"Verify Application CI and the Kokoro default on the private Netlify develop site. The admin sign-in and improved-book upload remain separate follow-ups.","updated_at":"2026-11-05T21:29:46Z"}
+{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"4406456fd4df32910f4145a7d77f14eaaf05d374","next_step":"Verify private Manifest playback after Netlify team sign-in. The admin sign-in and improved-book upload remain separate follow-ups.","updated_at":"2026-11-05T21:35:37Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
