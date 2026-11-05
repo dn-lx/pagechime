@@ -4,10 +4,10 @@ Updated 2026-11-05 (Europe/Madrid).
 
 ## Current work — PageChime 0.3.0
 
-Owner approved develop → main once verified. Release includes admin shared publishing and Kokoro as the single Manifest card's default. Netlify has distinct production and branch credentials with Functions scope. Both sites use the same private shared catalog. Source 4406456f passed Application 42113229593 and deploy 6aecf569e5cc29ddc9be74a0 is ready. The exact sample PDF/MP3s passed isolated desktop and Pixel 7 publishing tests. Team sign-in still gates hosted UI verification. See REQ-019/018 plans.
+PR #8 merged 0.3.0 to main at 046f009e. Netlify production deploy 6aed00a789daae96fd796049 is current, with library/reader functions and the media edge. Main and develop share the private catalog. Kokoro is the existing Manifest default. The exact release tree passed Application 42119331554 with 62 Node and 88 browser cases, four private skips, exports and 574/900 KiB. The separate PR run stalled installing Chromium. The sample passed isolated desktop and Pixel 7 publishing. Team sign-in gates live admin verification. GitHub tag and release publication are pending. See REQ-019/018 plans.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"testing","last_verified_sha":"4406456fd4df32910f4145a7d77f14eaaf05d374","next_step":"Verify 0.3.0 CI, merge through the approved release PR, then check the main deploy and catalog.","updated_at":"2026-11-05T22:05:54Z"}
+{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"f6f653bb7ff1e6a025556879a1aa2d94fa3fdbe5","next_step":"Verify an authenticated production admin upload after Netlify team sign-in. GitHub tag and release publication need authenticated access.","updated_at":"2026-11-05T22:22:08Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
