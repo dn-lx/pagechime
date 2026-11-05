@@ -263,9 +263,12 @@ http
               );
         type = "application/json";
       } else if (path.startsWith("/books/demo/")) {
+        const cookies = req.headers.cookie || "";
         if (
-          path.endsWith("/piper.json") &&
-          /(?:^|; )reader-test-piper-unavailable=1(?:;|$)/.test(req.headers.cookie || "")
+          (path.endsWith("/piper.json") &&
+            /(?:^|; )reader-test-piper-unavailable=1(?:;|$)/.test(cookies)) ||
+          (path.endsWith("/book.json") &&
+            /(?:^|; )reader-test-kokoro-unavailable=1(?:;|$)/.test(cookies))
         ) {
           res.writeHead(503, { "Cache-Control": "no-store" });
           res.end("Unavailable");
@@ -280,7 +283,7 @@ http
         // Isolated browser contexts choose a corpus without bypassing the real worker/auth path.
         const corpus =
           /(?:^|; )reader-test-corpus=(long|mixed|untimed|words|mixedwords|editions|references|repaired|voices|voicepages|audioonly)(?:;|$)/.exec(
-            req.headers.cookie || "",
+            cookies,
           )?.[1];
         const wordBook = JSON.parse(
           await readFile("tests/fixtures/book.json", "utf8"),

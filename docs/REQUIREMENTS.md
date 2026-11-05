@@ -6,7 +6,7 @@ Accepted scope: Next.js website and Expo React Native app, based on Agent Projec
 - The owner creates each book's PDFs and narration, then publishes it to the shared library from the website, including on Android. Work and deployment stay on develop; main remains unchanged.
 - Support multiple PDF editions with individual page counts, ordered audio tracks, optional cover and a reusable versioned book description. Read page counts/durations from supplied files. Keep ordinary untimed uploads in manual-PDF mode.
 - Only an authenticated admin may prepare, upload, verify or publish. Drafts stay hidden; every file must match its declared digest/type/size before atomic publication. Credentials remain server-only; storage remains private and capacity bounded.
-- Show one bookshelf card for the newer Piper edition when both linked Manifest narrations are loaded; retain source files, voice switching and saved data.
+- Show one Manifest bookshelf card with Kokoro Emma as the default when both linked narrations are loaded. Keep Piper selectable and use its matching passage when resuming newer saved Piper progress. Keep the available edition on the shelf if the other fails to load.
 - Readers/guests see published books across devices without a website rebuild. Preserve the packaged Manifest catalog and personal device imports; refresh/error handling must distinguish service failure from a valid empty catalog.
 - Acceptance: security/negative paths, retries, publication isolation, fresh-reader catalog/audio/ranges/PDF editions, desktop/mobile visual verification, source checks, budget and hosted develop evidence.
 - Plan: docs/plans/REQ-019-shared-book-upload.md; format/workflow: docs/SHARED-BOOK-FORMAT.md.

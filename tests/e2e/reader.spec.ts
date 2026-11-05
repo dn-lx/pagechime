@@ -20,7 +20,7 @@ async function menu(page: any) {
   const b = page.getByRole("button", { name: "Open library menu" });
   if (await b.isVisible()) await b.click();
 }
-test("the newer narration has one shelf card and retains original voice access", async ({
+test("one shelf card plays Kokoro by default and Piper remains selectable", async ({
   page,
   context,
 }, info) => {
@@ -36,7 +36,7 @@ test("the newer narration has one shelf card and retains original voice access",
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await expect(page.locator(".featured-book")).toHaveCount(1);
-  await expect(page.locator(".voice-note")).toHaveText("Piper · Cori");
+  await expect(page.locator(".voice-note")).toContainText("Kokoro · Emma");
   await expect(page.locator(".section-heading")).toContainText("1 book");
   expect(
     await page.evaluate(
@@ -47,23 +47,60 @@ test("the newer narration has one shelf card and retains original voice access",
     path: info.outputPath("single-book-shelf.png"),
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Open book", exact: true }).click();
-  await expect(page.locator(".ebook-heading")).toContainText("Piper reading");
-  await page.getByRole("button", { name: "Choose narration voice" }).click();
-  await page.getByRole("button", { name: /Kokoro · Emma/ }).click();
+  await page.getByRole("button", { name: "Listen to A Quiet Beginning" }).click();
   await expect(page.locator(".ebook-heading")).toContainText(
     "A quiet beginning",
   );
+  await expect(page.getByRole("button", { name: "Pause narration", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Pause narration", exact: true }).click();
   await page.getByRole("button", { name: "Choose narration voice" }).click();
+  await expect(page.getByRole("button", { name: /Kokoro · Emma/ })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: /Piper · Cori/ }).click();
   await expect(page.locator(".ebook-heading")).toContainText("Piper reading");
+  await page.getByRole("button", { name: "Choose narration voice" }).click();
+  await page.getByRole("button", { name: /Kokoro · Emma/ }).click();
+  await expect(page.locator(".ebook-heading")).toContainText("A quiet beginning");
   await context.addCookies([
     { name: "reader-test-piper-unavailable", value: "1", url: "http://localhost:4174" },
   ]);
   await page.reload();
   await expect(page.locator(".featured-book")).toHaveCount(1);
   await expect(page.locator(".voice-note")).toContainText("Kokoro");
+  await context.addCookies([
+    { name: "reader-test-piper-unavailable", value: "0", url: "http://localhost:4174" },
+    { name: "reader-test-kokoro-unavailable", value: "1", url: "http://localhost:4174" },
+  ]);
+  await page.reload();
+  await expect(page.locator(".featured-book")).toHaveCount(1);
+  await expect(page.locator(".voice-note")).toHaveText("Piper · Cori");
+  await page.getByRole("button", { name: "Continue reading", exact: true }).click();
+  await expect(page.locator(".ebook-heading")).toContainText("Piper reading");
+  await page.getByRole("button", { name: "Choose narration voice" }).click();
+  await expect(page.getByRole("button", { name: /Kokoro · Emma/ })).toBeDisabled();
   expect(errors).toEqual([]);
+});
+test("continuing a saved Piper passage opens the matching place in Kokoro", async ({ page, context }) => {
+  await context.addCookies([
+    { name: "reader-test-corpus", value: "voices", url: "http://localhost:4174" },
+    { name: "reader-test-shelf", value: "piper", url: "http://localhost:4174" },
+  ]);
+  await page.goto("/");
+  await expect(page.locator(".voice-note")).toContainText("Kokoro");
+  await page.evaluate(() => {
+    const id = JSON.parse(localStorage.getItem("leaf.reader.session")!).account.id;
+    localStorage.setItem(`leaf.account.${id}.progress.demo-piper`, JSON.stringify({
+      chapter: 0,
+      time: 4,
+      page: 2,
+      reading: { chapter: 0, segment: 2, offset: 0 },
+      updated: Date.now(),
+    }));
+  });
+  await page.reload();
+  await page.getByRole("button", { name: "Continue reading", exact: true }).click();
+  await expect(page.locator(".ebook-heading")).toContainText("The next page");
+  await page.getByRole("button", { name: "Choose narration voice" }).click();
+  await expect(page.getByRole("button", { name: /Kokoro · Emma/ })).toHaveAttribute("aria-pressed", "true");
 });
 test("listen, follow passages, change chapter, bookmark and restore a reading place", async ({
   page,

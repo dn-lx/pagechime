@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 
-- Show the newer Piper edition once on the bookshelf when its original narration is also in the catalog; retain the original files, reading data and voice switching.
+- Open the single Manifest in Action shelf card with Kokoro Emma by default. Keep Piper Cori in the voice menu and continue from the matching passage when the latest saved progress is from Piper.
+- Show the selected voice accurately, including for books that use supplied audio, and start shelf playback at the first listening chapter or the saved position.
 
 ## [0.3.0] - 2026-10-28
 

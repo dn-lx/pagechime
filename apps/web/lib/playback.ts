@@ -271,14 +271,12 @@ export function usePlayback(
     },
     [seek],
   );
-  const open = useCallback((b: Book, startOver = false) => {
-    const p = startOver
-      ? null
-      : readSaved<Progress | null>("progress." + b.id, null);
+  const open = useCallback((b: Book, autoplay = false) => {
+    const p = readSaved<Progress | null>("progress." + b.id, null);
     loadRef.current(
       p?.chapter ?? firstListeningChapter(b.chapters),
       p?.time || 0,
-      false,
+      autoplay,
       b,
       p?.reading
         ? {

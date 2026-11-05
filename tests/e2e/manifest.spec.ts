@@ -192,14 +192,15 @@ test("restored Manifest guest library, real word following, chapter boundaries a
   expect(errors).toEqual([]);
 });
 
-test("complete Piper edition plays for guests and preserves Kokoro", async ({ page }, info) => {
+test("one Manifest card opens Kokoro and the complete Piper edition plays for guests", async ({ page }, info) => {
   const errors: string[] = [];
   page.on("pageerror", e => errors.push(e.message));
   await page.goto("/");
   await page.getByRole("button", { name: "Continue as guest" }).click();
-  await expect(page.locator(".featured-book")).toHaveCount(2);
-  await expect(page.locator(".secondary-book")).toContainText("Piper");
+  await expect(page.locator(".featured-book")).toHaveCount(1);
+  await expect(page.locator(".voice-note")).toContainText("Kokoro · Emma");
   await page.getByRole("button", { name: "Open book", exact: true }).first().click();
+  await expect(page.locator(".ebook-heading")).toContainText("Chapter 5 of 19");
   await page.getByRole("button", { name: "Choose narration voice" }).click();
   await page.getByRole("button", { name: /Piper · Cori/ }).click();
   await expect(page.locator(".ebook-heading")).toContainText("Chapter 1 of 17");

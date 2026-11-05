@@ -111,6 +111,11 @@ test("admin publishes multiple PDFs and tracks, and a fresh reader sees the book
       });
     await expect(card).toBeVisible();
     await card.getByRole("button", { name: "Open book", exact: true }).click();
+    await reader.getByRole("button", { name: "Choose narration voice" }).click();
+    const kokoro = reader.getByRole("button", { name: /Kokoro · Emma/ });
+    await expect(kokoro).toBeDisabled();
+    await expect(kokoro).toHaveAttribute("aria-pressed", "false");
+    await reader.getByRole("button", { name: "Close dialog" }).click();
     await expect(
       reader.getByLabel("PDF page number", { exact: true }),
     ).toHaveAttribute("max", "2");

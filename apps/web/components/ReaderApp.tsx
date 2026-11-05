@@ -142,6 +142,16 @@ function AudioBars({ playing }: { playing: boolean }) {
     </span>
   );
 }
+function isPiperEdition(edition: Book, source: Book) {
+  return (
+    !source.local &&
+    !edition.local &&
+    source.narration === "kokoro" &&
+    edition.narration === "piper" &&
+    edition.sourceBookId === source.id &&
+    edition.id === `${source.id}-piper`
+  );
+}
 export default function ReaderApp() {
   const { account, isGuest, requestAccount, storage, logout, syncMessage } =
     useAccount();
@@ -185,17 +195,23 @@ export default function ReaderApp() {
     timeout.current = setTimeout(() => setNotice(""), 4500);
   }, []);
   const p = usePlayback(notify, storage);
-  // Keep the source available for voice switching without repeating its shelf card.
+  // Keep both narrations available, with one shelf card for the default voice.
   const shelfBooks = books.filter(
     (book) =>
-      book.local ||
-      !books.some(
-        (replacement) =>
-          !replacement.local &&
-          replacement.narration === "piper" &&
-          replacement.sourceBookId === book.id,
-      ),
+      book.narration !== "piper" ||
+      !books.some((source) => isPiperEdition(book, source)),
   );
+  const currentBook = p.book;
+  const narrationSource =
+    currentBook &&
+    (books.find(
+      (book) => book.id === (currentBook.sourceBookId ?? currentBook.id),
+    ) ?? currentBook);
+  const catalogPiper =
+    narrationSource?.narration === "kokoro"
+      ? books.find((book) => isPiperEdition(book, narrationSource))
+      : undefined;
+  const piperAvailable = catalogPiper || narrationSource?.preparedNarrations?.piper;
   const readingLocation = useRef<ReadingLocation | null>(null);
   const reportReadingPosition = useCallback((location: ReadingLocation) => {
     readingLocation.current = location;
@@ -354,15 +370,37 @@ export default function ReaderApp() {
     document.documentElement.dataset.theme = theme;
     writeSaved("theme", theme);
   }, [theme]);
-  const open = useCallback(
-    (b: Book) => {
-      p.open(b);
-      setReading(true);
-      setDrawer(false);
-      setTab("chapters");
-    },
-    [p.open],
-  );
+  function open(
+    book: Book,
+    autoplay = false,
+    resume?: { book: Book; progress: Progress },
+  ) {
+    const position =
+      resume &&
+      narrationPosition(
+        resume.book,
+        resume.progress.chapter,
+        resume.progress.time,
+        book,
+        resume.progress.reading,
+      );
+    if (resume && position?.matched) {
+      const view = readSaved<"text" | "pdf">("view." + resume.book.id, "text");
+      const follow = readSaved("follow." + resume.book.id, false);
+      writeSaved("view." + book.id, view);
+      p.load(position.chapter, position.time, autoplay, book, {
+        anchor: position.reading,
+        follow,
+        preserve: true,
+      });
+      if (view === "pdf" && !follow) p.setPage(resume.progress.page);
+    } else {
+      p.open(book, autoplay);
+    }
+    setReading(true);
+    setDrawer(false);
+    setTab("chapters");
+  }
   const addMark = useCallback(
     (location?: Partial<Bookmark>) => {
       if (isGuest) {
@@ -416,16 +454,21 @@ export default function ReaderApp() {
     return () => document.removeEventListener("keydown", onKey);
   }, [reading, p.book, p.toggle, p.skip, addMark]);
   async function chooseNarration(kind: "kokoro" | "google" | "piper") {
-    if (!p.book) {
-      notify("Open a book to choose its narration.");
+    if (!currentBook) return;
+    if (currentBook.narration === kind) {
+      setModal("");
       return;
     }
-    const base =
-      books.find((b) => b.id === (p.book!.sourceBookId || p.book!.id)) ||
-      p.book;
+    const base = narrationSource;
+    if (!base) return;
     try {
-      let next = base;
-      if (kind !== "kokoro") {
+      let next: Book;
+      if (kind === "kokoro") {
+        if (base.narration !== "kokoro") return;
+        next = base;
+      } else if (kind === "piper" && catalogPiper) {
+        next = catalogPiper;
+      } else {
         const address =
           kind === "google"
             ? base.alternateNarration
@@ -448,16 +491,12 @@ export default function ReaderApp() {
         )
           throw Error();
       }
-      if (next.id === p.book.id) {
-        setModal("");
-        return;
-      }
       const visible =
-        readingLocation.current?.bookId === p.book.id
+        readingLocation.current?.bookId === currentBook.id
           ? readingLocation.current
           : null;
       const position = narrationPosition(
-        p.book,
+        currentBook,
         p.chapter,
         p.time,
         next,
@@ -1171,15 +1210,30 @@ export default function ReaderApp() {
                         "progress." + b.id,
                         null,
                       );
+                      const piper =
+                        b.narration === "kokoro"
+                          ? books.find((book) => isPiperEdition(book, b))
+                          : undefined;
+                      const piperProgress =
+                        piper &&
+                        readSaved<Progress | null>("progress." + piper.id, null);
+                      const resume =
+                        piper &&
+                        piperProgress &&
+                        (!saved || piperProgress.updated > saved.updated)
+                          ? { book: piper, progress: piperProgress }
+                          : undefined;
+                      const progress = resume?.progress ?? saved;
+                      const progressBook = resume?.book ?? b;
                       const percent =
-                        saved && b.duration
+                        progress && progressBook.duration
                           ? clamp(
                               (globalPosition(
-                                b.chapters,
-                                saved.chapter,
-                                saved.time,
+                                progressBook.chapters,
+                                progress.chapter,
+                                progress.time,
                               ) /
-                                b.duration) *
+                                progressBook.duration) *
                                 100,
                               0,
                               100,
@@ -1193,7 +1247,10 @@ export default function ReaderApp() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: i * 0.06, duration: 0.35 }}
                         >
-                          <div className="cover-stage" onClick={() => open(b)}>
+                          <div
+                            className="cover-stage"
+                            onClick={() => open(b, false, resume)}
+                          >
                             <div className="cover-shadow" />
                             <motion.div
                               whileHover={{ rotate: -3, y: -7 }}
@@ -1232,7 +1289,7 @@ export default function ReaderApp() {
                                 {b.chapters.length} chapters
                               </span>
                             </div>
-                            {saved && (
+                            {progress && (
                               <div className="library-progress">
                                 <div>
                                   <span>Your place is waiting</span>
@@ -1244,23 +1301,15 @@ export default function ReaderApp() {
                             <div className="book-actions">
                               <button
                                 className="primary-button"
-                                onClick={() => open(b)}
+                                onClick={() => open(b, false, resume)}
                               >
-                                {saved ? "Continue reading" : "Open book"}
+                                {progress ? "Continue reading" : "Open book"}
                                 <ArrowRight size={18} />
                               </button>
                               <button
                                 className="round-play"
                                 aria-label={`Listen to ${b.title}`}
-                                onClick={() => {
-                                  open(b);
-                                  p.load(
-                                    saved?.chapter || 0,
-                                    saved?.time || 0,
-                                    true,
-                                    b,
-                                  );
-                                }}
+                                onClick={() => open(b, true, resume)}
                               >
                                 <Play weight="fill" />
                               </button>
@@ -1385,37 +1434,35 @@ export default function ReaderApp() {
         {modal === "voices" && (
           <Modal title="A voice to read with" onClose={() => setModal("")}>
             <p className="muted voice-intro">
-              British English. A woman’s voice. A little slower, with room to
-              breathe.
+              {currentBook
+                ? currentBook.voice || "This book uses its supplied audio."
+                : "Open a book to see its available narrations."}
             </p>
             <div className="voice-choices">
               <button
                 className="voice-choice"
                 onClick={() => void chooseNarration("kokoro")}
-                disabled={!p.book}
+                disabled={narrationSource?.narration !== "kokoro"}
+                aria-pressed={currentBook?.narration === "kokoro"}
               >
                 <Headphones size={23} />
                 <div>
                   <strong>Kokoro · Emma</strong>
                   <p>Warm, gently paced narration</p>
                   <span>
-                    {!p.book?.narration || p.book.narration === "kokoro"
-                      ? "Selected · ready to listen"
-                      : "Choose this narration"}
+                    {currentBook?.narration === "kokoro"
+                      ? "Selected · default narration"
+                      : narrationSource?.narration === "kokoro"
+                        ? "Default narration"
+                        : "Not enabled"}
                   </span>
                 </div>
-                {p.book &&
-                  (!p.book.narration || p.book.narration === "kokoro") && (
-                    <Check size={20} />
-                  )}
+                {currentBook?.narration === "kokoro" && <Check size={20} />}
               </button>
               <button
                 className="voice-choice"
-                disabled={
-                  !books.find(
-                    (b) => b.id === (p.book?.sourceBookId || p.book?.id),
-                  )?.preparedNarrations?.piper
-                }
+                disabled={!piperAvailable && currentBook?.narration !== "piper"}
+                aria-pressed={currentBook?.narration === "piper"}
                 onClick={() => void chooseNarration("piper")}
               >
                 <Headphones size={23} />
@@ -1423,23 +1470,22 @@ export default function ReaderApp() {
                   <strong>Piper · Cori</strong>
                   <p>British English · female</p>
                   <span>
-                    {p.book?.narration === "piper"
+                    {currentBook?.narration === "piper"
                       ? "Selected · ready to listen"
-                      : books.find(
-                            (b) =>
-                              b.id === (p.book?.sourceBookId || p.book?.id),
-                          )?.preparedNarrations?.piper
+                      : piperAvailable
                         ? "Choose this narration"
                         : "Not enabled"}
                   </span>
                 </div>
-                {p.book?.narration === "piper" && <Check size={20} />}
+                {currentBook?.narration === "piper" && <Check size={20} />}
               </button>
               <button
                 className="voice-choice"
                 disabled={
-                  !books.find((b) => b.id === p.book?.id)?.alternateNarration
+                  !narrationSource?.alternateNarration &&
+                  currentBook?.narration !== "google"
                 }
+                aria-pressed={currentBook?.narration === "google"}
                 onClick={() => void chooseNarration("google")}
               >
                 <Headphones size={23} />
@@ -1447,10 +1493,9 @@ export default function ReaderApp() {
                   <strong>Google Neural2</strong>
                   <p>British English · female</p>
                   <span>
-                    {p.book?.narration === "google"
+                    {currentBook?.narration === "google"
                       ? "Selected · ready to listen"
-                      : books.find((b) => b.id === p.book?.id)
-                            ?.alternateNarration
+                      : narrationSource?.alternateNarration
                         ? "Choose this narration"
                         : "Not enabled"}
                   </span>
