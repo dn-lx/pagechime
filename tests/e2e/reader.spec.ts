@@ -316,6 +316,9 @@ test("Piper can play, switch chapter layouts and return to Kokoro", async ({ pag
   await page.getByRole("button", { name: "Next audio chapter" }).click();
   await page.getByRole("button", { name: "Choose narration voice" }).click();
   await expect(page.getByRole("button", { name: /Piper · Cori/ })).toBeEnabled();
+  await expect(
+    page.getByRole("dialog", { name: "A voice to read with" }),
+  ).toHaveCSS("opacity", "1");
   const voiceA11y = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
   expect(voiceA11y.violations).toEqual([]);
   await page.screenshot({ path: info.outputPath("piper-voice-choice.png"), fullPage: true });
