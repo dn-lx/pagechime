@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Open books directly in fullscreen on phones, with a compact reader and player that give the page more room.
+- Open books in a full-window reader on phones that stays active when the browser suspends and resumes the tab. Compact controls give the page more room.
 - Put voice selection in the reading toolbar and keep audio-follow in the Voice menu.
 
 ## [0.3.0] - 2026-11-05

@@ -9,21 +9,17 @@ async function enter(page: import("@playwright/test").Page) {
   await page.goto("/");
   await page.getByRole("button", { name: "Open book", exact: true }).click();
 }
-test("real fullscreen keeps reader/player available and exits with browser state", async ({
+test("fullscreen survives phone suspension and follows browser state on desktop", async ({
   page,
 }, info) => {
   const errors: string[] = [];
+  const mobile = info.project.name === "mobile";
   page.on("pageerror", (e) => errors.push(e.message));
   await enter(page);
-  const api = await page.evaluate(() => document.fullscreenEnabled);
-  if (info.project.name === "desktop") {
-    expect(api).toBe(true);
+  if (!mobile) {
     await page
       .getByRole("button", { name: "Enter fullscreen", exact: true })
       .click();
-  }
-  await expect(page.locator(".app-shell")).toHaveClass(/focus-reading/);
-  if (api)
     await expect
       .poll(() =>
         page.evaluate(
@@ -31,6 +27,8 @@ test("real fullscreen keeps reader/player available and exits with browser state
         ),
       )
       .toBe(true);
+  }
+  await expect(page.locator(".app-shell")).toHaveClass(/focus-reading/);
   await expect(
     page.getByRole("button", { name: "Exit fullscreen", exact: true }),
   ).toBeVisible();
@@ -44,13 +42,27 @@ test("real fullscreen keeps reader/player available and exits with browser state
   ).toHaveText("Voice");
   await expect(page.getByRole("article", { name: "Book text" })).toBeVisible();
   await expect(page.locator(".reader-main")).toHaveCSS("opacity", "1");
+  if (mobile) {
+    // Model a screen lock that leaves native fullscreen and suspends the tab.
+    const usedNativeFullscreen = await page.evaluate(async () => {
+      if (!document.fullscreenElement) return false;
+      await document.exitFullscreen();
+      return true;
+    });
+    const lifecycle = await page.context().newCDPSession(page);
+    await lifecycle.send("Page.setWebLifecycleState", { state: "frozen" });
+    await lifecycle.send("Page.setWebLifecycleState", { state: "active" });
+    await lifecycle.detach();
+    await expect(page.locator(".app-shell")).toHaveClass(/focus-reading/);
+    expect(usedNativeFullscreen).toBe(false);
+  }
   const navigation = await page
     .getByRole("navigation", { name: "Reading pages" })
     .boundingBox();
   const player = await page
     .getByRole("region", { name: "Audiobook player" })
     .boundingBox();
-  if (info.project.name === "mobile") {
+  if (mobile) {
     expect(player!.height).toBeLessThan(120);
     const height = await page.evaluate(() => innerHeight);
     const paper = await page.locator(".ebook-paper").boundingBox();
@@ -85,7 +97,7 @@ test("real fullscreen keeps reader/player available and exits with browser state
     .getByRole("button", { name: "Exit fullscreen", exact: true })
     .click();
   await expect(page.locator(".app-shell")).not.toHaveClass(/focus-reading/);
-  if (api) {
+  if (!mobile) {
     await page
       .getByRole("button", { name: "Enter fullscreen", exact: true })
       .click();
@@ -98,7 +110,7 @@ test("real fullscreen keeps reader/player available and exits with browser state
     ).toBeVisible();
     await expect(page.locator(".app-shell")).not.toHaveClass(/focus-reading/);
   }
-  if (info.project.name === "mobile") {
+  if (mobile) {
     await page.getByRole("button", { name: "Open library menu" }).click();
     await page.getByRole("button", { name: /^My library/ }).click();
     await page.getByRole("button", { name: "Open current book" }).click();
@@ -106,12 +118,14 @@ test("real fullscreen keeps reader/player available and exits with browser state
   }
   expect(errors).toEqual([]);
 });
-test("fullscreen rejection uses an accessible full-window fallback and Escape restores chrome", async ({
+test("the full-window reader exits with Escape and handles denied desktop fullscreen", async ({
   page,
 }, info) => {
   await page.addInitScript(() => {
-    HTMLElement.prototype.requestFullscreen = () =>
-      Promise.reject(new DOMException("Unavailable", "NotAllowedError"));
+    HTMLElement.prototype.requestFullscreen = () => {
+      document.documentElement.dataset.fullscreenRequested = "true";
+      return Promise.reject(new DOMException("Unavailable", "NotAllowedError"));
+    };
   });
   await enter(page);
   if (info.project.name === "mobile") {
@@ -122,9 +136,15 @@ test("fullscreen rejection uses an accessible full-window fallback and Escape re
     .getByRole("button", { name: "Enter fullscreen", exact: true })
     .click();
   await expect(page.locator(".app-shell")).toHaveClass(/focus-reading/);
-  await expect(page.getByRole("status")).toContainText(
-    "full-window reading view",
-  );
+  if (info.project.name === "mobile")
+    await expect(page.locator("html")).not.toHaveAttribute(
+      "data-fullscreen-requested",
+      "true",
+    );
+  else
+    await expect(page.getByRole("status")).toContainText(
+      "full-window reading view",
+    );
   await page.keyboard.press("Escape");
   await expect(page.locator(".app-shell")).not.toHaveClass(/focus-reading/);
   await expect(

@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
+const phoneReaderQuery =
+  "(max-width: 767px), (pointer: coarse) and (max-height: 550px)";
+
 export function useReaderFullscreen() {
   const [active, setActive] = useState(false);
   const [notice, setNotice] = useState("");
@@ -51,12 +54,14 @@ export function useReaderFullscreen() {
     setNotice("");
     setActive(false);
   };
-  const enter = async (announceFallback = true) => {
-    if (wantsFullscreen.current) return;
+  const enter = async (onBookOpen = false) => {
+    const fullWindow = matchMedia(phoneReaderQuery).matches;
+    if (wantsFullscreen.current || (onBookOpen && !fullWindow)) return;
     wantsFullscreen.current = true;
     setNotice("");
     setActive(true);
-    if (pending.current) return;
+    // The phone layout stays active when the browser suspends the tab.
+    if (fullWindow || pending.current) return;
     // Request directly from the tap, before any awaited work consumes activation.
     pending.current = true;
     try {
@@ -74,7 +79,7 @@ export function useReaderFullscreen() {
       }
       ownsFullscreen.current = true;
     } catch {
-      if (mounted.current && wantsFullscreen.current && announceFallback)
+      if (mounted.current && wantsFullscreen.current)
         setNotice(
           "This browser uses a full-window reading view. Tap Exit to return.",
         );
@@ -85,7 +90,7 @@ export function useReaderFullscreen() {
   return {
     active,
     notice,
-    enter,
+    enterOnBookOpen: () => enter(true),
     exit,
     toggle: () => (active ? exit() : enter()),
   };

@@ -2,12 +2,11 @@
 
 Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-28.
 
-## [x] REQ-020 — Fullscreen phone reader and compact controls
-- Open books in browser fullscreen on phones when available, with a full-window fallback and an obvious Exit control. Keep the mobile library menu accessible and preserve fullscreen across chapter and voice changes.
+## [ ] REQ-020 — Full-window phone reader and compact controls
+- Open books in a full-window reader on phones. Keep the layout active across browser suspension and resumption, chapter changes and voice changes. Keep the mobile library menu and Exit accessible. Desktop keeps manual browser fullscreen.
 - Give the reading surface more room through a compact heading, toolbar and player. Keep page turns, text/PDF switching, playback controls and appearance accessible.
 - Replace the toolbar headset with a labeled Voice picker. Keep audio-follow available in the Voice menu and retain the current passage when switching voices.
 - Acceptance includes mobile and desktop browser regressions, measured reading space, touch targets, accessibility and develop deployment.
-- Verified on develop runtime 08e1081f and Netlify deploy 6aee55299574512c5e82c17b. Private live-book testing requires Netlify team sign-in.
 
 ## [ ] REQ-019 — Reusable book format and admin shared-library uploads
 - The owner creates each book's PDFs and narration, then publishes it to the shared library from the website, including on Android. The owner approved promotion of verified publishing and playback changes from develop to main for 0.3.0.

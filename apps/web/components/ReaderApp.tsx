@@ -375,12 +375,7 @@ export default function ReaderApp() {
     writeSaved("theme", theme);
   }, [theme]);
   function showReader() {
-    if (
-      matchMedia(
-        "(max-width: 767px), (pointer: coarse) and (max-height: 550px)",
-      ).matches
-    )
-      void fullscreen.enter(false);
+    void fullscreen.enterOnBookOpen();
     setReading(true);
     setDrawer(false);
   }
@@ -1524,11 +1519,10 @@ export default function ReaderApp() {
                 spoken word.
               </p>
               <p>
-                Books open fullscreen on phones. Tap Exit to return to the
-                regular view. The player’s 10s buttons move back or forward
-                ten seconds. Normal listening skips sections marked Reference.
-                You can open them
-                from Contents at any time.
+                Books fill the browser window on phones. Tap Exit to return
+                to the regular view. The player’s 10s buttons move back or
+                forward ten seconds. Normal listening skips sections marked
+                Reference. You can open them from Contents at any time.
               </p>
               <p>
                 Use a passage’s play button to listen from there. Select text to

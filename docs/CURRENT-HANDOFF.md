@@ -6,10 +6,10 @@ Updated 2026-11-06 (Europe/Madrid).
 
 PR #8 merged 0.3.0 to main at 046f009e. Netlify production deploy 6aed00a789daae96fd796049 is current, with library/reader functions and the media edge. Main and develop share the private catalog. Kokoro is the existing Manifest default. The exact release tree passed Application 42119331554 with 62 Node and 88 browser cases, four private skips, exports and 574/900 KiB. The separate PR run stalled installing Chromium. The sample passed isolated desktop and Pixel 7 publishing. Team sign-in gates live admin verification. GitHub tag and release publication are pending. See REQ-019/018 plans.
 
-REQ-020 runtime 08e1081f is ready on develop deploy 6aee55299574512c5e82c17b. Simulated Pixel 7 paper grew from 449 to 574px. Checks passed with 62 Node and 88 browser cases, four private skips, web and native exports, and 575/900 KiB. Hosted book checks require team sign-in.
+REQ-020 follow-up uses the browser window on phones so suspending the tab no longer drops the compact reader. The regression models native fullscreen exiting, then freezes and resumes Chromium. Previous runtime 08e1081f added the compact controls. Hosted book checks require team sign-in.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-020","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"reviewing","last_verified_sha":"08e1081f72c2d0ff4b19aaca077d9a8902523b74","next_step":"Owner review on develop. Promote only with explicit owner approval.","updated_at":"2026-11-06T22:34:00Z"}
+{"task_id":"REQ-020","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"testing","last_verified_sha":"08e1081f72c2d0ff4b19aaca077d9a8902523b74","next_step":"Verify the phone suspension fix and deploy to develop.","updated_at":"2026-11-06T22:45:00Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
