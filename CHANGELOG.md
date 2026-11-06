@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Open books directly in fullscreen on phones, with a compact reader and player that give the page more room.
+- Put voice selection in the reading toolbar and keep audio-follow in the Voice menu.
+
 ## [0.3.0] - 2026-11-05
 
 - Add a versioned reusable book description and admin publishing of multiple PDF editions, ordered audio tracks and an optional cover to a private shared library.

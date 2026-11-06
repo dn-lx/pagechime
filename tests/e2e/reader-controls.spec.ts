@@ -16,11 +16,13 @@ test("real fullscreen keeps reader/player available and exits with browser state
   page.on("pageerror", (e) => errors.push(e.message));
   await enter(page);
   const api = await page.evaluate(() => document.fullscreenEnabled);
-  if (info.project.name === "desktop") expect(api).toBe(true);
-  await page
-    .getByRole("button", { name: "Enter fullscreen", exact: true })
-    .click();
-  await expect(page.locator("body")).toHaveClass(/focus-reading/);
+  if (info.project.name === "desktop") {
+    expect(api).toBe(true);
+    await page
+      .getByRole("button", { name: "Enter fullscreen", exact: true })
+      .click();
+  }
+  await expect(page.locator(".app-shell")).toHaveClass(/focus-reading/);
   if (api)
     await expect
       .poll(() =>
@@ -35,13 +37,25 @@ test("real fullscreen keeps reader/player available and exits with browser state
   await expect(
     page.getByRole("button", { name: "Play narration", exact: true }),
   ).toBeVisible();
+  await expect(
+    page
+      .locator(".ebook-tools")
+      .getByRole("button", { name: "Choose narration voice" }),
+  ).toHaveText("Voice");
   await expect(page.getByRole("article", { name: "Book text" })).toBeVisible();
+  await expect(page.locator(".reader-main")).toHaveCSS("opacity", "1");
   const navigation = await page
     .getByRole("navigation", { name: "Reading pages" })
     .boundingBox();
   const player = await page
     .getByRole("region", { name: "Audiobook player" })
     .boundingBox();
+  if (info.project.name === "mobile") {
+    expect(player!.height).toBeLessThan(120);
+    const height = await page.evaluate(() => innerHeight);
+    const paper = await page.locator(".ebook-paper").boundingBox();
+    expect(paper!.height).toBeGreaterThan(height * 0.55);
+  }
   expect(navigation!.y + navigation!.height).toBeLessThanOrEqual(player!.y);
   expect(
     await page
@@ -70,7 +84,7 @@ test("real fullscreen keeps reader/player available and exits with browser state
   await page
     .getByRole("button", { name: "Exit fullscreen", exact: true })
     .click();
-  await expect(page.locator("body")).not.toHaveClass(/focus-reading/);
+  await expect(page.locator(".app-shell")).not.toHaveClass(/focus-reading/);
   if (api) {
     await page
       .getByRole("button", { name: "Enter fullscreen", exact: true })
@@ -82,27 +96,37 @@ test("real fullscreen keeps reader/player available and exits with browser state
     await expect(
       page.getByRole("button", { name: "Enter fullscreen", exact: true }),
     ).toBeVisible();
-    await expect(page.locator("body")).not.toHaveClass(/focus-reading/);
+    await expect(page.locator(".app-shell")).not.toHaveClass(/focus-reading/);
+  }
+  if (info.project.name === "mobile") {
+    await page.getByRole("button", { name: "Open library menu" }).click();
+    await page.getByRole("button", { name: /^My library/ }).click();
+    await page.getByRole("button", { name: "Open current book" }).click();
+    await expect(page.getByRole("button", { name: "Exit fullscreen" })).toBeVisible();
   }
   expect(errors).toEqual([]);
 });
 test("fullscreen rejection uses an accessible full-window fallback and Escape restores chrome", async ({
   page,
-}) => {
+}, info) => {
   await page.addInitScript(() => {
     HTMLElement.prototype.requestFullscreen = () =>
       Promise.reject(new DOMException("Unavailable", "NotAllowedError"));
   });
   await enter(page);
+  if (info.project.name === "mobile") {
+    await expect(page.locator(".app-shell")).toHaveClass(/focus-reading/);
+    await page.getByRole("button", { name: "Exit fullscreen", exact: true }).click();
+  }
   await page
     .getByRole("button", { name: "Enter fullscreen", exact: true })
     .click();
-  await expect(page.locator("body")).toHaveClass(/focus-reading/);
+  await expect(page.locator(".app-shell")).toHaveClass(/focus-reading/);
   await expect(page.getByRole("status")).toContainText(
     "full-window reading view",
   );
   await page.keyboard.press("Escape");
-  await expect(page.locator("body")).not.toHaveClass(/focus-reading/);
+  await expect(page.locator(".app-shell")).not.toHaveClass(/focus-reading/);
   await expect(
     page.getByRole("button", { name: "Enter fullscreen", exact: true }),
   ).toBeVisible();
@@ -238,7 +262,9 @@ test("audio-only parts retain manual PDF pages across navigation, automatic adva
   await expect(page.locator(".player-book")).toContainText("The next page");
   await page.getByRole("button", { name: "Pause narration", exact: true }).click();
   await expect(pdfPage).toHaveValue("2");
+  await page.getByRole("button", { name: "Choose narration voice" }).click();
   await expect(page.getByRole("button", { name: "Follow audio", exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "Close dialog", exact: true }).click();
   await page.reload();
   await page.getByRole("button", { name: "Continue reading", exact: true }).click();
   await expect(pdfPage).toHaveValue("2");

@@ -1,10 +1,12 @@
 "use client";
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import {
   ArrowLeft,
@@ -23,6 +25,7 @@ import {
   Pause,
   Play,
   TextAa,
+  Waveform,
   X,
 } from "@phosphor-icons/react";
 import {
@@ -50,7 +53,7 @@ import {
 import { useAccount } from "../lib/account";
 import type { Playback } from "../lib/playback";
 import { PdfPage } from "./PdfPage";
-import { useReaderFullscreen } from "../lib/reader-fullscreen";
+import type { useReaderFullscreen } from "../lib/reader-fullscreen";
 import Modal from "./Modal";
 
 export type AnnotationDraft = {
@@ -71,6 +74,10 @@ export type ReadingLocation = {
 };
 type Props = {
   onReadingPosition: (location: ReadingLocation) => void;
+  fullscreen: ReturnType<typeof useReaderFullscreen>;
+  libraryMenu: ReactNode;
+  voiceChoices: ReactNode;
+  onVoiceMenu: (open: boolean) => void;
   p: Playback;
   addMark: (location?: Partial<Bookmark>) => void;
   notes: ReaderNote[];
@@ -115,6 +122,10 @@ function markedText(
 export default function BookReader({
   p,
   onReadingPosition,
+  fullscreen,
+  libraryMenu,
+  voiceChoices,
+  onVoiceMenu,
   addMark,
   notes,
   onAnnotate,
@@ -186,7 +197,7 @@ export default function BookReader({
     active: focus,
     toggle: toggleFullscreen,
     notice: fullscreenNotice,
-  } = useReaderFullscreen();
+  } = fullscreen;
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const [selection, setSelection] = useState<AnnotationDraft | null>(null);
   const paper = useRef<HTMLDivElement>(null),
@@ -207,7 +218,7 @@ export default function BookReader({
   const chapterNotes = notes.filter(
     (n) => n.bookId === book.id && n.chapter === readingChapter,
   );
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = paper.current;
     if (!el) return;
     const resize = () =>
@@ -216,7 +227,7 @@ export default function BookReader({
     observer.observe(el);
     resize();
     return () => observer.disconnect();
-  }, [mode, appearance.width]);
+  }, [mode, appearance.width, focus]);
   const [, setWordClock] = useState(p.time);
   useEffect(() => {
     let frame = 0,
@@ -522,7 +533,8 @@ export default function BookReader({
       aria-label="Interactive book reader"
     >
       <div className="ebook-heading">
-        <div>
+        {libraryMenu}
+        <div className="ebook-title">
           <p className="eyebrow">YOUR READING ROOM</p>
           <h1>{book.title}</h1>
           <p>
@@ -569,11 +581,12 @@ export default function BookReader({
           </button>
           <button
             aria-pressed={mode === "pdf"}
+            aria-label="Original PDF"
             className={mode === "pdf" ? "active" : ""}
             onClick={() => setMode("pdf")}
           >
             <FilePdf size={16} />
-            Original PDF
+            {libraryMenu ? "PDF" : "Original PDF"}
           </button>
         </div>
         {mode === "pdf" && book.editions?.some((e) => e.kind === "pdf") && (
@@ -599,18 +612,35 @@ export default function BookReader({
         )}
         <div className="ebook-tool-actions">
           <button
-            className={`ebook-follow ${follow ? "is-following" : ""}`}
-            aria-label={follow ? "Following audio" : "Follow audio"}
-            aria-pressed={follow}
-            disabled={!chapter.segments.length}
-            onClick={() => {
-              pendingFollow.current = null;
-              setFollow(!follow);
-            }}
+            className="voice-menu-button"
+            aria-label="Choose narration voice"
+            aria-haspopup="dialog"
+            aria-expanded={!!voiceChoices}
+            onClick={() => onVoiceMenu(true)}
           >
-            <Headphones size={16} />
-            <span>{follow ? "Following audio" : "Follow audio"}</span>
+            <Waveform size={16} />
+            <span>Voice</span>
           </button>
+          {voiceChoices && (
+            <Modal
+              title="A voice to read with"
+              onClose={() => onVoiceMenu(false)}
+            >
+              {voiceChoices}
+              <button
+                className="ebook-follow"
+                aria-label="Follow audio"
+                aria-pressed={follow}
+                disabled={!chapter.segments.length}
+                onClick={() => {
+                  pendingFollow.current = null;
+                  setFollow(!follow);
+                }}
+              >
+                Follow audio <span>{follow ? "On" : "Off"}</span>
+              </button>
+            </Modal>
+          )}
           <button
             className="appearance-trigger"
             aria-label="Reading appearance"
@@ -736,7 +766,12 @@ export default function BookReader({
         </div>
       </div>
       {mode === "pdf" ? (
-        <div className="reading-page pdf-page">
+        <div
+          className="reading-page pdf-page"
+          role="region"
+          aria-label="Original PDF page"
+          tabIndex={0}
+        >
           <PdfPage url={pdfEdition} page={p.page} />
         </div>
       ) : (
@@ -960,7 +995,7 @@ export default function BookReader({
           <ArrowRight size={19} />
         </button>
       </nav>
-      {!follow && mode === "text" && (
+      {!focus && !follow && mode === "text" && (
         <button className="ebook-resume" onClick={() => setFollow(true)}>
           <Headphones size={16} />
           Return to the narrator

@@ -1,13 +1,15 @@
 # Current Handoff
 
-Updated 2026-11-05 (Europe/Madrid).
+Updated 2026-11-06 (Europe/Madrid).
 
 ## Current work — PageChime 0.3.0
 
 PR #8 merged 0.3.0 to main at 046f009e. Netlify production deploy 6aed00a789daae96fd796049 is current, with library/reader functions and the media edge. Main and develop share the private catalog. Kokoro is the existing Manifest default. The exact release tree passed Application 42119331554 with 62 Node and 88 browser cases, four private skips, exports and 574/900 KiB. The separate PR run stalled installing Chromium. The sample passed isolated desktop and Pixel 7 publishing. Team sign-in gates live admin verification. GitHub tag and release publication are pending. See REQ-019/018 plans.
 
+REQ-020 opens the phone reader in fullscreen, compacts playback and moves narration and audio-follow to Voice. Simulated Pixel 7 paper height grew from 449 to 574px. A full-window fallback covers browsers without native fullscreen.
+
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-019","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"blocked","last_verified_sha":"f6f653bb7ff1e6a025556879a1aa2d94fa3fdbe5","next_step":"Verify an authenticated production admin upload after Netlify team sign-in. GitHub tag and release publication need authenticated access.","updated_at":"2026-11-05T22:22:08Z"}
+{"task_id":"REQ-020","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"testing","last_verified_sha":"e39ead6720817af222e7ef12b0199aa42903b36e","next_step":"Verify the compact reader in the develop deploy. Live private-book testing requires Netlify team sign-in.","updated_at":"2026-11-06T22:31:00Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017

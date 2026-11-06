@@ -5,6 +5,7 @@ export function useReaderFullscreen() {
   const [active, setActive] = useState(false);
   const [notice, setNotice] = useState("");
   const ownsFullscreen = useRef(false);
+  const wantsFullscreen = useRef(false);
   const mounted = useRef(true),
     pending = useRef(false);
   useEffect(() => {
@@ -12,6 +13,7 @@ export function useReaderFullscreen() {
     const changed = () => {
       if (ownsFullscreen.current && !document.fullscreenElement) {
         ownsFullscreen.current = false;
+        wantsFullscreen.current = false;
         setActive(false);
       }
     };
@@ -21,8 +23,10 @@ export function useReaderFullscreen() {
         !event.defaultPrevented &&
         !document.fullscreenElement &&
         !document.querySelector("dialog[open]")
-      )
+      ) {
+        wantsFullscreen.current = false;
         setActive(false);
+      }
     };
     document.addEventListener("fullscreenchange", changed);
     document.addEventListener("keydown", key);
@@ -34,25 +38,25 @@ export function useReaderFullscreen() {
         void document.exitFullscreen().catch(() => {});
     };
   }, []);
-  useEffect(() => {
-    document.body.classList.toggle("focus-reading", active);
-    return () => document.body.classList.remove("focus-reading");
-  }, [active]);
-  const toggle = async () => {
-    if (pending.current) return;
-    setNotice("");
-    if (active) {
-      if (ownsFullscreen.current && document.fullscreenElement) {
-        try {
-          await document.exitFullscreen();
-        } catch {
-          return;
-        }
+  const exit = async () => {
+    if (ownsFullscreen.current && document.fullscreenElement) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        return;
       }
-      ownsFullscreen.current = false;
-      setActive(false);
-      return;
     }
+    ownsFullscreen.current = false;
+    wantsFullscreen.current = false;
+    setNotice("");
+    setActive(false);
+  };
+  const enter = async (announceFallback = true) => {
+    if (wantsFullscreen.current) return;
+    wantsFullscreen.current = true;
+    setNotice("");
+    setActive(true);
+    if (pending.current) return;
     // Request directly from the tap, before any awaited work consumes activation.
     pending.current = true;
     try {
@@ -64,20 +68,25 @@ export function useReaderFullscreen() {
       await document.documentElement.requestFullscreen({
         navigationUI: "hide",
       });
-      if (!mounted.current) {
+      if (!mounted.current || !wantsFullscreen.current) {
         await document.exitFullscreen();
         return;
       }
       ownsFullscreen.current = true;
     } catch {
-      if (mounted.current)
+      if (mounted.current && wantsFullscreen.current && announceFallback)
         setNotice(
           "This browser uses a full-window reading view. Tap Exit to return.",
         );
     } finally {
       pending.current = false;
     }
-    if (mounted.current) setActive(true);
   };
-  return { active, notice, toggle };
+  return {
+    active,
+    notice,
+    enter,
+    exit,
+    toggle: () => (active ? exit() : enter()),
+  };
 }

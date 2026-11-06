@@ -1173,8 +1173,10 @@ progress::-webkit-progress-value {
   display: flex;
   align-items: center;
   gap: 11px;
-  cursor: pointer;
   min-width: 0;
+}
+button.player-book {
+  cursor: pointer;
 }
 .mini-cover {
   height: 49px;
@@ -2823,13 +2825,21 @@ progress::-webkit-progress-value {
 .ebook-follow {
   display: flex;
   align-items: center;
-  gap: 7px;
-  color: var(--muted);
-  font-size: 11px;
-  white-space: nowrap;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 13px;
 }
-.ebook-follow.is-following {
-  color: var(--olive-deep);
+.ebook-follow[aria-pressed="true"] {
+  background: var(--soft);
+}
+.ebook-follow span {
+  color: var(--muted);
 }
 .appearance-trigger {
   display: flex;
@@ -3160,9 +3170,6 @@ progress::-webkit-progress-value {
   .appearance-trigger > span {
     display: none;
   }
-  .ebook-follow > span {
-    max-width: 95px;
-  }
   .ebook-tools .view-switch > button {
     padding: 7px 9px;
   }
@@ -3191,9 +3198,6 @@ progress::-webkit-progress-value {
   .ebook-tool-actions {
     flex: 1;
     justify-content: flex-end;
-  }
-  .ebook-follow span {
-    display: none;
   }
   .ebook-tools .view-switch {
     flex: 0 1 auto;
@@ -3510,7 +3514,7 @@ progress::-webkit-progress-value {
     row-gap: 12px;
     margin-bottom: 16px;
   }
-  .ebook-heading > div:first-child {
+  .ebook-heading > .ebook-title {
     flex: 1 1 200px;
     min-width: 0;
   }
@@ -3556,27 +3560,6 @@ progress::-webkit-progress-value {
   }
   .speed-control select {
     font-size: 12px;
-  }
-  .focus-reading .reader-main {
-    padding: 14px 16px;
-  }
-  .focus-reading .ebook-heading {
-    flex-wrap: nowrap;
-  }
-  .focus-reading .ebook-heading > div:first-child {
-    flex-basis: auto;
-  }
-  .focus-reading .ebook-heading h1 {
-    font-size: 19px;
-  }
-  .focus-reading .ebook-heading .reader-chapter-title {
-    display: none;
-  }
-  .focus-reading .ebook-heading p > span:not(.reader-chapter-title) {
-    display: none;
-  }
-  .focus-reading .ebook-paper {
-    height: calc(100dvh - var(--player) - 205px - env(safe-area-inset-bottom));
   }
 }
 
@@ -3628,6 +3611,100 @@ progress::-webkit-progress-value {
     margin-top: 4px;
   }
 }
+@media (max-width: 767px), (max-height: 550px) and (pointer: coarse) {
+  .focus-reading .reader-main {
+    padding: max(5px, env(safe-area-inset-top))
+      max(10px, env(safe-area-inset-right)) 0
+      max(10px, env(safe-area-inset-left));
+  }
+  .focus-reading .ebook-heading {
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .focus-reading .ebook-heading > .ebook-title {
+    flex-basis: auto;
+  }
+  .focus-reading .ebook-heading h1 {
+    overflow: hidden;
+    font-size: 18px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .focus-reading .ebook-heading p:last-child {
+    margin-top: 2px;
+  }
+  .focus-reading .ebook-heading .ebook-actions {
+    gap: 0;
+  }
+  .focus-reading .ebook-heading .icon-button,
+  .focus-reading .ebook-tool-actions .icon-button,
+  .focus-reading .appearance-trigger,
+  .focus-reading .ebook-page-turn {
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+  }
+  .focus-reading .fullscreen-button {
+    padding: 0 8px;
+  }
+  .focus-reading .ebook-heading .reader-chapter-title {
+    display: none;
+  }
+  .focus-reading .ebook-heading p > span:not(.reader-chapter-title) {
+    display: none;
+  }
+  .focus-reading .ebook-tools {
+    gap: 4px;
+    padding: 0;
+    margin-bottom: 6px;
+  }
+  .focus-reading .ebook-tools .view-switch > button {
+    padding: 0 7px;
+    font-size: 11px;
+  }
+  .focus-reading .ebook-tool-actions {
+    gap: 0;
+  }
+  .focus-reading .voice-menu-button {
+    gap: 4px;
+    padding: 0 6px;
+  }
+  .focus-reading .ebook-tools .edition-choice {
+    order: 1;
+    flex-basis: 100%;
+  }
+  .focus-reading .ebook-page-navigation {
+    margin-top: 2px;
+  }
+  .focus-reading .player {
+    min-height: 0;
+    gap: 0 8px;
+    padding: 3px 12px calc(4px + env(safe-area-inset-bottom));
+  }
+  .focus-reading .player-book :is(.mini-cover, strong) {
+    display: none;
+  }
+  .focus-reading .player-book > div > span {
+    margin-top: 0;
+  }
+  .focus-reading .speed-control select {
+    min-height: 32px;
+  }
+  .focus-reading .playback-buttons {
+    gap: clamp(5px, 2vw, 12px);
+    margin-bottom: 0;
+  }
+  .focus-reading .play-button,
+  .focus-reading .skip-button {
+    width: 44px;
+    height: 44px;
+  }
+  .focus-reading .seek-row input[type="range"] {
+    min-height: 22px;
+  }
+}
 .focus-reading .ebook-running-head,
 .focus-reading .ebook-running-foot,
 .focus-reading .ebook-chapter-opening,
@@ -3638,6 +3715,11 @@ progress::-webkit-progress-value {
   min-height: 100%;
   padding-top: 22px;
   padding-bottom: 22px;
+}
+@media (max-width: 767px), (max-height: 550px) and (pointer: coarse) {
+  .focus-reading .ebook-prose {
+    padding: 16px 20px 12px;
+  }
 }
 .focus-reading .book-editions {
   display: none;

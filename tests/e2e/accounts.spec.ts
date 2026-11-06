@@ -379,6 +379,7 @@ test("email signup and password reveal create an account that can sign in again"
     password: "A long test password, for reading.",
   });
   await page.getByRole("button", { name: "Open book", exact: true }).click();
+  await expect(page.getByRole("article", { name: "Book text" })).toBeVisible();
   await notes(page);
   await page
     .getByLabel("Your note", { exact: true })

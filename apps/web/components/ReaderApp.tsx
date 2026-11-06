@@ -2,6 +2,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -33,6 +34,7 @@ import {
   Pause,
   Play,
   Plus,
+  Question,
   SkipBack,
   SkipForward,
   SpeakerHigh,
@@ -69,6 +71,7 @@ import Modal from "./Modal";
 import SharedBookUpload from "./SharedBookUpload";
 import { sharedCatalog } from "../lib/shared-library";
 import { usePlayback, type Playback } from "../lib/playback";
+import { useReaderFullscreen } from "../lib/reader-fullscreen";
 import { pdfLibrary } from "../lib/pdf";
 import Reader, {
   type AnnotationDraft,
@@ -195,6 +198,7 @@ export default function ReaderApp() {
     timeout.current = setTimeout(() => setNotice(""), 4500);
   }, []);
   const p = usePlayback(notify, storage);
+  const fullscreen = useReaderFullscreen();
   // Keep both narrations available, with one shelf card for the default voice.
   const shelfBooks = books.filter(
     (book) =>
@@ -370,11 +374,27 @@ export default function ReaderApp() {
     document.documentElement.dataset.theme = theme;
     writeSaved("theme", theme);
   }, [theme]);
+  function showReader() {
+    if (
+      matchMedia(
+        "(max-width: 767px), (pointer: coarse) and (max-height: 550px)",
+      ).matches
+    )
+      void fullscreen.enter(false);
+    setReading(true);
+    setDrawer(false);
+  }
+  function showLibrary() {
+    void fullscreen.exit();
+    setReading(false);
+    setDrawer(false);
+  }
   function open(
     book: Book,
     autoplay = false,
     resume?: { book: Book; progress: Progress },
   ) {
+    showReader();
     const position =
       resume &&
       narrationPosition(
@@ -397,8 +417,6 @@ export default function ReaderApp() {
     } else {
       p.open(book, autoplay);
     }
-    setReading(true);
-    setDrawer(false);
     setTab("chapters");
   }
   const addMark = useCallback(
@@ -515,7 +533,6 @@ export default function ReaderApp() {
         preserve: true,
       });
       setReaderKey((k) => k + 1);
-      setReading(true);
       setModal("");
     } catch {
       notify("This narration could not open. Please try again.");
@@ -597,7 +614,7 @@ export default function ReaderApp() {
       await deleteLocalBook(b.id);
       if (p.book?.id === b.id) {
         p.close();
-        setReading(false);
+        showLibrary();
       }
       setBooks((x) => x.filter((v) => v.id !== b.id));
       URL.revokeObjectURL(b.pdf);
@@ -611,10 +628,7 @@ export default function ReaderApp() {
     <>
       <button
         className="brand"
-        onClick={() => {
-          setReading(false);
-          setDrawer(false);
-        }}
+        onClick={showLibrary}
         aria-label="Pagechime library"
       >
         <Leaf size={30} weight="duotone" />
@@ -625,10 +639,7 @@ export default function ReaderApp() {
       <p className="nav-label">YOUR LITTLE CORNER</p>
       <button
         className={`nav-item ${!reading ? "active" : ""}`}
-        onClick={() => {
-          setReading(false);
-          setDrawer(false);
-        }}
+        onClick={showLibrary}
       >
         <BookOpen />
         My library<span className="count">{shelfBooks.length}</span>
@@ -822,6 +833,92 @@ export default function ReaderApp() {
       </div>
     </>
   );
+  const voiceChoices = modal === "voices" && (
+    <>
+      <p className="muted voice-intro">
+        {currentBook?.voice || "This book uses its supplied audio."}
+      </p>
+      <div className="voice-choices">
+        <button
+          className="voice-choice"
+          onClick={() => void chooseNarration("kokoro")}
+          disabled={narrationSource?.narration !== "kokoro"}
+          aria-pressed={currentBook?.narration === "kokoro"}
+        >
+          <Headphones size={23} />
+          <div>
+            <strong>Kokoro · Emma</strong>
+            <p>Warm, gently paced narration</p>
+            <span>
+              {currentBook?.narration === "kokoro"
+                ? "Selected · default narration"
+                : narrationSource?.narration === "kokoro"
+                  ? "Default narration"
+                  : "Not enabled"}
+            </span>
+          </div>
+          {currentBook?.narration === "kokoro" && <Check size={20} />}
+        </button>
+        <button
+          className="voice-choice"
+          disabled={!piperAvailable && currentBook?.narration !== "piper"}
+          aria-pressed={currentBook?.narration === "piper"}
+          onClick={() => void chooseNarration("piper")}
+        >
+          <Headphones size={23} />
+          <div>
+            <strong>Piper · Cori</strong>
+            <p>British English · female</p>
+            <span>
+              {currentBook?.narration === "piper"
+                ? "Selected · ready to listen"
+                : piperAvailable
+                  ? "Choose this narration"
+                  : "Not enabled"}
+            </span>
+          </div>
+          {currentBook?.narration === "piper" && <Check size={20} />}
+        </button>
+        <button
+          className="voice-choice"
+          disabled={
+            !narrationSource?.alternateNarration &&
+            currentBook?.narration !== "google"
+          }
+          aria-pressed={currentBook?.narration === "google"}
+          onClick={() => void chooseNarration("google")}
+        >
+          <Headphones size={23} />
+          <div>
+            <strong>Google Neural2</strong>
+            <p>British English · female</p>
+            <span>
+              {currentBook?.narration === "google"
+                ? "Selected · ready to listen"
+                : narrationSource?.alternateNarration
+                  ? "Choose this narration"
+                  : "Not enabled"}
+            </span>
+          </div>
+        </button>
+      </div>
+      <p className="muted voice-intro">
+        Switching voices resumes at the nearest matching passage.
+      </p>
+    </>
+  );
+  const libraryMenu = (
+    <button
+      type="button"
+      aria-label="Open library menu"
+      aria-haspopup="dialog"
+      aria-expanded={drawer}
+      className="icon-button mobile-menu"
+      onClick={() => setDrawer(true)}
+    >
+      <List />
+    </button>
+  );
   return (
     <MotionConfig reducedMotion="user">
       {modal === "join" && (
@@ -1001,7 +1098,7 @@ export default function ReaderApp() {
         </Modal>
       )}
       <div
-        className={`app-shell ${p.book ? "has-player" : ""} ${reading ? "is-reading" : ""}`}
+        className={`app-shell ${p.book ? "has-player" : ""} ${reading ? "is-reading" : ""} ${fullscreen.active ? "focus-reading" : ""}`}
       >
         {!narrow && <aside className="sidebar">{sidebar}</aside>}
         {narrow && drawer && (
@@ -1017,16 +1114,7 @@ export default function ReaderApp() {
         <div className="main-shell">
           <header className="topbar">
             <div className="topbar-left">
-              <button
-                type="button"
-                aria-label="Open library menu"
-                aria-haspopup="dialog"
-                aria-expanded={drawer}
-                className="icon-button mobile-menu"
-                onClick={() => setDrawer(true)}
-              >
-                <List />
-              </button>
+              {!fullscreen.active && libraryMenu}
               <span className="breadcrumb">
                 MY LIBRARY
                 {reading && (
@@ -1038,14 +1126,6 @@ export default function ReaderApp() {
               </span>
             </div>
             <div className="topbar-right">
-              <button
-                className="voice-menu-button"
-                onClick={() => openModal("voices")}
-                aria-label="Choose narration voice"
-              >
-                <Headphones size={16} />
-                <span>Voice</span>
-              </button>
               <span className="topbar-note">
                 <span className="status-dot" />A place to slow down
               </span>
@@ -1053,7 +1133,7 @@ export default function ReaderApp() {
                 label="Reading help"
                 onClick={() => openModal("help")}
               >
-                <Headphones />
+                <Question />
               </IconButton>
             </div>
           </header>
@@ -1070,6 +1150,10 @@ export default function ReaderApp() {
                 <Reader
                   key={p.book.id + readerKey}
                   p={p}
+                  fullscreen={fullscreen}
+                  libraryMenu={narrow && fullscreen.active ? libraryMenu : null}
+                  voiceChoices={voiceChoices}
+                  onVoiceMenu={(open) => openModal(open ? "voices" : "")}
                   onReadingPosition={reportReadingPosition}
                   addMark={addMark}
                   notes={notes}
@@ -1376,7 +1460,7 @@ export default function ReaderApp() {
             )}
           </AnimatePresence>
         </div>
-        {p.book && <Player p={p} onOpen={() => setReading(true)} />}
+        {p.book && <Player p={p} reading={reading} onOpen={showReader} />}
         <AnimatePresence>
           {notice && (
             <motion.div
@@ -1421,105 +1505,29 @@ export default function ReaderApp() {
             books={books}
             onClose={() => setModal("")}
             onSelect={(b, i, t) => {
+              showReader();
               p.open(b);
               writeSaved("follow." + b.id, true);
               p.load(i, t, false, b);
               setReaderKey((k) => k + 1);
-              setReading(true);
               setModal("");
-              setDrawer(false);
             }}
           />
-        )}
-        {modal === "voices" && (
-          <Modal title="A voice to read with" onClose={() => setModal("")}>
-            <p className="muted voice-intro">
-              {currentBook
-                ? currentBook.voice || "This book uses its supplied audio."
-                : "Open a book to see its available narrations."}
-            </p>
-            <div className="voice-choices">
-              <button
-                className="voice-choice"
-                onClick={() => void chooseNarration("kokoro")}
-                disabled={narrationSource?.narration !== "kokoro"}
-                aria-pressed={currentBook?.narration === "kokoro"}
-              >
-                <Headphones size={23} />
-                <div>
-                  <strong>Kokoro · Emma</strong>
-                  <p>Warm, gently paced narration</p>
-                  <span>
-                    {currentBook?.narration === "kokoro"
-                      ? "Selected · default narration"
-                      : narrationSource?.narration === "kokoro"
-                        ? "Default narration"
-                        : "Not enabled"}
-                  </span>
-                </div>
-                {currentBook?.narration === "kokoro" && <Check size={20} />}
-              </button>
-              <button
-                className="voice-choice"
-                disabled={!piperAvailable && currentBook?.narration !== "piper"}
-                aria-pressed={currentBook?.narration === "piper"}
-                onClick={() => void chooseNarration("piper")}
-              >
-                <Headphones size={23} />
-                <div>
-                  <strong>Piper · Cori</strong>
-                  <p>British English · female</p>
-                  <span>
-                    {currentBook?.narration === "piper"
-                      ? "Selected · ready to listen"
-                      : piperAvailable
-                        ? "Choose this narration"
-                        : "Not enabled"}
-                  </span>
-                </div>
-                {currentBook?.narration === "piper" && <Check size={20} />}
-              </button>
-              <button
-                className="voice-choice"
-                disabled={
-                  !narrationSource?.alternateNarration &&
-                  currentBook?.narration !== "google"
-                }
-                aria-pressed={currentBook?.narration === "google"}
-                onClick={() => void chooseNarration("google")}
-              >
-                <Headphones size={23} />
-                <div>
-                  <strong>Google Neural2</strong>
-                  <p>British English · female</p>
-                  <span>
-                    {currentBook?.narration === "google"
-                      ? "Selected · ready to listen"
-                      : narrationSource?.alternateNarration
-                        ? "Choose this narration"
-                        : "Not enabled"}
-                  </span>
-                </div>
-              </button>
-            </div>
-            <p className="muted voice-intro">
-              Switching voices resumes at the nearest matching passage.
-            </p>
-          </Modal>
         )}
         {modal === "help" && (
           <Modal title="A little reading room" onClose={() => setModal("")}>
             <div className="help-copy">
               <p>
-                Read the clean text or switch to the original PDF. With Follow
-                audio on, Pagechime keeps your passage and page with the
-                narrator. Books with word timings also highlight the spoken
-                word.
+                Read the clean text or switch to the original PDF. Turn on
+                Follow audio in the Voice menu to keep your passage and page
+                with the narrator. Books with word timings also highlight the
+                spoken word.
               </p>
               <p>
-                Tap Fullscreen for more reading space, then Exit to return. The
-                player’s 10s buttons move back or forward ten seconds. Normal
-                listening skips sections marked Reference; you can open them
+                Books open fullscreen on phones. Tap Exit to return to the
+                regular view. The player’s 10s buttons move back or forward
+                ten seconds. Normal listening skips sections marked Reference.
+                You can open them
                 from Contents at any time.
               </p>
               <p>
@@ -1578,9 +1586,17 @@ export default function ReaderApp() {
     </MotionConfig>
   );
 }
-function Player({ p, onOpen }: { p: Playback; onOpen: () => void }) {
+function Player({
+  p,
+  reading,
+  onOpen,
+}: {
+  p: Playback;
+  reading: boolean;
+  onOpen: () => void;
+}) {
   const host = useRef<HTMLElement>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const element = host.current,
       shell = element?.closest<HTMLElement>(".app-shell");
     if (!element || !shell) return;
@@ -1599,12 +1615,13 @@ function Player({ p, onOpen }: { p: Playback; onOpen: () => void }) {
   }, []);
   const b = p.book!,
     ch = b.chapters[p.chapter];
+  const BookInfo = reading ? "div" : "button";
   return (
     <section ref={host} className="player" aria-label="Audiobook player">
-      <button
+      <BookInfo
         className="player-book"
-        onClick={onOpen}
-        aria-label="Open current book"
+        onClick={reading ? undefined : onOpen}
+        aria-label={reading ? undefined : "Open current book"}
       >
         <div className="mini-cover">
           <BookOpen size={24} />
@@ -1614,7 +1631,7 @@ function Player({ p, onOpen }: { p: Playback; onOpen: () => void }) {
           <span>{ch.title}</span>
         </div>
         <AudioBars playing={p.playing} />
-      </button>
+      </BookInfo>
       <div className="player-center">
         <div className="playback-buttons">
           <IconButton

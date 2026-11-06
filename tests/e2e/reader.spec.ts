@@ -12,9 +12,9 @@ test.beforeEach(async ({ page }) => {
 async function open(page: any) {
   await page.goto("/");
   await page.getByRole("button", { name: "Open book", exact: true }).click();
-  await expect(
-    page.getByRole("heading", { name: "A quiet beginning", exact: true }),
-  ).toBeVisible();
+  await expect(page.getByRole("article", { name: "Book text" })).toContainText(
+    "A quiet beginning.",
+  );
 }
 async function menu(page: any) {
   const b = page.getByRole("button", { name: "Open library menu" });
@@ -122,18 +122,18 @@ test("listen, follow passages, change chapter, bookmark and restore a reading pl
     .click();
   await page.getByLabel("Playback speed").selectOption("0.85");
   await page.getByRole("button", { name: "Next audio chapter" }).click();
-  await expect(
-    page.getByRole("heading", { name: "The next page", exact: true }),
-  ).toBeVisible();
+  await expect(page.getByRole("article", { name: "Book text" })).toContainText(
+    "The next page.",
+  );
   await page.getByRole("button", { name: "Bookmark this moment" }).click();
   await expect(page.getByRole("status")).toContainText("bookmark");
   await page.reload();
   await page
     .getByRole("button", { name: "Continue reading", exact: true })
     .click();
-  await expect(
-    page.getByRole("heading", { name: "The next page", exact: true }),
-  ).toBeVisible();
+  await expect(page.getByRole("article", { name: "Book text" })).toContainText(
+    "The next page.",
+  );
   await expect(page.getByLabel("Playback speed")).toHaveValue("0.85");
   await menu(page);
   await page.getByRole("button", { name: "Bookmarks", exact: true }).click();
@@ -300,9 +300,9 @@ test("chapter end advances narration", async ({ page }) => {
   await page
     .getByRole("button", { name: "Play narration", exact: true })
     .click();
-  await expect(
-    page.getByRole("heading", { name: "The next page", exact: true }),
-  ).toBeVisible();
+  await expect(page.getByRole("article", { name: "Book text" })).toContainText(
+    "The next page.",
+  );
   await page
     .getByRole("button", { name: "Pause narration", exact: true })
     .click();

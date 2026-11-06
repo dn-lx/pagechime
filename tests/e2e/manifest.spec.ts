@@ -21,10 +21,9 @@ test("restored Manifest guest library, real word following, chapter boundaries a
   });
   await page.getByRole("button", { name: "Open book", exact: true }).first().click();
   await expect(page.locator(".ebook-heading")).toContainText("Chapter 5 of 19");
-  await page
-    .getByRole("button", { name: "Enter fullscreen", exact: true })
-    .click();
-  await expect(page.locator("body")).toHaveClass(/focus-reading/);
+  if (info.project.name === "desktop")
+    await page.getByRole("button", { name: "Enter fullscreen", exact: true }).click();
+  await expect(page.locator(".app-shell")).toHaveClass(/focus-reading/);
   await expect
     .poll(() =>
       page

@@ -143,24 +143,23 @@ test("short-screen settings scroll while Close and Done remain reachable", async
 
 test("Escape closes settings before leaving fallback fullscreen", async ({
   page,
-}) => {
+}, info) => {
   await page.addInitScript(() => {
     HTMLElement.prototype.requestFullscreen = () =>
       Promise.reject(new DOMException("Unavailable", "NotAllowedError"));
   });
   await guest(page);
-  await page
-    .getByRole("button", { name: "Enter fullscreen", exact: true })
-    .click();
-  await expect(page.locator("body")).toHaveClass(/focus-reading/);
+  if (info.project.name === "desktop")
+    await page.getByRole("button", { name: "Enter fullscreen", exact: true }).click();
+  await expect(page.locator(".app-shell")).toHaveClass(/focus-reading/);
   await page
     .getByRole("button", { name: "Reading appearance", exact: true })
     .click();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
-  await expect(page.locator("body")).toHaveClass(/focus-reading/);
+  await expect(page.locator(".app-shell")).toHaveClass(/focus-reading/);
   await page.keyboard.press("Escape");
-  await expect(page.locator("body")).not.toHaveClass(/focus-reading/);
+  await expect(page.locator(".app-shell")).not.toHaveClass(/focus-reading/);
 });
 
 test("mobile library traps focus, closes with Escape and hands off to one dialog", async ({
