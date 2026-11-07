@@ -2,10 +2,11 @@
 
 Accepted scope: Next.js website and Expo React Native app, based on Agent Project Starter. Updated 2026-10-28.
 
-## [ ] REQ-021 — Use the desktop reading space
+## [x] REQ-021 — Use the desktop reading space
 - Let the text page grow into the available desktop window height while keeping a comfortable line width and accessible reading, edition and playback controls.
 - Keep all words through page turns and preserve reading anchors through window resizing. Short windows retain scrolling access to the footer.
 - Verify tall and ordinary desktop windows, short windows, the phone reader, source checks, the web budget and develop delivery.
+- Verified runtime fdf1b721, ready develop deploy 6aee9ddbf8b572cb6933d418, 62 Node and 48 reader cases. The tall-window regression preserves all chapter text. Hosted private-book testing requires team sign-in.
 
 ## [x] REQ-020 — Full-window phone reader and compact controls
 - Open books in a full-window reader on phones. Keep the layout active across browser suspension and resumption, chapter changes and voice changes. Keep the mobile library menu and Exit accessible. Desktop keeps manual browser fullscreen.
