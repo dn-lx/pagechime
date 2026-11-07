@@ -1,15 +1,15 @@
 # Current Handoff
 
-Updated 2026-11-06 (Europe/Madrid).
+Updated 2026-11-07 (Europe/Madrid).
 
 ## Current work — PageChime 0.3.0
 
 PR #8 merged 0.3.0 to main at 046f009e. Netlify production deploy 6aed00a789daae96fd796049 is current, with library/reader functions and the media edge. Main and develop share the private catalog. Kokoro is the existing Manifest default. The exact release tree passed Application 42119331554 with 62 Node and 88 browser cases, four private skips, exports and 574/900 KiB. The separate PR run stalled installing Chromium. The sample passed isolated desktop and Pixel 7 publishing. Team sign-in gates live admin verification. GitHub tag and release publication are pending. See REQ-019/018 plans.
 
-REQ-020 runtime c025fc61 is ready on develop deploy 6aee58c5d3354137e966dc0b. Phones fill the browser window by default and retain the reader after Chromium suspension and resume. Checks passed with 62 Node and 88 browser cases, four private skips, and 575/900 KiB. Physical lock testing remains open.
+REQ-021 lets desktop text pages fill the available height, replacing the 740px cap. Reserve the narrator-return row so page turning cannot change pagination by shrinking the paper. REQ-020 phone behavior remains at runtime c025fc61/deploy6aee58c5. Physical phone lock testing remains open.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-020","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"reviewing","last_verified_sha":"c025fc610eafb1092504225dd9473b5075987713","next_step":"Owner review on develop. Promote only with explicit owner approval.","updated_at":"2026-11-06T22:49:00Z"}
+{"task_id":"REQ-021","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"testing","last_verified_sha":"eb8486533c30a52a76e25cbecf12f05fe7e4f20c","next_step":"Verify desktop window sizing and deploy to develop.","updated_at":"2026-11-07T03:38:00Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017

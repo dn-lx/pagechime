@@ -995,12 +995,16 @@ export default function BookReader({
           <ArrowRight size={19} />
         </button>
       </nav>
-      {!focus && !follow && mode === "text" && (
-        <button className="ebook-resume" onClick={() => setFollow(true)}>
-          <Headphones size={16} />
-          Return to the narrator
-          <ArrowRight size={15} />
-        </button>
+      {!focus && mode === "text" && (
+        <div className="ebook-resume-slot">
+          {!follow && (
+            <button className="ebook-resume" onClick={() => setFollow(true)}>
+              <Headphones size={16} />
+              Return to the narrator
+              <ArrowRight size={15} />
+            </button>
+          )}
+        </div>
       )}
       {!!book.editions?.length && (
         <details className="book-editions">

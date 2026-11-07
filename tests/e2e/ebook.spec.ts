@@ -113,11 +113,21 @@ test("repaired reading joins words and saves corrected quotations at original so
 });
 test("reading pages preserve all text and move across chapter boundaries without opening PDF", async ({
   page,
-}) => {
+}, info) => {
+  if (info.project.name === "desktop")
+    await page.setViewportSize({ width: 980, height: 1750 });
   await login(page, "long");
   await expect(page.locator("[data-fragment]").first()).toContainText(
     "Moment 1.",
   );
+  await expect(page.locator(".reader-main")).toHaveCSS("opacity", "1");
+  if (info.project.name === "desktop") {
+    const paper = await page.locator(".ebook-paper").boundingBox();
+    const tip = await page.locator(".ebook-tip").boundingBox();
+    const player = await page.locator(".player").boundingBox();
+    expect(paper!.height).toBeGreaterThan(900);
+    expect(player!.y - tip!.y - tip!.height).toBeLessThanOrEqual(40);
+  }
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const all: string[] = [];

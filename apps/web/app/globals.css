@@ -2936,6 +2936,37 @@ button.player-book {
 .ebook-reader[data-width="wide"] .ebook-paper {
   max-width: 900px;
 }
+@media (min-width: 768px) {
+  .app-shell:not(.focus-reading) .reader-main {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100dvh - var(--player) - 81px);
+  }
+  .app-shell:not(.focus-reading) .ebook-reader {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .app-shell:not(.focus-reading) .ebook-reader > * {
+    flex-shrink: 0;
+  }
+  .app-shell:not(.focus-reading) .ebook-paper {
+    flex: 1 0 430px;
+    width: 100%;
+    height: 430px;
+    margin: 0 auto;
+  }
+  .app-shell:not(.focus-reading) :is(
+    .ebook-page-navigation,
+    .ebook-tip,
+    .quotation-actions
+  ) {
+    width: 100%;
+  }
+  .app-shell:not(.focus-reading) .ebook-resume-slot {
+    min-height: 56px;
+  }
+}
 .ebook-running-head,
 .ebook-running-foot {
   display: flex;
