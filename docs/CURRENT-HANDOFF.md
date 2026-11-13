@@ -1,5 +1,11 @@
 # Current Handoff
 
+## Active task — Qwen3-TTS Colab sample (2026-11-13)
+
+Notebook and companion pipeline are present in the owner's private Google Drive folder **PageChime Qwen3 Audiobook Studio**. Runtime evaluation reached a free Tesla T4 with Python 3.13.16, PyTorch 2.14.1+cu130 and CUDA 13.0. The pinned dependency install cell completed, with a resolver warning that Colab's preinstalled diffusers expects a newer huggingface-hub. The import verification cell has not passed. The owner completed Colab's Drive authorization prompt, but `drive.mount('/content/drive')` returned `ValueError: mount failed` twice (first CPU runtime, then T4); the run-all sequence stopped at that cell. No Qwen model was loaded, no speech sample or audio file was generated, and no book was processed. Drive save, alignment, playback and PageChime export remain unverified. Production code, catalog and deployments were not changed.
+
+Next step: resume in the owner's visible Safari/Colab session and resolve the Drive mount once; if it fails again, stop using that mount path and choose an authorized alternative. Then verify imports, generate a short synthetic passage, listen to the recording, and confirm its private Drive file before reporting a completed sample. Do not process a full book until its text and rights are reviewed.
+
 Updated 2026-11-07 (Europe/Madrid).
 
 ## Current work — PageChime 0.3.0
