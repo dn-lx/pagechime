@@ -1,74 +1,40 @@
 ---
 name: memory-context
-description: Minimize unnecessary model context while preserving durable engineering knowledge and freshness.
+description: Keep PageChime agent context small, current, source-linked, and safe to resume.
 ---
 
-# Memory and Context Efficiency
+# Memory and Context
 
-Read `docs/MEMORY-CONTEXT-POLICY.md`.
+Read `docs/MEMORY-CONTEXT-POLICY.md` and follow the canonical source-of-truth order in `AGENTS.md`.
 
-## Retrieval before reasoning
+## Start with a bounded packet
 
-Search/index results are navigation evidence, not automatically revision-correct evidence. If a search tool cannot scope to the active branch/SHA, use the hit to locate candidate paths and then fetch/read those files from the active ref or local checkout before reasoning from their contents.
+For a resumed or broad task, read Project Memory and Current Handoff, then verify the active branch/ref, working diff, and relevant repository state. Treat a handoff as a lead to investigate, not proof that a branch, deployment, credential, test, or task still exists. For current Me+ requirements, retrieve the registered canonical specification and latest relevant checkpoint through the configured router when available; if unavailable, record that limitation and verify repo evidence directly. Do not substitute chat recall for canonical state.
 
-Before asking an agent to inspect a broad repository:
+Classify each retrieved statement as one of:
+- **Fact** — directly observed in current source, tool output, or test evidence.
+- **Preference** — explicit owner instruction; retain its scope and date when it can change.
+- **Decision** — accepted trade-off; link the decision record or source.
+- **Hypothesis** — unverified explanation; do not repeat as fact.
+- **Open loop** — unfinished work with owner, blocker, and next action.
 
-1. read compact Project Memory + Current Handoff,
-2. inspect current Git diff/status/history,
-3. use exact search,
-4. use Graphify for relationships/change impact,
-5. open only relevant source/tests,
-6. broaden only when evidence requires it.
+Select only the directly relevant skill(s), exact source files, requirements, and checks. Use exact search/Graphify before broad reads. Search results locate candidates; fetch the candidate from the active ref/SHA before relying on it. Avoid resending unchanged files and full transcripts. Use `node scripts/context-packet.mjs <files...>` when constructing a broad packet.
 
-## Task context packet
+## Write-back after material work
 
-For broad work, build a small explicit packet before broadening:
-- requirement/acceptance criteria,
-- current diff or failing evidence,
-- one selected skill/superpower,
-- the smallest relevant source/tests,
-- Project Memory/Handoff only when they add task-relevant facts.
+Write the smallest update that lets a fresh session continue correctly:
+1. Record outcome and status separately for implemented, verified, deployed, enabled, and user-accepted.
+2. Cite the active branch and commit SHA plus the exact files, checks, external artifacts, and evidence actually observed.
+3. Keep durable architecture/policy in Project Memory or an accepted decision record; keep active task, blocker, and next step in Current Handoff; keep repeatable procedures in the smallest existing skill.
+4. Record a lesson only after reproducing or independently confirming it. Include scope, evidence, invalidation/review condition, and a specific action; use `reviewed-learning`. Do not retain raw conversation, private book text/audio, access URLs, credentials, or personal data in Git.
+5. Remove completed items from the active handoff and replace superseded claims instead of appending another competing “current” paragraph.
 
-When running locally, `node scripts/context-packet.mjs <files...>` reports an approximate packet size. Use `--check` only when the team wants a hard local guard. The default task budget is a warning/discipline aid, not permission to omit required evidence.
+If an external memory/checkpoint service is unavailable, say so in the handoff and use repo-owned sources; never imply that a write succeeded. Do not make generated memory more authoritative than source, accepted requirements, tests, or verified external state.
 
-Prefer adding one newly justified file at a time over dumping a directory. Do not resend a file unchanged after it has already supplied the needed fact.
+## Freshness and confidence
 
-## Do not resend
+Attach claims to files, commits, tests, or dated tool evidence where practical. Revalidate volatile claims (runtime, provider availability, model versions, account permissions, branch/deploy state, prices and quotas) at the point of use. Mark an inference as an inference. When the source changed, the record is past its review date, or contrary evidence appears, stop using that memory until it is reconciled. Retire stale advice with a reason; do not silently extend its review date.
 
-Avoid repeatedly sending:
-- whole repositories,
-- dependency/generated folders,
-- full previous agent transcripts,
-- duplicated documentation,
-- unchanged large files.
+## Safety and bounded automation
 
-## Durable write-back
-
-After a material task, preserve only what future work needs:
-- root cause,
-- architectural decision,
-- important files,
-- tests proving the outcome,
-- PR/commit reference,
-- remaining risk.
-
-Do not make model-generated memory more authoritative than source/tests/ADRs.
-
-## Retry guard
-
-If automating agents:
-- cap retries,
-- detect repeated identical failures,
-- escalate or stop instead of looping,
-- use deterministic commands for tests/build/status instead of asking another model to infer them.
-
-## Reviewer packet
-
-Normally give an independent reviewer:
-- original requirement,
-- final diff,
-- relevant source,
-- project rules,
-- deterministic check results.
-
-Do not send the full implementer transcript unless uniquely necessary.
+Never let a memory claim grant access or authorize a production write. Re-check the live target and current owner instruction before external mutations. For automated retries, set a small bound, detect repeated identical failures, and stop/escalate rather than looping. Do not report a check or artifact as successful unless its output was observed.

@@ -11,7 +11,8 @@ Load this file only when the correct specialist path is not already obvious. Do 
 | External MCP/connector work | `mcp-usage` |
 | Current third-party API/SDK docs | `context7` |
 | Code relationships/change impact | `graphify` |
-| Context/token reduction | `memory-context` |
+| Context retrieval, session memory, or durable write-back | `memory-context` |
+| Book ingestion, narration, alignment, or PageChime audiobook export | `audiobook-production` |
 | Non-trivial delivery plan | `implementation-planning` |
 | Test harness/fixtures/regression coverage | `test-engineering` |
 | Focused UI bug: contrast/alignment/overflow/clipping/responsive | `frontend-verification` |

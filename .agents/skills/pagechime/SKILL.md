@@ -10,15 +10,17 @@ An installable personal library for reading book pages while listening to synchr
 
 ## Source of truth
 - Read `AGENTS.md` first.
-- Use `docs/PROJECT-MEMORY.md` for durable architecture, commands and boundaries.
-- Use `docs/CURRENT-HANDOFF.md` for unfinished task state.
-- Use `docs/REQUIREMENTS.md` for accepted requirements.
+- Use `docs/PROJECT-MEMORY.md` for durable architecture, commands, privacy boundaries, and authoritative paths.
+- Use `docs/CURRENT-HANDOFF.md` only for active work; verify its branch, commit, and external state before resuming.
+- Use `docs/REQUIREMENTS.md` for accepted product requirements.
+- Load `audiobook-production` for source ingestion, narration, alignment, or book exports.
+- Load `memory-context` for context retrieval, session recovery, or durable write-back.
 
 ## Branch flow
 - Integration: `develop`
 - Production: `main`
-- Ordinary work: temporary feature/fix/chore branch → `develop`
-- Release: `develop` → `main` only after required checks and explicit approval.
+- Follow current `.agents/project-policy.json` and `AGENTS.md`; owner-directed direct integration on `develop` overrides generic temporary-branch examples while that policy is active.
+- Production promotion or a production write requires explicit owner approval.
 
-## Project rule
-Do not invent missing architecture, credentials, external-system identity or production state. Verify against current source/runtime/tool evidence.
+## Evidence and privacy
+Do not invent missing architecture, credentials, external-system identity, production state, model output, voice quality, alignment accuracy, or user acceptance. Verify against current source/runtime/tool evidence. Keep private books, recordings, and personal Drive links outside Git.
