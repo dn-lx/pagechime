@@ -33,3 +33,10 @@ Use for book ingestion, narration generation, alignment, or preparing a PageChim
 ## iPad handoff
 
 Keep routine controls in notebook forms/widgets instead of requiring Python edits. Give the owner a short Safari workflow for upload/select, voice/sample review, start/resume, progress, and Drive access. Clearly identify any step requiring their account interaction.
+
+## Colab runtime and interruption recovery
+
+- Before model loading, confirm the active runtime reports CUDA and its actual GPU; a GPU selection in notebook settings alone is not evidence. Prefer a free T4 when Colab assigns one. Never upgrade the account or select a paid runtime.
+- If the owner has completed the Google account/terms/Drive authorization checkpoint, continue with the notebook's Drive mount. If `drive.mount()` times out or raises `mount failed`, capture the cell error and runtime identity. Allow at most one retry after correcting/restarting the runtime; if it fails again, stop and record Drive as unavailable. Do not keep rerunning the authorization loop or claim any output was saved.
+- Keep setup stages distinct: dependency installation does not prove imports work; CUDA detection does not prove the model loads; model loading does not prove audio generation or Drive persistence. Verify each stage from cell output and inspect the resulting audio before describing it as a usable narration sample.
+- A British English VoiceDesign prompt is only a target. Assess the generated sample for pronunciation, prosody, artifacts, pacing and accent; label the accent unverified until listening confirms it.
