@@ -38,6 +38,8 @@ Load this file only when the correct specialist path is not already obvious. Do 
 | Measured optional compression | `headroom-pilot` |
 | Project-specific durable guidance | `pagechime` |
 
+| Smallest complete implementation / avoid over-building | `ponytail` |
+
 ## Fast-path rule
 
 If the task clearly matches one row, load that skill directly. Use `task-routing` only when the outcome is broad or ambiguous.

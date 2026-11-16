@@ -94,6 +94,7 @@ See `docs/MEMORY-CONTEXT-POLICY.md`.
 Keep routing progressive. For broad/stalled/end-to-end work, use `.agents/skills/task-routing/SKILL.md` to select one primary Superpower from `.agents/superpowers/`. Do not preload the Superpower/skill catalog.
 
 Direct fast paths:
+- smallest complete implementation / avoid over-building → `ponytail`;
 - resume/branch uncertainty → `task-continuity`;
 - host/model/parallelism choice → `execution-routing`;
 - non-trivial delivery sequencing → `implementation-planning`;
