@@ -68,6 +68,11 @@ test("prepared voice metadata rejects foreign origins, book namespaces and trave
     }).preparedNarrations?.piper,
     "/books/demo/piper/book.json",
   );
+  assert.equal(
+    validateBook({ ...fixture, preparedNarrations: { qwen: "/books/demo/qwen/book.json" } }).preparedNarrations?.qwen,
+    "/books/demo/qwen/book.json",
+  );
+  assert.throws(() => validateBook({ ...fixture, preparedNarrations: { qwen: "https://outside.test/book.json" } }));
 });
 
 test("voice changes retain a visible character offset across split passages and round trips", () => {

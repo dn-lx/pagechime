@@ -466,7 +466,7 @@ export default function ReaderApp() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [reading, p.book, p.toggle, p.skip, addMark]);
-  async function chooseNarration(kind: "kokoro" | "google" | "piper") {
+  async function chooseNarration(kind: "kokoro" | "google" | "piper" | "qwen") {
     if (!currentBook) return;
     if (currentBook.narration === kind) {
       setModal("");
@@ -485,7 +485,7 @@ export default function ReaderApp() {
         const address =
           kind === "google"
             ? base.alternateNarration
-            : base.preparedNarrations?.piper;
+            : base.preparedNarrations?.[kind];
         if (!address) return;
         const url = new URL(address, location.href);
         if (
@@ -498,8 +498,8 @@ export default function ReaderApp() {
         next = validateBook(await response.json());
         if (
           next.narration !== kind ||
-          (kind === "piper"
-            ? next.id !== `${base.id}-piper` || next.sourceBookId !== base.id
+          (kind === "piper" || kind === "qwen"
+            ? next.id !== `${base.id}-${kind}` || next.sourceBookId !== base.id
             : next.id !== base.id)
         )
           throw Error();
@@ -873,6 +873,20 @@ export default function ReaderApp() {
             </span>
           </div>
           {currentBook?.narration === "piper" && <Check size={20} />}
+        </button>
+        <button
+          className="voice-choice"
+          disabled={!narrationSource?.preparedNarrations?.qwen && currentBook?.narration !== "qwen"}
+          aria-pressed={currentBook?.narration === "qwen"}
+          onClick={() => void chooseNarration("qwen")}
+        >
+          <Headphones size={23} />
+          <div>
+            <strong>Qwen3</strong>
+            <p>English · female narration</p>
+            <span>{currentBook?.narration === "qwen" ? "Selected · ready to listen" : narrationSource?.preparedNarrations?.qwen ? "Choose this narration" : "Not enabled"}</span>
+          </div>
+          {currentBook?.narration === "qwen" && <Check size={20} />}
         </button>
         <button
           className="voice-choice"

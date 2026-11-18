@@ -34,8 +34,8 @@ export type Book = {
   duration: number;
   timing?: string;
   local?: boolean;
-  narration?: "kokoro" | "google" | "piper";
-  preparedNarrations?: { piper?: string };
+  narration?: "kokoro" | "google" | "piper" | "qwen";
+  preparedNarrations?: { piper?: string; qwen?: string };
   sourceBookId?: string;
   alternateNarration?: string;
   editions?: {
@@ -329,7 +329,7 @@ export function validateBook(value: unknown): Book {
       (!b.preparedNarrations || typeof b.preparedNarrations !== "object" ||
        Array.isArray(b.preparedNarrations) ||
        Object.entries(b.preparedNarrations).some(([kind, url]) =>
-         kind !== "piper" || typeof url !== "string" ||
+         !["piper", "qwen"].includes(kind) || typeof url !== "string" ||
          !url.startsWith(`/books/${b.id}/`) ||
          !/^\/books\/[A-Za-z0-9_-]+\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\.json$/.test(url))))
     throw Error("A prepared narration has an invalid address.");
