@@ -1,12 +1,18 @@
 # Current Handoff
 
-## Active task — Qwen3 integration (2026-11-18)
+## Completed Qwen3 integration — verified on develop (2026-11-18)
 
-The completed Qwen3 recording contains 18 chapters and 197 segments. A private M4B, 20 size-bounded MP3 tracks, and a draft PageChime book with 36,219 estimated word cues are in the owner's Studio Drive folder. Complete master audio decoded; segment and alignment hashes, bounds, track durations, and reader schemas were checked. The acoustic report indicates 96.2% overall coverage; index coverage is 47.93%. Two split-boundary cues were omitted and 17 PDF page transitions remain provisional. Listening review and hosted sync verification remain open.
+**Code and deployment:** Qwen voice selection and same-book manifest validation are on GitHub develop. The verified code ref is 627a203bc22b3437f7aaf9f09574171f164c72f2; Netlify deploy 6afd430e619d39bb88a1d04b is ready. The protected preview is https://develop--pagechime.netlify.app/. GitHub main and the production website deployment were not changed.
 
-Develop supports Qwen selection, gated by the private book manifest. A new version of the existing private library is uploading, preserving Kokoro and Piper. Qwen is not verified on the hosted site yet. Next: verify all private files and current pointer; deploy develop; test playback, word following and voice switching; review low-coverage areas. Keep book text/audio out of Git and do not modify main. Temporary library access must be revoked after use. The notebook's Drive path changed when its folder moved; reconcile before rerunning it.
+**Private library:** Qwen was added to the existing Supabase library as immutable version 36237ab930429a1de47ac46ed61232b85300684bf96cd63874edee3940179010 (66 files, 267,185,165 bytes). Kokoro and Piper remain present. An independent restore checked every file hash. Temporary Qwen upload/build capabilities are expired. The owner authorized this production catalog update; the catalog is shared by build contexts, so a future main build can read it without changing the main branch.
 
-Updated 2026-11-07 (Europe/Madrid).
+**Live reader verification:** In the deployed reader, Qwen3 showed “Selected · ready to listen.” Introduction playback advanced from about 0:02 to 0:22, and the highlighted word advanced with the visible book text. The export contains 20 MP3 tracks, 229 passages and 36,219 estimated word cues. Automated text, timing, schema and library checks passed; the project check (62 Node tests, typecheck, docs and agent-stack checks) and clean build passed.
+
+**Review boundary:** Estimated alignment coverage is 96.2% overall and 47.93% in the index. Seventeen page transitions remain provisional and two split-boundary cues were omitted. This browser check verified playback and word-follow, not subjective audio quality. The menu labels the voice English/female; British accent and naturalness still need listening review. No full proofread is claimed.
+
+**Next:** Qwen is ready on develop. Owner listening review is optional acceptance; keep the code on develop unless separately authorized. Chatterbox remains a separate incomplete voice in the broader three-engine request.
+
+Updated 2026-11-18 (Europe/Berlin).
 
 ## Current work — PageChime 0.3.0
 
@@ -15,7 +21,7 @@ PR #8 merged 0.3.0 to main at 046f009e. Netlify production deploy 6aed00a789daae
 REQ-021 runtime fdf1b721 is ready on develop deploy 6aee9ddbf8b572cb6933d418. Desktop paper grew from 740 to 1120px at 980×1750. Checks passed with 62 Node and 48 reader cases, and 576/900 KiB. Short windows, editions, themes and phones were checked. Hosted book checks require team sign-in.
 
 <!-- AGENT_TASK_STATE_START -->
-{"task_id":"REQ-021","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"reviewing","last_verified_sha":"fdf1b721bbff775fa36f3dca9a99e562a6c3690d","next_step":"Owner review on develop. Promote only with explicit owner approval.","updated_at":"2026-11-07T03:43:18.653Z"}
+{"task_id":"REQ-016","repository":"dn-lx/pagechime","base":"develop","branch":"develop","pr":null,"status":"reviewing","last_verified_sha":"627a203bc22b3437f7aaf9f09574171f164c72f2","next_step":"Qwen integration is verified on develop. Optional owner listening review for accent/naturalness; Chatterbox completion remains separate. Do not promote to main without explicit approval.","updated_at":"2026-11-18T09:52:37.708Z"}
 <!-- AGENT_TASK_STATE_END -->
 
 ## Reader synchronization — REQ-017
