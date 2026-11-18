@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add a Qwen3 narration option with its own word timing when a verified private recording is available.
+- Update Next.js to 16.4.6 to address the security advisory reported during the build.
 - Let the desktop reading page grow into the available window height, with stable page turns and accessible footer controls.
 - Open books in a full-window reader on phones that stays active when the browser suspends and resumes the tab. Compact controls give the page more room.
 - Put voice selection in the reading toolbar and keep audio-follow in the Voice menu.

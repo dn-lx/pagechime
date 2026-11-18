@@ -9,15 +9,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@pagechime/core": "*",
-    "next": "16.4.3",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "pdfjs-dist": "5.4.296",
-    "motion": "^12.23.24",
-    "@phosphor-icons/react": "^2.1.10",
+    "@fontsource-variable/dm-sans": "^5.2.8",
     "@fontsource-variable/newsreader": "^5.2.8",
-    "@fontsource-variable/dm-sans": "^5.2.8"
+    "@pagechime/core": "*",
+    "@phosphor-icons/react": "^2.1.10",
+    "motion": "^12.23.24",
+    "next": "16.4.6",
+    "pdfjs-dist": "5.4.296",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@types/react-dom": "~19.3.0"
