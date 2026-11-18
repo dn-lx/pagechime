@@ -24,7 +24,7 @@ Current partial private chunks are under /workspace/scratch/452ae38be48c/full-re
 
 ## Remaining acceptance
 
-Full generation, complete output decoding, final private saves and delivery are pending. Later app integration is separate and must retain exact new voice timings and existing reader security boundaries. REQ-014 hosted verification remains separately blocked by Netlify sign-in.
+The three-engine request remains open for Chatterbox generation, full-output decoding, private save and delivery. Qwen and Piper are complete for the current PageChime edition; Qwen's browser playback and text-follow are verified on develop. Accent/naturalness still needs a human listening review, and no full proofread is claimed. Do not promote the code to main without separate owner approval.
 
 ## Piper publication follow-up
 
@@ -34,4 +34,10 @@ Package seventeen <=18min MP3 chapters under existing private limits; exact chun
 
 Before the compute outage,48 Node checks, web build,4 targeted fixture browser checks and4 real-book browser checks passed across desktop/mobile. All17 encoded files fully decoded. Voice-menu contrast and mobile copy were corrected. The environment became unavailable before source synchronization; equivalent website changes and regression tests were recovered through GitHub MCP and require current remote CI. Develop only; preserve main, hosting gate, Google $0 block and original Kokoro.
 
-Qwen39 chunks and Chatterbox at least70 were last observed locally. Saved checkpoint ZIPs contain38 and43 respectively, version1 each. Compute is currently unavailable, so no running-worker claim. Resume verified caches when a workspace returns, keeping generation sequential to avoid7.7GiB resident Torch memory/paging. Remaining renderer improvements (lexical duration bounds for slash lists, seeded retakes, short-clause Piper repairs) were local-only when the outage occurred; recover from saved preparation scripts/checkpoints and inspect before resuming. Full generation and two private final deliverables remain open.
+## Qwen3-TTS and PageChime integration — current status (2026-11-18)
+
+The completed Qwen3-TTS Studio run supersedes the earlier partial local Qwen checkpoint for the PageChime edition: 18 chapters, 197 source segments and 13,062.82 seconds. The complete master decoded successfully. Its PageChime export has 20 size-bounded MP3 tracks, 229 passages and 36,219 estimated word cues; text reconstruction, hashes, ordering, bounds and reader schema checks passed. Estimated acoustic coverage is 96.2% overall and 47.93% for the index. Seventeen PDF page transitions remain provisional and two cues crossing track boundaries were omitted. This is not a full human listening review or proofread.
+
+The private library was published as immutable version 36237ab930429a1de47ac46ed61232b85300684bf96cd63874edee3940179010, preserving Kokoro and Piper; all 66 files were restored and hash-checked. Temporary Qwen upload/build capabilities expired. Qwen selection, playback progress and visible word-follow are verified on develop. Source SHA, deployment and remaining acceptance details are in docs/CURRENT-HANDOFF.md. The owner separately authorized the shared Supabase catalog publication; GitHub main and the production website deployment were not changed.
+
+Chatterbox remains incomplete at its last persisted local checkpoint (at least70 chunks); no worker is running. Finish Chatterbox generation, full decode, private save and delivery if the broader three-engine request remains active. Keep the $0 Google-spend policy.
