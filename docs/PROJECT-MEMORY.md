@@ -14,7 +14,7 @@
 - **Shared core:** packages/core exports typed book/chapters/passages, schema validation, seeking, timing selection and lossless reading pagination/highlights.
 - **Storage:** Web IndexedDB for imported books; localStorage for progress, bookmarks/preferences; Cache Storage for explicit downloads. Native document directory plus AsyncStorage. Imported files and preferences are device local; bookmarks, notes and reading positions sync through a custom Me+ API. No analytics.
 - **Hosting:** The private Netlify project is linked to GitHub. Develop is the preview branch and main is production after explicit owner approval. Hosted builds restore hash-verified Manifest assets from private Supabase storage. Clean source CI uses fixtures. See Current Handoff for deployed revisions and verification limits.
-- **Voices:** Full private Kokoro Emma British female narration with acoustic word cues. Owner-approved Google spend is $0: preparation API/credential requests are blocked, offline preflight remains available, and no client generates cloud speech. Optional future Google recordings need explicit later authorization and independent SSML word timings. See docs/CONTENT-AND-VOICES.md.
+- **Voices:** Private Kokoro Emma remains the default. Develop also offers the Qwen3 English/female Manifest in Action narration; hosted playback and visible word-follow were verified. Accent and subjective naturalness still need listening review. The Supabase private library catalog is shared by develop and main build contexts; catalog publication and GitHub branch/deployment changes are separate and each needs explicit owner authorization. Google speech spend remains $0. See docs/CONTENT-AND-VOICES.md and docs/CURRENT-HANDOFF.md.
 
 ## Important paths
 
