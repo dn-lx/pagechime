@@ -30,6 +30,16 @@ Use for book ingestion, narration generation, alignment, or preparing a PageChim
 - Existing PageChime reader ingestion has explicit book and cue contracts; verify the current import path before claiming compatibility. A generated sidecar alone does not mean the reader consumes it.
 - Do not modify `main`, production deploys, or live catalog capabilities as part of audiobook preparation without a separate explicit owner instruction.
 
+## Publishing a completed narration
+
+Treat code changes, deployments, and private-library publication as separate effects. An owner may authorize a production Supabase catalog update while requiring GitHub `main` to remain untouched; make code changes on `develop`, and do not infer approval for either target from approval for the other.
+
+Before publishing, verify which build contexts read the library pointer. If `develop` and `main` share a catalog, disclose that new catalog content can appear in later builds from both branches even though no `main` code or production deployment changed. Keep book text and audio private.
+
+Preserve every existing catalog entry. Assemble a complete immutable version within verified per-file and total-size limits. Validate paths, sizes, hashes, manifest, and voice schema before publishing. Read back every published file and compare hashes. Expire temporary upload/build capabilities and verify expiry without changing standing capabilities.
+
+Verify the exact `develop` deployment and catalog version. In the hosted reader, select the voice, start audio, confirm time advances, and confirm visible word highlighting follows the current text. This verifies playback and sync only; it does not verify accent, naturalness, or manual timing quality. Report alignment gaps and provisional cues.
+
 ## iPad handoff
 
 Keep routine controls in notebook forms/widgets instead of requiring Python edits. Give the owner a short Safari workflow for upload/select, voice/sample review, start/resume, progress, and Drive access. Clearly identify any step requiring their account interaction.
